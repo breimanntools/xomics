@@ -6,8 +6,9 @@ from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
 
-import xomics._utils as ut
-from xomics.plotting._plotting import color_filter, label_filter, set_labels, set_legend_handles_labels, _adjust_text
+import xomics.utils as ut
+from xomics.plotting.utils_plotting import (color_filter, label_filter, set_labels,
+                                            set_legend_handles_labels, _adjust_text)
 
 # TODO optimize and unify plotting functions
 # TODO highlight hidden gem in (P-score > 0.75, E-score <= 0.1 (not pathway))
@@ -172,8 +173,6 @@ def plot_enrich_map(df=None, row_colors=None, col_colors=None,
                       font_scale=0.8, x_legend=1.2):
     """"""
     # TODO add to plotting functions
-    ut.plot_settings(weight_bold=False, font_scale=font_scale,
-                                no_ticks_y=True, short_ticks_x=True)
     fg_ratio = figsize[1]/figsize[0]
     ratio = 0.15
     dendrogram_ratio = [ratio*fg_ratio, ratio]
@@ -195,8 +194,7 @@ def plot_enrich_map(df=None, row_colors=None, col_colors=None,
     # TODO dif color
     dict_color = {"Associated": ut.COLOR_GEM, "Not associated": "white"}
     set_legend_handles_labels(ax=cg.ax_heatmap, dict_color=dict_color, lw=1, edgecolor="black", y=-0.01,
-                              x=x_legend, ncol=1, list_cat=dict_color.keys(),
-                              fontsize=ut.LEGEND_FONTSIZE)
+                              x=x_legend, ncol=1, list_cat=dict_color.keys())
 
 
 # EP plot (ExPlano plot)

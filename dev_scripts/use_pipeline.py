@@ -15,7 +15,6 @@ import dev_scripts._utils as ut
 
 import xomics as xo
 
-
 # Settings
 pd.set_option('expand_frame_repr', False)  # Single line print for pd.Dataframe
 

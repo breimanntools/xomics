@@ -10,7 +10,7 @@ authors = [
     "Stephan Breimann <stephanbreimann@gmail.de>",
     "Clarissa Rienaecker <clarissa.rienaecker@web.de>"]
 license = "MIT"
-readme = "README.rest"
+readme = "README.rst"
 
 # Add classifiers to provide more details about the package (used by PyPI)
 classifiers = [

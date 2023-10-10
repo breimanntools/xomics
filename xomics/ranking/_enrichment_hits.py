@@ -2,7 +2,7 @@
 This is a script for an enrichment association hit analysis
 """
 import pandas as pd
-import xomics._utils as ut
+import xomics.utils as ut
 
 
 # I Helper Functions

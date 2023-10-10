@@ -1,3 +1,11 @@
+Conditional Imputation
+======================
+
+This is a tutorial on conditional imputation of missing values using
+``cImpute``.
+
+First import some third-party packages and ``xomics``:
+
 .. code:: ipython3
 
     import pandas as pd
@@ -710,7 +718,7 @@
 
 
 
-.. image:: NOTEBOOK_1_output_4_0.png
+.. image:: NOTEBOOK_1_output_5_0.png
 
 
 .. code:: ipython3
@@ -733,7 +741,7 @@
 
 
 
-.. image:: NOTEBOOK_2_output_5_1.png
+.. image:: NOTEBOOK_2_output_6_1.png
 
 
 

@@ -24,7 +24,7 @@ For more details look into the README
 """
 import pandas as pd
 import numpy as np
-import xomics._utils as ut
+import xomics.utils as ut
 
 from scipy.stats import truncnorm
 from sklearn.impute import KNNImputer

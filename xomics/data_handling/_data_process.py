@@ -7,7 +7,7 @@ from scipy.stats import ttest_ind
 from statsmodels.stats.multitest import multipletests
 from datetime import datetime
 
-import xomics._utils as ut
+import xomics.utils as ut
 
 # Settings
 pd.set_option('expand_frame_repr', False)  # Single line print for pd.Dataframe

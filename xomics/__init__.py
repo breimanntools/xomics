@@ -18,4 +18,6 @@ __all__ = ["p_score",
            "plot_explano",
            "plot_inferno",
            "plot_imput_histo",
-           "plot_imput_scatter"]
+           "plot_imput_scatter",
+           "plot_settings",
+           "plot_get_clist"]

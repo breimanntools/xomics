@@ -44,8 +44,8 @@ cImpute aims to impute only MVs matching well-defined confidence criteria and co
 
     a) For MCAR, CS is equal to the fraction of quantified values (non MVs)
     b) For MNAR, CS is equal to the fraction of MVs
-    d) For NM, CS is set to 1
-    c) For MAR, CS is set to 0 (due to the lack of certainty about the source of the MVs)
+    c) For NM, CS is set to 1
+    d) For MAR, CS is set to 0 (due to the lack of certainty about the source of the MVs)
 
 4. Imputation methods are applied on MCAR and MNAR MVs (MinProb and KNN, respectively)
     with a CS higher than a given threshold for each experimental group (0.5 by default).

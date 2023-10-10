@@ -4,6 +4,7 @@ Plotting utility function to obtain xOmics color list.
 from typing import List
 import xomics.utils as ut
 
+
 # II Main function
 def plot_get_clist(n_colors: int = 3) -> List[str]:
     """

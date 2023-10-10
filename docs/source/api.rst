@@ -22,8 +22,6 @@ Data Handling
 .. autosummary::
     :toctree: generated/
 
-    xomics.load_dataset
-    xomics.load_enrichment
 
 .. _imputation_api:
 
@@ -43,7 +41,6 @@ Ranking
 .. autosummary::
     :toctree: generated/
 
-    xomics.xOmicsRank
 
 
 Integration
@@ -51,10 +48,14 @@ Integration
 .. autosummary::
     :toctree: generated/
 
-    xomics.xOmicsIntegrate
 
+.. _plot_api:
 
 Plot Utilities
 --------------
 .. autosummary::
     :toctree: generated/
+
+        xomics.plot_settings
+        xomics.plot_get_clist
+
