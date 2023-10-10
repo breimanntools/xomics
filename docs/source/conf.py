@@ -16,7 +16,7 @@ from create_tables_doc import generate_table_rst
 from create_notebooks_docs import export_notebooks_to_rst
 
 processed_notebooks = export_notebooks_to_rst()
-#generate_table_rst()
+generate_table_rst()
 
 # -- Path and Platform setup --------------------------------------------------
 path_source = os.path.join(os.path.dirname(__file__))

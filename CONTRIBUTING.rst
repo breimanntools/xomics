@@ -18,14 +18,14 @@ Contributing
 Introduction
 ============
 
-Welcome and thank you for considering a contribution to AAanalysis! We are an open-source project focusing on
+Welcome and thank you for considering a contribution to xOmics! We are an open-source project focusing on
 interpretable protein prediction. Your involvement is invaluable to us. Contributions can be made in the following ways:
 
-- Filing bug reports or feature suggestions on our `GitHub issue tracker <https://github.com/breimanntools/aaanalysis/issues>`_.
+- Filing bug reports or feature suggestions on our `GitHub issue tracker <https://github.com/breimanntools/xomics/issues>`_.
 - Submitting improvements via Pull Requests.
 - Participating in project discussions.
 
-Newcomers can start by tackling issues labeled `good first issue <https://github.com/breimanntools/aaanalysis/issues>`_.
+Newcomers can start by tackling issues labeled `good first issue <https://github.com/breimanntools/xomics/issues>`_.
 Please email stephanbreimann@gmail.com for further questions or suggestions?
 
 Vision
@@ -45,7 +45,7 @@ Non-goals
 
 - Reimplementation of existing solutions.
 - Ignoring the biological context.
-- Reliance on opaque, black-box models.
+- Cherry-picking of biological hits.
 
 Principles
 ----------
@@ -53,8 +53,8 @@ Principles
 - Algorithms should be biologically inspired and combine empirical insights with cutting-edge computational methods.
 - We emphasize fair, accountable, and transparent machine learning, as detailed
   in `Interpretable Machine Learning with Python <https://www.packtpub.com/product/interpretable-machine-learning-with-python/9781800203907>`_.
-- We're committed to offering diverse evaluation metrics and interpretable visualizations, aiming to extend to other aspects of
-  explainable AI such as causal inference.
+- We're committed to offering diverse evaluation metrics and interpretable visualizations, aiming to extend to other
+  aspects of interpretable data analysis and explainable AI such as causal inference.
 
 
 Bug Reports
@@ -79,7 +79,7 @@ To test the latest development version, you can use pip:
 
 .. code-block:: bash
 
-  pip install git+https://github.com/breimanntools/aaanalysis.git@master
+  pip install git+https://github.com/breimanntools/xomics.git@master
 
 Local Development Environment
 -----------------------------
@@ -87,12 +87,12 @@ Local Development Environment
 Fork and Clone
 """"""""""""""
 
-1. Fork the `repository <https://github.com/breimanntools/aaanalysis>`_
+1. Fork the `repository <https://github.com/breimanntools/xomics>`_
 2. Clone your fork:
 
 .. code-block:: bash
 
-  git clone https://github.com/YOUR_USERNAME/aaanalysis.git
+  git clone https://github.com/YOUR_USERNAME/xomics.git
 
 Install Dependencies
 """"""""""""""""""""
@@ -103,7 +103,7 @@ Navigate to the project folder and set up the Python environment.
 
 .. code-block:: bash
 
-  cd aaanalysis
+  cd xomics
 
 2. Create a new isolated Python environment using `conda`:
 
@@ -128,8 +128,8 @@ We utilize `pytest <https://docs.pytest.org/en/7.4.x/>`_ and `hypothesis <https:
   pytest
 
 This will execute all the test cases in the tests/ directory. Check out our
-`README on testing <https://github.com/breimanntools/aaanalysis/blob/master/tests/README_TESTING>`_. See further
-useful commands in our `Project Cheat Sheet <https://github.com/breimanntools/aaanalysis/blob/master/docs/project_cheat_sheet.md>`_.
+`README on testing <https://github.com/breimanntools/xomics/blob/master/tests/README_TESTING>`_. See further
+useful commands in our `Project Cheat Sheet <https://github.com/breimanntools/xomics/blob/master/docs/project_cheat_sheet.md>`_.
 
 
 Pull Requests
@@ -165,32 +165,30 @@ We strive for consistency of our public interfaces with well-established librari
 Class Templates
 """""""""""""""
 
-We primarily use two class templates for organizing our codebase:
-
-- **Wrapper**: Designed to extend models from libraries like scikit-learn. These classes contain `.fit` and `.eval` methods
-  for model training and evaluation, respectively.
+We primarily use one class templates for organizing our codebase:
 
 - **Tool**: Standalone classes that focus on specialized tasks, such as feature engineering for protein prediction.
   They feature `.run` and `.eval` methods to carry out the complete processing pipeline and generate various evaluation metrics.
 
 The remaining classes should fulfill two further purposes, without being directly implemented using class inheritance.
 
-- **Data visualization**: Supplementary plotting classes for `Wrapper` and `Tool` classes, named accordingly using a
-  `Plot` suffix (e.g., 'CPPPlot'). These classes implement an `.eval` method to visualize the key evaluation measures.
-- **Analysis support**: Supportive pre-processing classes  for `Wrapper` and `Tool` classes.
+- **Data visualization**: Supplementary plotting classes for `Tool` classes. These classes implement
+    an `.eval` method to visualize the key evaluation measures.
+- **Analysis support**: Supportive pre-processing classes for `Tool` classes.
 
 Function and Method Naming
 """"""""""""""""""""""""""
 
 We semi-strictly adhere to the naming conventions established by the aforementioned libraries. Functions/Methods
 processing data values should correspond with the names specified in our primary `pd.DataFrame` columns, as defined in
-`aaanalysis/_utils/_utils_constants.py`.
+`xomics/_utils/_utils_constants.py`.
 
 Code Philosophy
 ---------------
 
-We aim for a modular, robust, and easily extendable codebase. Therefore, we adhere to flat class hierarchies
-(i.e., only inheriting from `Wrapper` or `Tool` is recommended) and functional programming principles, as outlined in
+We aim for a modular, robust, and easily extendable codebase. Therefore, we adhere to using flat class hierarchies
+(i.e., only inheriting from `Tool` is recommended and using classes as container for data and functionality)
+and functional programming principles, as outlined in
 `A Philosophy of Software Design <https://dl.acm.org/doi/10.5555/3288797>`_.
 Our goal is to provide a user-friendly public interface using concise description and
 `Python type hints <https://docs.python.org/3/library/typing.html>`_ (see also this Python Enhancement Proposal
@@ -218,7 +216,7 @@ Documentation Style
   `napoleon <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/#>`_, and
   `sphinx-design <https://sphinx-design.readthedocs.io/en/rtd-theme/>`_ extensions.
 
-- **Further Details**: See our `conf.py <https://github.com/breimanntools/aaanalysis/blob/master/docs/source/conf.py>`_
+- **Further Details**: See our `conf.py <https://github.com/breimanntools/xomics/blob/master/docs/source/conf.py>`_
   for more.
 
 Documentation Layers
@@ -237,13 +235,13 @@ See our reference order here (exceptions confirm the rules):
 
 .. image :: /docs/source/_artwork/diagrams/ref_order.png
 
-The `API <https://aaanalysis.readthedocs.io/en/latest/api.html>`_ showcases **Docstrings** for our public objects
+The `API <https://xomics.readthedocs.io/en/latest/api.html>`_ showcases **Docstrings** for our public objects
 and functions. Within these docstrings, scientific
-`References <https://aaanalysis.readthedocs.io/en/latest/index/references.html>`_
+`References <https://xomics.readthedocs.io/en/latest/index/references.html>`_
 may be mentioned in their extended sections. For additional links in docstrings, use the *See Also* section in this order:
-`Usage Principles <https://aaanalysis.readthedocs.io/en/latest/index/usage_principles.html>`_,
-`Tables <https://aaanalysis.readthedocs.io/en/latest/index/tables.html>`_,
-`Tutorials <https://aaanalysis.readthedocs.io/en/latest/tutorials.html>`_. Only include **External library** references
+`Usage Principles <https://xomics.readthedocs.io/en/latest/index/usage_principles.html>`_,
+`Tables <https://xomics.readthedocs.io/en/latest/index/tables.html>`_,
+`Tutorials <https://xomics.readthedocs.io/en/latest/tutorials.html>`_. Only include **External library** references
 when absolutely necessary. Note that the Usage Principles documentation is open for direct linking to References,
 Tutorials, and Tables, which can as well include links to References.
 
@@ -261,75 +259,3 @@ To generate the documentation locally:
   make html
 
 - Open `_build/html/index.html` in a browser.
-
-
-Test with ChatGPT
-=================
-To optimize testing, use ChatGPT with the template below and fill in the blank spaces between ``START OF CODE``
-and ``END OF CODE``. For testing templates,
-utilize `our <https://github.com/breimanntools/aaanalysis/blob/master/tests/unit/data_loader_tests/test_load_dataset.py>`_
-or any custom testing template.
-
-.. code-block:: none
-
-    "
-    Generate test functions for a given TARGET FUNCTION using the style of the provided TESTING TEMPLATE.
-
-    Inputs:
-    TARGET FUNCTION:
-    - START OF CODE
-    -------------------------------------
-    [your code here]
-    -------------------------------------
-    - END OF CODE
-
-    TESTING TEMPLATE:
-    - START OF CODE
-    -------------------------------------
-    your code
-    -------------------------------------
-    - END OF CODE
-
-    **Key Directive**: For the Normal Cases Test Class, EACH function MUST test ONLY ONE individual parameter of the TARGET FUNCTION using Hypothesis for property-based testing. This is crucial.
-
-    Requirements:
-
-    1. Normal Cases Test Class:
-    - Name: 'Test[TARGET FUNCTION NAME]'.
-    - Objective: Test EACH parameter *INDIVIDUALLY*.
-    - Tests: Test EACH parameter, at least 10 positive and 10 negative tests for this class.
-
-    2. Complex Cases Test Class:
-    - Name: 'Test[TARGET FUNCTION NAME]Complex'.
-    - Objective: Test combinations of the TARGET FUNCTION parameters.
-    - Tests: At least 5 positive and 5 negative that intricately challenge the TARGET FUNCTION.
-
-    3. General Guidelines:
-    - Use Hypothesis for property-based testing, but test parameters individually for the Normal Cases Test Class .
-    - Tests should be clear, concise, and non-redundant.
-    - Do not leave any placeholders like "TODO", "Fill this", "Add ..." incomplete.
-    - Expose potential issues in the TARGET FUNCTION.
-
-    Output Expectations:
-    - Two test classes: one for normal cases (individual parameters) and one for complex cases (combinations).
-    - In Normal Cases, one function = one parameter tested.
-    - Total: at least 30 unique tests, 150+ lines of code.
-
-    Reminder: In Normal Cases, it's crucial to test parameters individually.
-    "
-
-ChatGPT has a token limit, which may truncate responses. To continue, simply ask **continue processing** or something
-similar. Repeat as necessary and compile the results. Once done, provide the script to ChatGPT for further refinement.
-
-Test Guided Development (TGD)
------------------------------
-Leverage ChatGPT-provided testing scripts to refine your code and its interface. If ChatGPT struggles or produces
-erroneous tests, it often indicates ambiguities or complexities in your function's naming or logic. Address these
-insights to ensure intuitive and robust code design through the TGD approach. You can provide the complete function or
-only its **signature & docstring**:
-
-**Signature & Docstring**: Focus on interface testing by providing the function's signature and docstring,
-aiming to ensure alignment with its external behavior and documentation.
-
-**Complete Function**: Submit the entire function code for deeper test generation, targeting comprehensive
-coverage that accounts for internal logic and intricacies.

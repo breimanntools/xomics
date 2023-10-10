@@ -1,66 +1,79 @@
-cImpute (conditional Imputation) is a hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
-Missing values can be distinguished into three categories as described by Lazar et al., 2016 and Wei et al., 2018
-for proteomic data sets as follows:
+Welcome to the xOmics documentation
+===================================
+.. Developer Notes:
+    Please update badges in README.rst and vice versa
+.. image:: https://github.com/breimanntools/xomics/workflows/Build/badge.svg
+   :target: https://github.com/breimanntools/xomics/actions
+   :alt: Build Status
 
-    a) Missing Completely At Random (MCAR): MVs due to random errors and stochastic fluctuations during process of 
-        data acquisition. Since MCAR MVs can not be explained by measured intensities, they are uniformly distributed.
-    b) Missing At Random (MAR): MVs due to suboptimal data processing and conditional dependencies. MAR is a more 
-        general class than MCAR, where all MCAR MVs are MAR MVs. The distribution of MAR MVs can just be speculated 
-        and likely differs highly between experiments. 
-    c) Missing Not At Random (MNAR): MVs due to experimental bias (i.e., the detection limit in mass-spectrometry
-        experiments). Commonly, MNAR MVs are described by a left-censored Gaussian distribution (i.e., the Gaussian
-        distribution is truncated on the region of lower abundances, which is the left side of the distribution).
+.. image:: https://github.com/breimanntools/xomics/workflows/Python-check/badge.svg
+   :target: https://github.com/breimanntools/xomics/actions
+   :alt: Python-check
 
-cImpute aims to impute only MVs matching well-defined confidence criteria and consists of following four steps:
+.. image:: https://img.shields.io/pypi/status/xomics.svg
+   :target: https://pypi.org/project/xomics/
+   :alt: PyPI - Status
 
-1. Definition of the upper bound for MNAR MVs called upMNAR to distinguish between MNAR and MCAR.
-    Let the detection range (DR) be defined as
+.. image:: https://img.shields.io/pypi/pyversions/xomics.svg
+   :target: https://pypi.python.org/pypi/xomics
+   :alt: Supported Python Versions
 
-        DR = Dmax - Dmin
+.. image:: https://img.shields.io/pypi/v/xomics.svg
+   :target: https://pypi.python.org/pypi/xomics
+   :alt: PyPI - Package Version
 
-    where Dmax is the smallest detected value (i.e., detection limit) and Dmax is the largest detected value over
-    the a whole data set. Such that the upper bound for MNAR MVs is defined as
+.. image:: https://anaconda.org/conda-forge/xomics/badges/version.svg
+   :target: https://anaconda.org/conda-forge/xomics
+   :alt: Conda - Package Version
 
-        upMNAR = Dmin + DR * l
+.. image:: https://readthedocs.org/projects/xomics/badge/?version=latest
+   :target: https://xomics.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
-    where l is the location factor for the upMNAR given as relative proportion of the DR (0-1, by default 0.1).
+.. image:: https://img.shields.io/github/license/breimanntools/xomics.svg
+   :target: https://github.com/breimanntools/xomics/blob/master/LICENSE
+   :alt: License
 
-2. For each detected protein in an experimental group, cImpute distinguishes between following four MVs scenarios:
-    
-    a) MCAR if all values > upMNAR
-    b) MNAR if all values <= upMNAR
-    c) NM if no MVs occur
-    d) MAR otherwise.
+.. image:: https://pepy.tech/badge/xomics
+   :target: https://pepy.tech/project/xomics
+   :alt: Downloads
 
-3. A confidence score (CS) [0-1] will be assigned to each detected protein in an experimental group based on
-    the fraction of MVs and the MVs category:
+**xOmics** (eXplainable Omics) is a Python framework developed for streamlined and explainable omics analysis, with a
+spotlight on differential proteomics expression data. It introduces the following key algorithms:
 
-    a) For MCAR, CS is equal to the fraction of quantified values (non MVs)
-    b) For MNAR, CS is equal to the fraction of MVs
-    d) For NM, CS is set to 1
-    c) For MAR, CS is set to 0 (due to the lack of certainty about the source of the MVs)
+- **cImpute**: Conditional Imputation - A transparent method for hybrid missing value imputation.
+- **xOmicsIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
+- **xOmicsRank**: Protein-centric ranking of (prote)omic data, leveraging functional enrichment results.
 
-4. Imputation methods are applied on MCAR and MNAR MVs (MinProb and KNN, respectively)
-    with a CS higher than a given threshold for each experimental group (0.5 by default).
+In addition, **xOmics** provides functional capabilities for efficiently loading benchmark proteomics datasets via
+**load_datasets**, accompanied by corresponding enrichment data.A suite of supportive functions is also available to
+facilitate a smooth and efficient (prote)omic analysis pipeline.
 
-The upMNAR (step 1) is computed over the whole dataset and steps 2-4 are preformed for each experimental group
-    (c.f., Liu and Dongre, 2020).
+Install
+=======
+**xOmics** can be installed either from `PyPi <https://pypi.org/project/xomics>`_ or
+`conda-forge <https://anaconda.org/conda-forge/xomics>`_:
 
-As a result, just MVs are imputed fulfilling a certain confidence level and a high transparency is guaranteed
-due to the missing value classification and the given confidence score.
+.. code-block:: bash
 
-References
-----------
-Lazar et al., 2016, Accounting for the Multiple Nature of Missing Values in Label-Free Quantitative Proteomics
-    Data Sets to Compare Imputation Strategies (Journal of Proteomics Research)
-Liang et al., 2021, A comparative study of evaluating missing value imputation methods in label-free proteomics
-    (scientific reports)
-Palstrom et al., 2020, Data Imputation in Merged Isobaric Labeling-Based Relative Quantification Datasets
-    (Mass Spectrometry Data Analysis in Proteomics, Springer Protocols)
-Liu and Dongre, 2020, Proper imputation of missing values in proteomics datasets for differential expression analysis
-    (Briefings in Bioinformatics)
+   pip install -u xomics
+   or
+   conda install -c conda-forge xomics
 
-See also
---------
-    https://www.rdocumentation.org/packages/imputeLCMD/versions/2.0/topics/impute.MinProb
-    https://bioconductor.org/packages/release/bioc/vignettes/DEP/inst/doc/MissingValues.html
+Contributing
+============
+We appreciate bug reports, feature requests, or updates on documentation and code. For details, please refer to
+`Contributing Guidelines <CONTRIBUTING.rst>`_. For further questions or suggestions, please email stephanbreimann@gmail.com.
+
+Citations
+=========
+If you use xOmics in your work, please cite the respective publication as follows:
+
+**xOmics**:
+   [Citation details and link if available]
+
+**cImpute**:
+   [Citation details and link if available]
+
+**xOmicsIntegrate**:
+   [Citation details and link if available]

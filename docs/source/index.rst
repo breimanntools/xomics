@@ -11,7 +11,7 @@ Welcome to the xOmics documentation!
 
 Install
 =======
-**AAanalysis** can be installed either from `PyPi <https://pypi.org/project/xomics>`_ or
+**xOmics** can be installed either from `PyPi <https://pypi.org/project/xomics>`_ or
 `conda-forge <https://anaconda.org/conda-forge/xomics>`_:
 
 .. code-block:: bash

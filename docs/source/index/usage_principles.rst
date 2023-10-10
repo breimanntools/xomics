@@ -1,6 +1,6 @@
 ..
    Developer Notes:
-   This is the index file that outlines the usage principles for the AAanalysis package.
+   This is the index file that outlines the usage principles for the xOmics package.
    Files for individual usage principles are stored in the /usage_principles directory.
 
    This document provides an overview of:
@@ -25,3 +25,4 @@ To get started with xOmics, import it as follows:
    :maxdepth: 1
 
    usage_principles/data_flow_entry_points
+   usage_principles/imputation

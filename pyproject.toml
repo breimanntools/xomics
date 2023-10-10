@@ -87,8 +87,8 @@ black = "22.12.0"
 
 # Project URLs
 [tool.poetry.urls]
-"Repository" = "https://github.com/breimanntools/aaanalysis"
-"Documentation" = "https://aaanalysis.readthedocs.io"
+"Repository" = "https://github.com/breimanntools/xomics"
+"Documentation" = "https://xomics.readthedocs.io"
 
 # If you use a tool for linting or formatting, you can add its configurations here.
 # For example, if you use `black` for formatting:

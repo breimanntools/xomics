@@ -1,6 +1,6 @@
 ..
    Developer Notes:
-   This is the index file for all tables of the AAanalysis documentation.
+   This is the index file for all tables of the xOmics documentation.
    Tables should be saved in the /tables directory. This file serves as a template
    for tables.rst, which is automatically generated based on the information here and
    in the .csv tables from the /tables directory.

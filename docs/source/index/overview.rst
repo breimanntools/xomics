@@ -8,5 +8,5 @@ spotlight on differential proteomics expression data. It introduces the followin
 - **xOmicsIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
 
 In addition, **xOmics** provides functional capabilities for efficiently loading benchmark proteomics datasets via
-**load_data**, accompanied by corresponding enrichment data.A suite of supportive functions is also available to
+**load_datasets**, accompanied by corresponding enrichment data.A suite of supportive functions is also available to
 facilitate a smooth and efficient (prote)omic analysis pipeline.

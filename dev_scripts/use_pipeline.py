@@ -11,8 +11,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+import dev_scripts._utils as ut
+
 import xomics as xo
-import xomics._utils as ut
 
 
 # Settings
@@ -27,17 +28,6 @@ pd.set_option('expand_frame_repr', False)  # Single line print for pd.Dataframe
 
 # TODO ()
 # TODO provide simple highlighted functions for plotting
-def _folder_path(super_folder, folder_name):
-    """Modification of separator (OS depending)"""
-    path = os.path.join(super_folder, folder_name + SEP)
-    return path
-
-
-# Folder
-SEP = "\\" if platform.system() == "Windows" else "/"
-FOLDER_PROJECT = str(Path(__file__).parent).replace('/', SEP) + SEP
-FOLDER_DATA = _folder_path(FOLDER_PROJECT, 'data')
-FOLDER_RESULTS = _folder_path(FOLDER_PROJECT, 'results')
 
 # Plotting settings
 DPI = 300
@@ -47,28 +37,32 @@ LEGEND_FONTSIZE = 16
 
 FILE_DAVID_DOWN = "David_DOWN.xlsx"
 FILE_DAVID_UP = "David_UP.xlsx"
-FILE_BPAN = "MS BPAN vs CTRL all 4 samples.xlsx"
+COL_E_SCORE = "E-score"
+COL_P_SCORE = "P-score"
+COL_C_SCORE = "C-score"
+COL_CS_STD = "CS_STD"
+COL_PE_MEAN = "PE-mean"
 
 
 # I Helper Functions
 def _get_scoring(df_p=None, df_e=None):
     """"""
-    df_p[ut.COL_P_SCORE] = xo.p_score(ids=df_p["Gene names"],
-                                      x_fc=df_p["Log2FC"],
-                                      x_pvals=df_p["pvalue"])
-    df_p[ut.COL_E_SCORE] = xo.e_score(ids=df_p["Gene names"],
-                                      id_lists=df_e["Genes"],
-                                      x_fe=df_e["Fold Enrichment"],
-                                      x_pvals=df_e["pval"])
-    df_p[ut.COL_PE_MEAN] = df_p[[ut.COL_E_SCORE, ut.COL_P_SCORE]].mean(axis=1)
-    df_p = df_p.sort_values(by=ut.COL_PE_MEAN, ascending=False)
+    df_p[COL_P_SCORE] = xo.p_score(ids=df_p["Gene names"],
+                                   x_fc=df_p["Log2FC"],
+                                   x_pvals=df_p["pvalue"])
+    df_p[COL_E_SCORE] = xo.e_score(ids=df_p["Gene names"],
+                                   id_lists=df_e["Genes"],
+                                   x_fe=df_e["Fold Enrichment"],
+                                   x_pvals=df_e["pval"])
+    df_p[COL_PE_MEAN] = df_p[[COL_E_SCORE, COL_P_SCORE]].mean(axis=1)
+    df_p = df_p.sort_values(by=COL_PE_MEAN, ascending=False)
     return df_p
 
 
 # II Main Functions
 def impute():
     """"""
-    # Load data
+    # Load _data
     file = "data/raw_data_proteomics_lfq.xlsx"
     df_raw = pd.read_excel(file)
     # Settings
@@ -110,7 +104,6 @@ def impute():
     plt.title("Imputed")
     plt.show()
 
-
     # Plot scatter plot for each group#
     """
     df_raw_plot = df_raw.set_index(str_ids)
@@ -151,15 +144,15 @@ def e_hit_analysis(df_p=None, df_e=None):
                         terms_sub_list=None, n_ids=10, n_terms=10, sort_alpha=True)
     xo.plot_settings()
     xo.plot_enrich_map(df=df_hits)
-    plt.savefig(FOLDER_RESULTS + "test.pdf")
+    plt.savefig(ut.FOLDER_RESULTS + "test.pdf")
 
 
 # III Test/Caller Functions
 def xo_pipeline():
     """"""
-    df_p = pd.read_excel(FOLDER_DATA + FILE_BPAN)
-    df_eu = pd.read_excel(FOLDER_DATA + FILE_DAVID_UP)
-    df_ed = pd.read_excel(FOLDER_DATA + FILE_DAVID_DOWN)
+    df_p = pd.read_excel(ut.FOLDER_DATA + FILE_BPAN)
+    df_eu = pd.read_excel(ut.FOLDER_DATA + FILE_DAVID_UP)
+    df_ed = pd.read_excel(ut.FOLDER_DATA + FILE_DAVID_DOWN)
     df_e = pd.concat([df_eu, df_ed], axis=0)
     # Pre-processing (filtering)
     pp = xo.PreProcess()

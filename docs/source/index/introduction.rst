@@ -1,17 +1,18 @@
 Introduction
 ============
 
-**AAanalysis** (Amino Acid analysis) is a Python framework for interpretable sequence-based protein prediction.
-It was developed to compare two sets of protein sequences using amino acids scales, but can be generally used
-for any (biological) sequence which can be represented by numerical values.
+**xOmics** (eXplainable Omics) is a Python framework developed for streamlined and explainable omics analysis, with a
+spotlight on differential proteomics expression data.
 
 Workflow
 --------
-A typical workflow consists of the following steps:
+A typical workflow involves missing the following algorithms:
 
-- **AAclust**: k-optimized clustering wrapper framework to select redundancy-reduced sets of numerical scales (e.g., amino acid scales)
-- **CPP**: Comparative Physicochemical Profiling, a feature engineering algorithm comparing two sets of protein sequences to identify the set of most distinctive features.
-- **dPULearn**: deterministic Positive-Unlabeled (PU) Learning algorithm to enable training on unbalanced and small datasets.
+- **cImpute**: Conditional Imputation - A transparent method for hybrid missing value imputation.
+- **xOmicsIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
+- **xOmicsRank**: Protein-centric ranking of (prote)omic data, leveraging functional enrichment results.
+
+Missing value imputation, data integration, and protein-centric ranking can all be performed independently.
 
 Overview of documentation
 -------------------------
