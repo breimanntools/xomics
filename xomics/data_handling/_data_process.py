@@ -12,7 +12,7 @@ import xomics._utils as ut
 # Settings
 pd.set_option('expand_frame_repr', False)  # Single line print for pd.Dataframe
 
-# TODO test on real data in dev_scripts, make volcano, use for cImpute, finish remaining pipleline
+# TODO test on real _data in dev_scripts, make volcano, use for cImpute, finish remaining pipleline
 
 
 # I Helper Functions
@@ -72,7 +72,7 @@ class PreProcess:
     @staticmethod
     def filter(df=None, cols=None, drop_na=True, split_names=None):
         """
-        Filter data frame for non-correct or missing values
+        Filter _data frame for non-correct or missing values
         """
         # Split names for provided column and filter duplicates by keeping first occuring
         if split_names is not None:

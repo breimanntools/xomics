@@ -1,0 +1,8 @@
+# Default ignored files
+/venv/
+/.idea/
+/dist/
+/dev_scripts/
+/recipe/
+/tutorials/.ipynb_checkpoints/
+/aaanalysis/_archive/

@@ -1,11 +1,11 @@
 """
-cImpute (conditional Imputation) is a hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
+cImpute (conditional Imputation) is a hybrid imputation algorithm for missing values (MVs) in (prote)omics _data.
 Missing values can be distinguished into three categories as described by Lazar et al., 2016 and Wei et al., 2018
-for proteomic data sets as follows:
+for proteomic _data sets as follows:
 
     a) Missing Completely At Random (MCAR): MVs due to random errors and stochastic fluctuations during process of
-        data acquisition. Since MCAR MVs can not be explained by measured intensities, they are uniformly distributed.
-    b) Missing At Random (MAR): MVs due to suboptimal data processing and conditional dependencies. MAR is a more
+        _data acquisition. Since MCAR MVs can not be explained by measured intensities, they are uniformly distributed.
+    b) Missing At Random (MAR): MVs due to suboptimal _data processing and conditional dependencies. MAR is a more
         general class than MCAR, where all MCAR MVs are MAR MVs. The distribution of MAR MVs can just be speculated
         and likely differs highly between experiments.
     c) Missing Not At Random (MNAR): MVs due to experimental bias (i.e., the detection limit in mass-spectrometry
@@ -35,7 +35,7 @@ from sklearn.impute import KNNImputer
 # TODO d) testing
 # TODO e) extend documentation & create google colab
 # TODO f) benchmarking (ring trail, standards (Tenzer Lab), existing artificial benchmark sets (c.f. publication)
-# TODO g) Extend to other omics data
+# TODO g) Extend to other omics _data
 
 # Settings
 pd.set_option('expand_frame_repr', False)  # Single line print for pd.Dataframe
@@ -135,7 +135,7 @@ def _impute(df=None, mv_class=None, d_min=None, up_mnar=None, std_factor=0.5, n_
 
 # II Main Functions
 def get_up_mnar(df=None, loc_up_mnar=0.25):
-    """Get upper bound for MNAR MVs for whole data set"""
+    """Get upper bound for MNAR MVs for whole _data set"""
     d_min = df.min().min()  # Detection limit
     d_max = df.max().max()  # Largest detected value
     dr = d_max - d_min      # Detection range
@@ -182,7 +182,7 @@ def compute_cs(df_group=None, mv_classes=None):
 
 def impute(df_group=None, mv_classes=None, list_cs=None, min_cs=0.5, d_min=None, up_mnar=None,
            n_neighbors=5, std_factor=0.5):
-    """Group-wise imputation over whole data set"""
+    """Group-wise imputation over whole _data set"""
     df_group = df_group.copy()
     list_df = []
     for mv_class in LIST_MV_CLASSES:
@@ -200,7 +200,7 @@ def impute(df_group=None, mv_classes=None, list_cs=None, min_cs=0.5, d_min=None,
 
 # Wrapper
 class cImpute:
-    """Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
+    """Hybrid imputation algorithm for missing values (MVs) in (prote)omics _data.
 
     Parameters
     ----------
@@ -244,7 +244,7 @@ class cImpute:
         return d_min, up_mnar, d_max
 
     def run(self, df=None, dict_group_cols=None, loc_up_mnar=0.25, min_cs=0.5, std_factor=0.5, n_neighbors=5):
-        """Hybrid method for imputation of omics data called conditional imputation (cImpute)
+        """Hybrid method for imputation of omics _data called conditional imputation (cImpute)
         using MinProb for MNAR (Missing Not at Random) missing values and KNN imputation for
         MCAR (Missing completely at Random) missing values.
 

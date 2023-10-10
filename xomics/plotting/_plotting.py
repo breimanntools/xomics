@@ -1,16 +1,13 @@
 """
 This is a script for plotting functions
 """
-import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib as mpl
 import matplotlib.patches as mpatches
 import seaborn as sns
-import math
 
 import xomics._utils as ut
-from xomics._plotting import color_filter, label_filter, set_labels, set_legend_handles_labels, _adjust_text
+from xomics.plotting._plotting import color_filter, label_filter, set_labels, set_legend_handles_labels, _adjust_text
 
 # TODO optimize and unify plotting functions
 # TODO highlight hidden gem in (P-score > 0.75, E-score <= 0.1 (not pathway))
@@ -47,7 +44,7 @@ def plot_volcano(df=None, col_fc=None, col_pval=None, gene_list=None,
                  fig_format="png", verbose=False, loc_legnd=2,
                  filled_circle=True, box=True, label_bold=False, label_size=8, minor_ticks=True):
     """
-     Generate and display a volcano plot based on fold-change and p-value data.
+     Generate and display a volcano plot based on fold-change and p-value _data.
 
      Parameters
      ----------
@@ -234,9 +231,9 @@ def plot_explano(df=None, show_names=False, force_text=0.2, force_points=0.2, fo
                               y=1, x=0.8)
 
 
-# Inferno plot (integration of multiple data sets using information from volcano and enrichment plot)
+# Inferno plot (integration of multiple _data sets using information from volcano and enrichment plot)
 def plot_inferno():
-    """Create Inferno plot for multiple integrated omics data"""
+    """Create Inferno plot for multiple integrated omics _data"""
     # TODO create after integration function (in integrate) is finished (Clari)
 
 

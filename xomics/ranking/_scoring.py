@@ -1,5 +1,5 @@
 """
-This is a script for protein-centric scoring of proteomics data
+This is a script for protein-centric scoring of proteomics _data
 """
 import pandas as pd
 import numpy as np
@@ -203,7 +203,7 @@ def p_score(ids=None, x_fc=None, x_pvals=None, adjust_log=True, verbose=True):
     _check_numeric_elements(x_fc, name="x_fc")
     _check_numeric_elements(x_pvals, name="x_pvals")
     _check_bool(name="verbose", val=verbose)
-    # Normalize data
+    # Normalize _data
     args = dict(adjust_log=adjust_log, z_norm=True, verbose=verbose)
     norm_fc = _normalize_folds(x_vals=x_fc, **args)
     norm_pvals = _normalize_pvals(x_pvals=x_pvals, **args)
@@ -252,7 +252,7 @@ def e_score(ids=None, id_lists=None, x_fe=None, x_pvals=None, adjust_log=True, v
     _check_numeric_elements(x_pvals, name="x_pvals")
     _check_all_non_negative(x_fe, name="x_fe")
     _check_bool(name="verbose", val=verbose)
-    # Normalize data
+    # Normalize _data
     args = dict(z_norm=True, adjust_log=adjust_log, for_fc=False, verbose=verbose)   # For DPBM originally z_norm=False
     x_pvals = _normalize_pvals(x_pvals=x_pvals, **args)
     x_fe = _normalize_folds(x_vals=x_fe, **args)
