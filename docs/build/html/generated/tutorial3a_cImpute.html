@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18: http://docutils.sourceforge.net/" />
+<meta property="og:title" content="<no title>" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="generated/tutorial3a_cImpute.html" />
+<meta property="og:site_name" content="xOmics" />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_generated_tutorial3a_cImpute_43698d8f.png" />
+<meta property="og:image:alt" content="" />
+<meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>&lt;no title&gt; &mdash; xOmics</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/notebook.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_small.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/design-tabs.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API" href="../api.html" />
+    <link rel="prev" title="Tutorials" href="../tutorials.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #343131" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo_big_trans.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                latest
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">OVERVIEW</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index/usage_principles.html">Usage Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index/CONTRIBUTING_COPY.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">EXAMPLES</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">REFERENCES</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index/references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #343131" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">xOmics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../tutorials.html">Tutorials</a></li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/breimanntools/xomics/blob/master/generated/tutorial3a_cImpute.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+
+<span class="kn">import</span> <span class="nn">xomics</span> <span class="k">as</span> <span class="nn">xo</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Settings</span>
+<span class="n">xo</span><span class="o">.</span><span class="n">plot_settings</span><span class="p">()</span>
+<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">]</span>
+<span class="n">str_lfq</span> <span class="o">=</span> <span class="s2">&quot;log2 LFQ &quot;</span>
+<span class="n">str_ids</span> <span class="o">=</span> <span class="s2">&quot;Protein IDs&quot;</span>
+
+<span class="c1"># Creat imputation object</span>
+<span class="n">pp</span> <span class="o">=</span> <span class="n">xo</span><span class="o">.</span><span class="n">PreProcess</span><span class="p">(</span><span class="n">str_id</span><span class="o">=</span><span class="n">str_ids</span><span class="p">,</span> <span class="n">str_lfq</span><span class="o">=</span><span class="n">str_lfq</span><span class="p">)</span>
+<span class="n">cimp</span> <span class="o">=</span> <span class="n">xo</span><span class="o">.</span><span class="n">cImpute</span><span class="p">(</span><span class="n">str_id</span><span class="o">=</span><span class="n">str_ids</span><span class="p">,</span> <span class="n">str_lfq</span><span class="o">=</span><span class="n">str_lfq</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load data</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s2">&quot;data/raw_data_proteomics_lfq.xlsx&quot;</span>
+<span class="n">df_raw</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="n">dict_group_cols</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">get_dict_groups</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df_raw</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="n">groups</span><span class="p">)</span>
+<span class="n">all_groups_col</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">get_all_group_cols</span><span class="p">(</span><span class="n">dict_group_cols</span><span class="o">=</span><span class="n">dict_group_cols</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imputation</span>
+<span class="n">loc_up_mnar</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">d_min</span><span class="p">,</span> <span class="n">up_mnar</span><span class="p">,</span> <span class="n">d_max</span> <span class="o">=</span> <span class="n">cimp</span><span class="o">.</span><span class="n">get_limits</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                                        <span class="n">group_cols</span><span class="o">=</span><span class="n">all_groups_col</span><span class="p">,</span>
+                                        <span class="n">loc_up_mnar</span><span class="o">=</span><span class="n">loc_up_mnar</span><span class="p">)</span>
+<span class="n">df_imput</span> <span class="o">=</span> <span class="n">cimp</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">df_raw</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                    <span class="n">dict_group_cols</span><span class="o">=</span><span class="n">dict_group_cols</span><span class="p">,</span>
+                    <span class="n">min_cs</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                    <span class="n">loc_up_mnar</span><span class="o">=</span><span class="n">loc_up_mnar</span><span class="p">,</span>
+                    <span class="n">std_factor</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+                    <span class="n">n_neigbhors</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_raw</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">df_imput</span><span class="p">)</span>
+</pre></div>
+</div>
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Protein IDs</th>
+      <th>log2 LFQ A_1</th>
+      <th>log2 LFQ A_2</th>
+      <th>log2 LFQ A_3</th>
+      <th>log2 LFQ A_4</th>
+      <th>log2 LFQ A_5</th>
+      <th>log2 LFQ A_6</th>
+      <th>log2 LFQ A_7</th>
+      <th>log2 LFQ A_8</th>
+      <th>log2 LFQ B_1</th>
+      <th>...</th>
+      <th>log2 LFQ E_6</th>
+      <th>log2 LFQ E_7</th>
+      <th>log2 LFQ E_8</th>
+      <th>log2 LFQ F_1</th>
+      <th>log2 LFQ F_2</th>
+      <th>log2 LFQ F_3</th>
+      <th>log2 LFQ F_4</th>
+      <th>log2 LFQ F_5</th>
+      <th>log2 LFQ F_6</th>
+      <th>log2 LFQ F_7</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Protein0001</td>
+      <td>NaN</td>
+      <td>27.272221</td>
+      <td>25.922796</td>
+      <td>25.922432</td>
+      <td>25.277178</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>24.927731</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>23.768906</td>
+      <td>20.753361</td>
+      <td>25.682444</td>
+      <td>18.955008</td>
+      <td>14.841122</td>
+      <td>NaN</td>
+      <td>26.132320</td>
+      <td>18.388605</td>
+      <td>18.504051</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Protein0002</td>
+      <td>NaN</td>
+      <td>22.973932</td>
+      <td>22.040863</td>
+      <td>22.421959</td>
+      <td>21.887550</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19.368668</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>22.289402</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>18.723541</td>
+      <td>22.490717</td>
+      <td>NaN</td>
+      <td>19.065342</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Protein0003</td>
+      <td>NaN</td>
+      <td>26.362188</td>
+      <td>26.277479</td>
+      <td>25.700308</td>
+      <td>26.063425</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>23.785065</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>22.482370</td>
+      <td>NaN</td>
+      <td>24.954735</td>
+      <td>NaN</td>
+      <td>17.709272</td>
+      <td>NaN</td>
+      <td>25.368429</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Protein0004</td>
+      <td>NaN</td>
+      <td>24.622601</td>
+      <td>24.937551</td>
+      <td>24.028673</td>
+      <td>24.003332</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>22.179192</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>18.779694</td>
+      <td>23.625000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>23.904903</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Protein0005</td>
+      <td>NaN</td>
+      <td>26.373484</td>
+      <td>25.566917</td>
+      <td>24.636662</td>
+      <td>24.215416</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>24.307581</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>23.111446</td>
+      <td>18.772238</td>
+      <td>24.299429</td>
+      <td>20.258911</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>24.806562</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1984</th>
+      <td>Protein1985</td>
+      <td>NaN</td>
+      <td>21.802860</td>
+      <td>20.268993</td>
+      <td>NaN</td>
+      <td>20.865973</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>18.424601</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19.074492</td>
+      <td>18.202038</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1985</th>
+      <td>Protein1986</td>
+      <td>NaN</td>
+      <td>21.085827</td>
+      <td>20.012226</td>
+      <td>21.334127</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1986</th>
+      <td>Protein1987</td>
+      <td>NaN</td>
+      <td>21.494091</td>
+      <td>20.655870</td>
+      <td>21.144823</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1987</th>
+      <td>Protein1988</td>
+      <td>NaN</td>
+      <td>22.458338</td>
+      <td>22.068317</td>
+      <td>21.164228</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>21.489689</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>21.709650</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1988</th>
+      <td>Protein1989</td>
+      <td>NaN</td>
+      <td>25.168253</td>
+      <td>23.133955</td>
+      <td>21.571959</td>
+      <td>22.226410</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19.746981</td>
+      <td>21.988396</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>1989 rows × 48 columns</p>
+</div><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>log2 LFQ A_1</th>
+      <th>log2 LFQ A_2</th>
+      <th>log2 LFQ A_3</th>
+      <th>log2 LFQ A_4</th>
+      <th>log2 LFQ A_5</th>
+      <th>log2 LFQ A_6</th>
+      <th>log2 LFQ A_7</th>
+      <th>log2 LFQ A_8</th>
+      <th>log2 LFQ B_1</th>
+      <th>log2 LFQ B_2</th>
+      <th>...</th>
+      <th>CS_C</th>
+      <th>CS_D</th>
+      <th>CS_E</th>
+      <th>CS_F</th>
+      <th>NaN_A</th>
+      <th>NaN_B</th>
+      <th>NaN_C</th>
+      <th>NaN_D</th>
+      <th>NaN_E</th>
+      <th>NaN_F</th>
+    </tr>
+    <tr>
+      <th>Protein IDs</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Protein0001</th>
+      <td>20.769350</td>
+      <td>27.272221</td>
+      <td>25.922796</td>
+      <td>25.922432</td>
+      <td>25.277178</td>
+      <td>21.212935</td>
+      <td>21.780364</td>
+      <td>24.927731</td>
+      <td>19.879334</td>
+      <td>20.325863</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.00</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MAR</td>
+    </tr>
+    <tr>
+      <th>Protein0002</th>
+      <td>21.386591</td>
+      <td>22.973932</td>
+      <td>22.040863</td>
+      <td>22.421959</td>
+      <td>21.887550</td>
+      <td>20.535161</td>
+      <td>21.680469</td>
+      <td>21.719430</td>
+      <td>19.368668</td>
+      <td>19.911213</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>0.38</td>
+      <td>0.62</td>
+      <td>0.43</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MNAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+    <tr>
+      <th>Protein0003</th>
+      <td>22.210057</td>
+      <td>26.362188</td>
+      <td>26.277479</td>
+      <td>25.700308</td>
+      <td>26.063425</td>
+      <td>21.860414</td>
+      <td>21.848587</td>
+      <td>23.785065</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>0.75</td>
+      <td>0.88</td>
+      <td>0.29</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+    <tr>
+      <th>Protein0004</th>
+      <td>21.224265</td>
+      <td>24.622601</td>
+      <td>24.937551</td>
+      <td>24.028673</td>
+      <td>24.003332</td>
+      <td>20.298384</td>
+      <td>21.968019</td>
+      <td>22.179192</td>
+      <td>13.966153</td>
+      <td>15.697899</td>
+      <td>...</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.75</td>
+      <td>0.14</td>
+      <td>MCAR</td>
+      <td>MNAR</td>
+      <td>MAR</td>
+      <td>MAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+    <tr>
+      <th>Protein0005</th>
+      <td>20.634347</td>
+      <td>26.373484</td>
+      <td>25.566917</td>
+      <td>24.636662</td>
+      <td>24.215416</td>
+      <td>19.846755</td>
+      <td>20.807572</td>
+      <td>24.307581</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>0.00</td>
+      <td>0.88</td>
+      <td>1.00</td>
+      <td>0.29</td>
+      <td>MCAR</td>
+      <td>MAR</td>
+      <td>MAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>Protein1985</th>
+      <td>20.723994</td>
+      <td>21.802860</td>
+      <td>20.268993</td>
+      <td>21.103184</td>
+      <td>20.865973</td>
+      <td>20.572797</td>
+      <td>20.456413</td>
+      <td>18.424601</td>
+      <td>12.358371</td>
+      <td>14.935295</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.25</td>
+      <td>0.29</td>
+      <td>MCAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+    <tr>
+      <th>Protein1986</th>
+      <td>NaN</td>
+      <td>21.085827</td>
+      <td>20.012226</td>
+      <td>21.334127</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>12.177962</td>
+      <td>15.398258</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>MCAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+    </tr>
+    <tr>
+      <th>Protein1987</th>
+      <td>NaN</td>
+      <td>21.494091</td>
+      <td>20.655870</td>
+      <td>21.144823</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>13.275301</td>
+      <td>13.506343</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>MCAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+    </tr>
+    <tr>
+      <th>Protein1988</th>
+      <td>NaN</td>
+      <td>22.458338</td>
+      <td>22.068317</td>
+      <td>21.164228</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>15.147106</td>
+      <td>13.077360</td>
+      <td>...</td>
+      <td>1.00</td>
+      <td>1.00</td>
+      <td>0.38</td>
+      <td>0.14</td>
+      <td>MCAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MNAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+    <tr>
+      <th>Protein1989</th>
+      <td>22.084077</td>
+      <td>25.168253</td>
+      <td>23.133955</td>
+      <td>21.571959</td>
+      <td>22.226410</td>
+      <td>19.582955</td>
+      <td>19.703981</td>
+      <td>21.802678</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>0.38</td>
+      <td>0.12</td>
+      <td>0.25</td>
+      <td>0.29</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+      <td>MCAR</td>
+    </tr>
+  </tbody>
+</table>
+<p>1989 rows × 61 columns</p>
+</div><div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot histogram</span>
+<span class="n">xo</span><span class="o">.</span><span class="n">plot_imput_histo</span><span class="p">(</span><span class="n">df_raw</span><span class="o">=</span><span class="n">df_raw</span><span class="p">,</span>
+                    <span class="n">df_imput</span><span class="o">=</span><span class="n">df_imput</span><span class="p">,</span>
+                    <span class="n">cols</span><span class="o">=</span><span class="n">all_groups_col</span><span class="p">,</span>
+                    <span class="n">d_min</span><span class="o">=</span><span class="n">d_min</span><span class="p">,</span>
+                    <span class="n">up_mnar</span><span class="o">=</span><span class="n">up_mnar</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="../_images/NOTEBOOK_1_output_4_0.png" src="../_images/NOTEBOOK_1_output_4_0.png" />
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot scatter plot for each group</span>
+<span class="n">df_raw_plot</span> <span class="o">=</span> <span class="n">df_raw</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">str_ids</span><span class="p">)</span>
+<span class="n">df_raw_plot</span> <span class="o">=</span> <span class="n">df_raw_plot</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">dict_group_cols</span><span class="p">:</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">dict_group_cols</span><span class="p">[</span><span class="n">group</span><span class="p">]</span>
+    <span class="n">xo</span><span class="o">.</span><span class="n">plot_imput_scatter</span><span class="p">(</span><span class="n">df_raw</span><span class="o">=</span><span class="n">df_raw_plot</span><span class="p">,</span> <span class="n">df_imput</span><span class="o">=</span><span class="n">df_imput</span><span class="p">,</span> <span class="n">cols</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">break</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">Figure</span> <span class="n">size</span> <span class="mi">600</span><span class="n">x700</span> <span class="k">with</span> <span class="mi">0</span> <span class="n">Axes</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<img alt="../_images/NOTEBOOK_2_output_5_1.png" src="../_images/NOTEBOOK_2_output_5_1.png" />
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorials.html" class="btn btn-neutral float-left" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api.html" class="btn btn-neutral float-right" title="API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Stephan Breimann.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

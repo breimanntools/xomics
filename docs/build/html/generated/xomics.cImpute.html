@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18: http://docutils.sourceforge.net/" />
+<meta property="og:title" content="xomics.cImpute" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="generated/xomics.cImpute.html" />
+<meta property="og:site_name" content="xOmics" />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_generated_xomics.cImpute_e6eac229.png" />
+<meta property="og:image:alt" content="" />
+<meta name="twitter:card" content="summary_large_image" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xomics.cImpute &mdash; xOmics</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/style.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/notebook.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/logo_small.png"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/design-tabs.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../index/tables.html" />
+    <link rel="prev" title="API" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #343131" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/logo_big_trans.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                latest
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">OVERVIEW</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index/usage_principles.html">Usage Principles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index/CONTRIBUTING_COPY.html">Contributing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">EXAMPLES</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials.html">Tutorials</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">REFERENCES</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../api.html#data-handling">Data Handling</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../api.html#imputation">Imputation</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">xomics.cImpute</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#ranking">Ranking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#integration">Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api.html#plot-utilities">Plot Utilities</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index/references.html">References</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #343131" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">xOmics</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API</a></li>
+      <li class="breadcrumb-item active">xomics.cImpute</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/breimanntools/xomics/blob/master/generated/xomics.cImpute.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="xomics-cimpute">
+<h1>xomics.cImpute<a class="headerlink" href="#xomics-cimpute" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="xomics.cImpute">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xomics.</span></span><span class="sig-name descname"><span class="pre">cImpute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Protein</span> <span class="pre">IDs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_lfq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log2</span> <span class="pre">LFQ'</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/breimanntools/xomics/tree/master/xomics/c_impute.py#L202-L312"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xomics.cImpute" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>str_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>default = &quot;Protein IDs&quot;</em>) – Column name of entry ids of input DataFrame for associated methods</p></li>
+<li><p><strong>str_lfq</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>default = &quot;log2 LFQ&quot;</em>) – Common substring of intensity columns of input DataFrame for associated methods</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xomics.cImpute.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Protein</span> <span class="pre">IDs'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_lfq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log2</span> <span class="pre">LFQ'</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/breimanntools/xomics/tree/master/xomics/c_impute.py#L213-L216"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xomics.cImpute.__init__" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xomics.cImpute.__init__" title="xomics.cImpute.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([str_id, str_lfq])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#xomics.cImpute.get_limits" title="xomics.cImpute.get_limits"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_limits</span></code></a>([df, loc_up_mnar, group_cols])</p></td>
+<td><p>Get minimum of detected values (d_min, i.e., detection limit), upper bound of MNAR MVs (up_mnar), and maximum of detected values (d_max).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#xomics.cImpute.run" title="xomics.cImpute.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>([df, dict_group_cols, loc_up_mnar, ...])</p></td>
+<td><p>Hybrid method for imputation of omics data called conditional imputation (cImpute) using MinProb for MNAR (Missing Not at Random) missing values and KNN imputation for MCAR (Missing completely at Random) missing values.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="xomics.cImpute.get_limits">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc_up_mnar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/breimanntools/xomics/tree/master/xomics/c_impute.py#L218-L244"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xomics.cImpute.get_limits" title="Permalink to this definition"></a></dt>
+<dd><p>Get minimum of detected values (d_min, i.e., detection limit), upper bound of MNAR MVs (up_mnar),
+and maximum of detected values (d_max).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – DataFrame containing quantified features including missing values</p></li>
+<li><p><strong>loc_up_mnar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default=0.1</em><em>, </em><em>[</em><em>0-1</em><em>]</em>) – Location factor for the upMNAR given as relative proportion of the detection range</p></li>
+<li><p><strong>group_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em> or </em><em>array-like</em>) – List of all group columns</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>d_min</strong> (<em>int</em>) – Minimum of detected values</p></li>
+<li><p><strong>up_mnar</strong> (<em>int</em>) – upper bound of MNAR MVs</p></li>
+<li><p><strong>d_max</strong> (<em>int</em>) – Maximum of detected values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xomics.cImpute.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict_group_cols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc_up_mnar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_cs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/breimanntools/xomics/tree/master/xomics/c_impute.py#L246-L312"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#xomics.cImpute.run" title="Permalink to this definition"></a></dt>
+<dd><p>Hybrid method for imputation of omics data called conditional imputation (cImpute)
+using MinProb for MNAR (Missing Not at Random) missing values and KNN imputation for
+MCAR (Missing completely at Random) missing values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – DataFrame containing quantified features including missing values</p></li>
+<li><p><strong>dict_group_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.12)"><em>dict</em></a>) – Dictionary for groups to list of columns containing intensity values for group.</p></li>
+<li><p><strong>min_cs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default 0.5</em><em> [</em><em>0-1</em><em>]</em>) – Minimum of confidence score used for selecting values for protein in groups to apply imputation on.</p></li>
+<li><p><strong>loc_up_mnar</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default 0.25</em><em> [</em><em>0-1</em><em>]</em>) – Factor to determine the location of the upper detection limit bound. In percent of total value range.</p></li>
+<li><p><strong>std_factor</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default = 0.5</em><em> (</em><em>MinProb parameter</em><em>)</em>) – Factor to control size of standard deviation of left-censored distribution
+relative to distance of upMNAR and Dmin.</p></li>
+<li><p><strong>n_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a><em>, </em><em>default=5</em><em> (</em><em>KNN imputation parameter</em><em>)</em>) – Number of neighboring samples to use for imputation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>df_imp</strong> – DataFrame with (a) imputed intensities values and (b) group-wise confidence score and NaN classification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api.html" class="btn btn-neutral float-left" title="API" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../index/tables.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Stephan Breimann.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
