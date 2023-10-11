@@ -34,11 +34,9 @@ Vision
 Objectives
 ----------
 
-- Establish a comprehensive toolkit for interpretable, sequence-based protein prediction.
-- Enable robust learning from small and unbalanced datasets, common in life sciences.
-- Integrate seamlessly with machine learning and explainable AI libraries such as `scikit-learn <https://scikit-learn.org/stable/>`_
-  and `SHAP <https://shap.readthedocs.io/en/latest/index.html>`_.
-- Offer flexible interoperability with other Python packages like `biopython <https://biopython.org/>`_.
+- Establish a toolkit for explainable omics analysis, focusing on protein/gene-centric analysis.
+- Offer flexible interoperability with other omics analysis software such as `MaxQuant <https://www.maxquant.org/>`_
+  or `gProfiler <https://biit.cs.ut.ee/gprofiler/gost>`_.
 
 Non-goals
 ---------
@@ -51,8 +49,6 @@ Principles
 ----------
 
 - Algorithms should be biologically inspired and combine empirical insights with cutting-edge computational methods.
-- We emphasize fair, accountable, and transparent machine learning, as detailed
-  in `Interpretable Machine Learning with Python <https://www.packtpub.com/product/interpretable-machine-learning-with-python/9781800203907>`_.
 - We're committed to offering diverse evaluation metrics and interpretable visualizations, aiming to extend to other
   aspects of interpretable data analysis and explainable AI such as causal inference.
 
@@ -75,7 +71,7 @@ Installation
 Latest Version
 --------------
 
-To test the latest development version, you can use pip:
+To install the latest development version using pip, execute the following:
 
 .. code-block:: bash
 
@@ -84,8 +80,8 @@ To test the latest development version, you can use pip:
 Local Development Environment
 -----------------------------
 
-Fork and Clone
-""""""""""""""
+Fork and Clone the Repository
+"""""""""""""""""""""""""""""
 
 1. Fork the `repository <https://github.com/breimanntools/xomics>`_
 2. Clone your fork:
@@ -103,20 +99,48 @@ Navigate to the project folder and set up the Python environment.
 
 .. code-block:: bash
 
-  cd xomics
+    cd xomics
 
-2. Create a new isolated Python environment using `conda`:
+**2a. Using conda for Environment Setup**
 
-.. code-block:: bash
-
-  conda create -n aanalysis python=3.9
-  conda activate aanalysis
-
-3. Install dependencies using `poetry`:
+Create and activate a new `conda` environment named 'venv', using Python 3.9:
 
 .. code-block:: bash
 
-  poetry install
+    conda create -n venv python=3.9
+    conda activate venv
+
+**2b. Using venv for Environment Setup**
+
+Alternatively, create and activate a virtual environment within the project folder using venv:
+
+.. code-block:: bash
+
+    python -m venv venv
+    source venv/bin/activate  # Use `venv\Scripts\activate` on Windows
+
+**3a. Installing Dependencies with poetry**
+
+Install dependencies as defined in 'pyproject.toml' using `poetry`:
+
+.. code-block:: bash
+
+    poetry install
+
+**3b. Installing Dependencies with pip**
+
+Alternatively, use `pip` to install dependencies from 'requirements.txt' and additional development requirements:
+
+.. code-block:: bash
+
+    pip install -r requirements.txt
+    pip install -r docs/source/requirements_docs.txt
+
+**General Notes**
+
+- **Additional Requirement**: Some non-Python utilities might to be need installed separately, such as Pandoc.
+- **Manage Dependencies**: Ensure dependencies are updated as specified in 'pyproject.toml' or 'requirements.txt'
+  after pulling updates from the repository.
 
 Run Unit Tests
 """"""""""""""
@@ -173,7 +197,7 @@ We primarily use one class templates for organizing our codebase:
 The remaining classes should fulfill two further purposes, without being directly implemented using class inheritance.
 
 - **Data visualization**: Supplementary plotting classes for `Tool` classes. These classes implement
-    an `.eval` method to visualize the key evaluation measures.
+  an `.eval` method to visualize the key evaluation measures.
 - **Analysis support**: Supportive pre-processing classes for `Tool` classes.
 
 Function and Method Naming
