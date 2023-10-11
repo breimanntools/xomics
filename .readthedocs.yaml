@@ -19,6 +19,7 @@ python:
   install:
     - requirements: requirements.txt
     - requirements: docs/requirements_docs.txt
+    - path: .
 
 #formats: disabled during development
 #  - htmlzip
