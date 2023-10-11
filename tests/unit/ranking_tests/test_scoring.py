@@ -7,36 +7,35 @@ Recommended testing commands:
 import pytest
 import numpy as np
 
-# Import your actual p_score and e_score functions
-from xomics import p_score, e_score
+import xomics as xo
 
 
 # Test p_score function
 class TestPScore:
     def test_basic(self):
         # Test basic functionality
-        result = p_score(ids=['protein1', 'protein2'], x_fc=[2.4, 1.5], x_pvals=[0.05, 0.2])
+        result = xo.p_score(ids=['protein1', 'protein2'], x_fc=[2.4, 1.5], x_pvals=[0.05, 0.2])
         assert isinstance(result, np.ndarray)
         assert len(result) == 2
 
     def test_empty_input(self):
         # Test empty input
         with pytest.raises(ValueError):
-            p_score(ids=[], x_fc=[], x_pvals=[])
+            xo.p_score(ids=[], x_fc=[], x_pvals=[])
 
     def test_invalid_input_length(self):
         # Test different lengths of inputs
         with pytest.raises(ValueError):
-            p_score(ids=['protein1'], x_fc=[2.4, 1.5], x_pvals=[0.05])
+            xo.p_score(ids=['protein1'], x_fc=[2.4, 1.5], x_pvals=[0.05])
 
     def test_non_numeric_input(self):
         # Test non-numeric input
         with pytest.raises(ValueError):
-            p_score(ids=['protein1', 'protein2'], x_fc=['a', 'b'], x_pvals=[0.05, 0.2])
+            xo.p_score(ids=['protein1', 'protein2'], x_fc=['a', 'b'], x_pvals=[0.05, 0.2])
 
     def test_negative_values(self):
         # Test negative fold change values
-        result = p_score(ids=['protein1', 'protein2'], x_fc=[-2.4, -1.5], x_pvals=[0.05, 0.2])
+        result = xo.p_score(ids=['protein1', 'protein2'], x_fc=[-2.4, -1.5], x_pvals=[0.05, 0.2])
         assert np.allclose(result, [1.0, 0.], atol=1e-2)
 
 
@@ -44,7 +43,7 @@ class TestPScore:
 class TestEScore:
     def test_basic(self):
         # Test basic functionality
-        result = e_score(
+        result = xo.e_score(
             ids=['protein1', 'protein2'],
             id_lists=[['protein1', 'protein2'], ['protein2']],
             x_fe=[2, 1.5],
@@ -57,17 +56,17 @@ class TestEScore:
     def test_empty_input(self):
         # Test empty input
         with pytest.raises(ValueError):
-            e_score(ids=[], id_lists=[], x_fe=[], x_pvals=[])
+            xo.e_score(ids=[], id_lists=[], x_fe=[], x_pvals=[])
 
     def test_invalid_input_length(self):
         # Test different lengths of inputs
         with pytest.raises(ValueError):
-            e_score(ids=['protein1'], id_lists=[['protein1', 'protein2'], ['protein2']], x_fe=[2, 1.5], x_pvals=[0.05])
+            xo.e_score(ids=['protein1'], id_lists=[['protein1', 'protein2'], ['protein2']], x_fe=[2, 1.5], x_pvals=[0.05])
 
     def test_non_numeric_input(self):
         # Test non-numeric input
         with pytest.raises(ValueError):
-            e_score(
+            xo.e_score(
                 ids=['protein1', 'protein2'],
                 id_lists=[['protein1', 'protein2'], ['protein2']],
                 x_fe=['a', 'b'],
@@ -77,7 +76,7 @@ class TestEScore:
     def test_negative_values(self):
         # Test negative fold enrichment values
         with pytest.raises(ValueError):
-            e_score(
+            xo.e_score(
                 ids=['protein1', 'protein2'],
                 id_lists=[['protein1', 'protein2'], ['protein2']],
                 x_fe=[-2, -1.5],
@@ -86,7 +85,7 @@ class TestEScore:
 
     def test_invalid_ids(self):
         # Test for ids not in id_lists
-        result = e_score(
+        result = xo.e_score(
             ids=['protein3'],
             id_lists=[['protein1', 'protein2'], ['protein2']],
             x_fe=[2, 1.5],

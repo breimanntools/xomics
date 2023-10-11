@@ -1,6 +1,6 @@
 ..
    Developer Notes:
-   The tutorials are referenced here such that the path must be relative to work for Sphinx referencing system elsewher.
+   The tutorials are referenced here such that the path must be relative to work for Sphinx referencing system elsewhere.
 ..
 
 
