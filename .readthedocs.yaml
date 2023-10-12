@@ -17,10 +17,8 @@ sphinx:
 
 python:
   install:
-    - path: .
     - requirements: requirements.txt
     - requirements: docs/requirements_docs.txt
-
 
 #formats: disabled during development
 #  - htmlzip
