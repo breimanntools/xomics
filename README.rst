@@ -42,8 +42,8 @@ Welcome to the xOmics documentation
 spotlight on differential proteomics expression data. It introduces the following key algorithms:
 
 - **cImpute**: Conditional Imputation - A transparent method for hybrid missing value imputation.
-- **xOmicsIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
-- **xOmicsRank**: Protein-centric ranking of (prote)omic data, leveraging functional enrichment results.
+- **pIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
+- **pRank**: Protein-centric ranking of (prote)omic data, leveraging functional enrichment results.
 
 In addition, **xOmics** provides functional capabilities for efficiently loading benchmark proteomics datasets via
 **load_datasets**, accompanied by corresponding enrichment data.A suite of supportive functions is also available to
@@ -75,5 +75,5 @@ If you use xOmics in your work, please cite the respective publication as follow
 **cImpute**:
    [Citation details and link if available]
 
-**xOmicsIntegrate**:
+**pIntegrate**:
    [Citation details and link if available]

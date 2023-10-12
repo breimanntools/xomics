@@ -10,7 +10,6 @@ First import some third-party packages and ``xomics``:
 
     import pandas as pd
     import matplotlib.pyplot as plt
-    from IPython.display import display, HTML
     
     import xomics as xo
 
@@ -29,10 +28,62 @@ First import some third-party packages and ``xomics``:
 .. code:: ipython3
 
     # Load data
+    # TODO update for example data
     file = "data/raw_data_proteomics_lfq.xlsx"
     df_raw = pd.read_excel(file)
     dict_group_cols = pp.get_dict_groups(df=df_raw, groups=groups)
     all_groups_col = pp.get_all_group_cols(dict_group_cols=dict_group_cols)
+
+
+::
+
+
+    ---------------------------------------------------------------------------
+
+    FileNotFoundError                         Traceback (most recent call last)
+
+    /tmp/ipykernel_7236/2165150488.py in <module>
+          1 # Load data
+          2 file = "data/raw_data_proteomics_lfq.xlsx"
+    ----> 3 df_raw = pd.read_excel(file)
+          4 dict_group_cols = pp.get_dict_groups(df=df_raw, groups=groups)
+          5 all_groups_col = pp.get_all_group_cols(dict_group_cols=dict_group_cols)
+
+
+    ~/.local/lib/python3.8/site-packages/pandas/io/excel/_base.py in read_excel(io, sheet_name, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skiprows, nrows, na_values, keep_default_na, na_filter, verbose, parse_dates, date_parser, date_format, thousands, decimal, comment, skipfooter, storage_options, dtype_backend)
+        476     if not isinstance(io, ExcelFile):
+        477         should_close = True
+    --> 478         io = ExcelFile(io, storage_options=storage_options, engine=engine)
+        479     elif engine and engine != io.engine:
+        480         raise ValueError(
+
+
+    ~/.local/lib/python3.8/site-packages/pandas/io/excel/_base.py in __init__(self, path_or_buffer, engine, storage_options)
+       1494                 ext = "xls"
+       1495             else:
+    -> 1496                 ext = inspect_excel_format(
+       1497                     content_or_path=path_or_buffer, storage_options=storage_options
+       1498                 )
+
+
+    ~/.local/lib/python3.8/site-packages/pandas/io/excel/_base.py in inspect_excel_format(content_or_path, storage_options)
+       1369         content_or_path = BytesIO(content_or_path)
+       1370 
+    -> 1371     with get_handle(
+       1372         content_or_path, "rb", storage_options=storage_options, is_text=False
+       1373     ) as handle:
+
+
+    ~/.local/lib/python3.8/site-packages/pandas/io/common.py in get_handle(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)
+        866         else:
+        867             # Binary mode
+    --> 868             handle = open(handle, ioargs.mode)
+        869         handles.append(handle)
+        870 
+
+
+    FileNotFoundError: [Errno 2] No such file or directory: 'data/raw_data_proteomics_lfq.xlsx'
+
 
 .. code:: ipython3
 
@@ -41,14 +92,12 @@ First import some third-party packages and ``xomics``:
     d_min, up_mnar, d_max = cimp.get_limits(df=df_raw.copy(),
                                             group_cols=all_groups_col,
                                             loc_up_mnar=loc_up_mnar)
-    df_imput = cimp.run(df=df_raw.copy(),
-                        dict_group_cols=dict_group_cols,
-                        min_cs=0.5,
-                        loc_up_mnar=loc_up_mnar,
-                        std_factor=0.8,
-                        n_neigbhors=6)
-    display(df_raw)
-    display(df_imput)
+    df_imp = cimp.run(df=df_raw.copy(),
+                      dict_group_cols=dict_group_cols,
+                      min_cs=0.5,
+                      loc_up_mnar=loc_up_mnar,
+                      std_factor=0.8,
+                      n_neigbhors=6)
 
 
 
@@ -709,7 +758,7 @@ First import some third-party packages and ``xomics``:
 
     # Plot histogram
     xo.plot_imput_histo(df_raw=df_raw,
-                        df_imput=df_imput,
+                        df_imput=df_imp,
                         cols=all_groups_col,
                         d_min=d_min,
                         up_mnar=up_mnar)
@@ -728,7 +777,7 @@ First import some third-party packages and ``xomics``:
     df_raw_plot = df_raw_plot.sort_index()
     for group in dict_group_cols:
         cols = dict_group_cols[group]
-        xo.plot_imput_scatter(df_raw=df_raw_plot, df_imput=df_imput, cols=cols, group=group)
+        xo.plot_imput_scatter(df_raw=df_raw_plot, df_imp=df_imp, cols=cols, group=group)
         plt.show()
         plt.close()
         break

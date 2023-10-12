@@ -9,8 +9,8 @@ Workflow
 A typical workflow involves missing the following algorithms:
 
 - **cImpute**: Conditional Imputation - A transparent method for hybrid missing value imputation.
-- **xOmicsIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
-- **xOmicsRank**: Protein-centric ranking of (prote)omic data, leveraging functional enrichment results.
+- **pIntegrate**: Protein-centric integration of multiple (prote)omic datasets to find commonalities and differences.
+- **pRank**: Protein-centric ranking of (prote)omic data, leveraging functional enrichment results.
 
 Missing value imputation, data integration, and protein-centric ranking can all be performed independently.
 
