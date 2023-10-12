@@ -21,7 +21,7 @@ path_source = os.path.join(os.path.dirname(__file__))
 sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../../xomics'))
 sys.path.insert(0, os.path.abspath('.'))
-
+print(sys.path)
 
 # -- Project information -----------------------------------------------------
 project = 'xOmics'
