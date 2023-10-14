@@ -1,7 +1,4 @@
-from ._scoring import p_score, e_score, c_score
-from ._enrichment_hits import e_hits
+from ._prank import pRank
 
-__all__ = ["p_score",
-           "e_score",
-           "c_score",
+__all__ = ["pRank",
            "e_hits"]

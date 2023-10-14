@@ -29,6 +29,7 @@ from ._utils.decorators import (catch_runtime_warnings, CatchRuntimeWarnings,
                                 doc_params)
 
 from ._utils.utils_output import (print_out, print_start_progress, print_progress, print_finished_progress)
+from ._utils.utils_groups import get_dict_col_quant_group, get_dict_group_cols_quant, get_cols_quant
 
 
 # Folder structure
@@ -43,8 +44,17 @@ FOLDER_PROJECT = os.path.dirname(os.path.abspath(__file__))
 FOLDER_DATA = _folder_path(FOLDER_PROJECT, '_data')
 URL_DATA = "https://github.com/breimanntools/xomics/tree/master/xomics/data/"
 
-
 # I Constants
+# cImpute constants
+STR_MCAR = "MCAR"
+STR_MNAR = "MNAR"
+STR_MAR = "MAR"
+STR_NM = "NM"
+LIST_MV_CLASSES = [STR_MCAR, STR_MNAR, STR_MAR, STR_NM]
+STR_CS = "CS"
+STR_MV_LABELS = "labels"
+
+# pRank constants
 COL_E_SCORE = "E-score"
 COL_P_SCORE = "P-score"
 COL_C_SCORE = "C-score"

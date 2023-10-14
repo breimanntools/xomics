@@ -17,7 +17,7 @@ def _folder_path(super_folder, folder_name):
 # Folder
 SEP = "\\" if platform.system() == "Windows" else "/"
 FOLDER_PROJECT = str(Path(__file__).parent).replace('/', SEP) + SEP
-FOLDER_DATA = _folder_path(FOLDER_PROJECT, '_data')
+FOLDER_DATA = _folder_path(FOLDER_PROJECT, 'data')
 FOLDER_RESULTS = _folder_path(FOLDER_PROJECT, 'results')
 
 # Plotting settings

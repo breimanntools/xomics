@@ -119,7 +119,7 @@ def plot_settings(font_scale: float = 1,
         >>> data = {'Classes': ['Class A', 'Class B', 'Class C'], 'Values': [23, 27, 43]}
         >>> colors = xo.plot_get_clist()
         >>> xo.plot_settings()
-        >>> sns.barplot(data=data, x='Classes', y='Values', palette=colors)
+        >>> sns.barplot(data=data, x='Classes', y='Values', palette=colors, hue="Classes", legend=False)
         >>> sns.despine()
         >>> plt.title("Adjusted")
         >>> plt.tight_layout()

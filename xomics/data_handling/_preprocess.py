@@ -55,7 +55,7 @@ def _calculate_group_stats(df, group_cols):
 
 # II Main Functions
 class PreProcess:
-    def __init__(self, str_id="Protein IDs", str_lfq="log2 LFQ"):
+    def __init__(self, str_id="Protein IDs", str_quant="log2 LFQ"):
         """
         Initialize the PreProcessor object with specific string identifiers for ID and LFQ columns.
 
@@ -63,16 +63,74 @@ class PreProcess:
         -----------
         str_id : str, default = "Protein IDs"
             Identifier for the protein ID column in the dataframe.
-        str_lfq : str, default = "log2 LFQ"
+        str_quant : str, default = "log2 LFQ"
             Identifier for the LFQ columns in the dataframe.
         """
         self.str_id = str_id
-        self.str_lfq = str_lfq
+        self.str_quant = str_quant
+
+    def get_dict_col_quant_group(self, df=None, groups=None):
+        """
+        Create a dictionary with groups from df based on lfq_str and given groups
+
+        Parameters
+        ----------
+        df: DataFrame
+            DataFrame containing quantified features including missing values
+        groups: list of str
+            List with group names
+
+        Return
+        ------
+        dict_col_group: dict
+            Dictionary assigning column names (keys) to group names (values) if group_to_col=False
+        """
+        dict_col_group = ut.get_dict_col_quant_group(df=df, groups=groups, str_quant=self.str_quant)
+        return dict_col_group
+
+    def get_dict_group_cols_quant(self, df=None, groups=None):
+        """
+        Create a dictionary with groups from df based on lfq_str and given groups
+
+        Parameters
+        ----------
+        df: DataFrame
+            DataFrame containing quantified features including missing values
+        groups: list of str
+            List with group names
+
+        Return
+        ------
+        dict_col_group: dict
+            Dictionary assigning column names (keys) to group names (values) if group_to_col=False
+        dict_group_cols: dict
+            Dictionary assigning groups (keys) to list of column names (values) if group_to_col=True
+        """
+        dict_group_cols = ut.get_dict_group_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
+        return dict_group_cols
+
+    def get_cols_quant(self, df=None, groups=None):
+        """
+        Create a list with groups from df based on str_quant and given groups
+
+        Parameters
+        ----------
+        df: DataFrame
+            DataFrame containing quantified features including missing values
+        groups: list of str
+            List with group names
+        Return
+        ------
+        cols_quant
+            List with all quantification columns across all groups
+        """
+        cols_quant = ut.get_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
+        return cols_quant
 
     @staticmethod
     def filter(df=None, cols=None, drop_na=True, split_names=None):
         """
-        Filter _data frame for non-correct or missing values
+        Filter data frame for non-correct or missing values
         """
         # Split names for provided column and filter duplicates by keeping first occuring
         if split_names is not None:
@@ -108,58 +166,6 @@ class PreProcess:
     def adjust_log(df=None, cols=None, auto=True):
         """"""
 
-
-    def get_dict_groups(self, df=None, groups=None, group_to_col=True):
-        """
-        Create a dictionary with groups from df based on lfq_str and given groups
-
-        Parameters
-        ----------
-        df: DataFrame
-            DataFrame containing quantified features including missing values
-        groups: list of str
-            List with group names
-        group_to_col: bool, default = True
-            Decide whether group columns (values) should be returned as list
-
-        Return
-        ------
-        dict_col_group: dict
-            Dictionary assigning column names (keys) to group names (values) if group_to_col=False
-        dict_group_cols: dict
-            Dictionary assigning groups (keys) to list of column names (values) if group_to_col=True
-        """
-        dict_col_group = {}
-        for col in list(df):
-            if self.str_lfq in col:
-                col_wo_lfq_str = col.replace(self.str_lfq, "")
-                for group in groups:
-                    if group in col_wo_lfq_str:
-                        dict_col_group[col] = group
-        if group_to_col:
-            dict_group_cols = {g: [k for k, v in dict_col_group.items() if v == g] for g in groups}
-            return dict_group_cols
-        return dict_col_group
-
-    @staticmethod
-    def get_all_group_cols(dict_group_cols=None):
-        """Retrieve all columns from group dictionary
-
-        Parameters
-        ----------
-        dict_group_cols: dict
-            Dictionary assigning groups (keys) to list of column names (values)
-
-        Return
-        ------
-        all_group_cols: list
-            List with all columns of input Data Frame from cImpute.get_dict_groups containing intensity values.
-        """
-        all_group_cols = []
-        for group in dict_group_cols:
-            all_group_cols.extend(dict_group_cols[group])
-        return all_group_cols
-
     def run(self, df=None, ids=None, groups=None, drop_na=False, pvals_method=None, pvals_neg_log10=True):
         """
         Perform pairwise t-tests for groups to obtain -log10 p-values and log2 fold changes,
@@ -189,7 +195,7 @@ class PreProcess:
         _check_p_correction(method=pvals_method)
         _check_ids(ids=ids, df=df, str_id=self.str_id)
         # Get the mapping dictionaries
-        dict_group_cols = self.get_dict_groups(df=df, groups=groups)
+        dict_group_cols = self.get_dict_col_quant_group(df=df, groups=groups)
         all_group_cols = self.get_all_group_cols(dict_group_cols=dict_group_cols)
 
         # Remove rows with NaNs if policy is 'omit'

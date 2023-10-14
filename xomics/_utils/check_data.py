@@ -55,6 +55,7 @@ def check_X_unique_samples(X, min_n_unique_samples=3):
                          f"\nX = {X}")
     return X
 
+
 def check_labels(labels=None):
     """"""
     if labels is None:
@@ -77,6 +78,7 @@ def check_match_X_labels(X=None, X_name="X", labels=None, labels_name="labels"):
     if n_samples != len(labels):
         raise ValueError(f"n_samples does not match for '{X_name}' ({len(X)}) and '{labels_name}' ({len(labels)}).")
 
+
 # Check sets
 def check_superset_subset(subset=None, superset=None, name_subset=None, name_superset=None):
     """"""
@@ -86,17 +88,17 @@ def check_superset_subset(subset=None, superset=None, name_subset=None, name_sup
 
 
 # df checking functions
-def check_col_in_df(df=None, name_df=None, col=None, col_type=None, accept_nan=False, error_if_exists=False):
+def check_col_in_df(df=None, name_df=None, cols=None, col_type=None, accept_nan=False, error_if_exists=False):
     """
-    Check if the column exists in the DataFrame, if the values have the correct type, and if NaNs are allowed.
+    Check if the column or columns exists in the DataFrame, if the values have the correct type, and if NaNs are allowed.
     """
     # Check if the column already exists and raise error if error_if_exists is True
-    if error_if_exists and (col in df.columns):
-        raise ValueError(f"Column '{col}' already exists in '{name_df}'")
+    if error_if_exists and (cols in df.columns):
+        raise ValueError(f"Column '{cols}' already exists in '{name_df}'")
 
     # Check if the column exists in the DataFrame
-    if col not in df.columns:
-        raise ValueError(f"'{col}' must be a column in '{name_df}': {list(df.columns)}")
+    if cols not in df.columns:
+        raise ValueError(f"'{cols}' must be a column in '{name_df}': {list(df.columns)}")
 
     # Make col_type a list if it is not already
     if col_type is not None and not isinstance(col_type, list):
@@ -104,17 +106,18 @@ def check_col_in_df(df=None, name_df=None, col=None, col_type=None, accept_nan=F
 
     # Check if the types match
     if col_type is not None:
-        wrong_types = [x for x in df[col] if not any([isinstance(x, t) for t in col_type])]
+        wrong_types = [x for x in df[cols] if not any([isinstance(x, t) for t in col_type])]
 
         # Remove NaNs from the list of wrong types if they are accepted
         if accept_nan:
             wrong_types = [x for x in wrong_types if not pd.isna(x)]
 
         if len(wrong_types) > 0:
-            raise ValueError(f"Values in '{col}' should be of type(s) {col_type}, "
+            raise ValueError(f"Values in '{cols}' should be of type(s) {col_type}, "
                              f"but the following values do not match: {wrong_types}")
 
     # Check if NaNs are present when they are not accepted
     if not accept_nan:
-        if df[col].isna().sum() > 0:
-            raise ValueError(f"NaN values are not allowed in '{col}'.")
+        if df[cols].isna().sum() > 0:
+            raise ValueError(f"NaN values are not allowed in '{cols}'.")
+
