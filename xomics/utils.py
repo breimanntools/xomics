@@ -30,7 +30,7 @@ from ._utils.decorators import (catch_runtime_warnings, CatchRuntimeWarnings,
 
 from ._utils.utils_output import (print_out, print_start_progress, print_progress, print_finished_progress)
 from ._utils.utils_groups import get_dict_col_quant_group, get_dict_group_cols_quant, get_cols_quant
-
+from ._utils.utils_plotting import plot_gco
 
 # Folder structure
 def _folder_path(super_folder, folder_name):
@@ -57,7 +57,7 @@ STR_MV_LABELS = "labels"
 # pRank constants
 COL_E_SCORE = "E-score"
 COL_P_SCORE = "P-score"
-COL_C_SCORE = "C-score"
+COL_C_SCORE = "C-Score"
 COL_CS_STD = "CS_STD"
 COL_PE_MEAN = "PE-mean"
 

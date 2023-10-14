@@ -39,3 +39,7 @@ def plot_enrich_map(df=None, row_colors=None, col_colors=None,
     set_legend_handles_labels(ax=cg.ax_heatmap, dict_color=dict_color, lw=1, edgecolor="black", y=-0.01,
                               x=x_legend, ncol=1, list_cat=dict_color.keys())
 
+
+def plot_enrich_rank():
+    """Plot enrichment by fold enrichment or significance with gene set size"""
+

@@ -26,7 +26,7 @@ import pandas as pd
 import numpy as np
 import xomics.utils as ut
 
-from ._backend.cimpute import get_up_mnar, classify_of_mvs, compute_cs, impute
+from ._backend.cimpute import run_cimpute, get_up_mnar
 
 
 # TODO a) generalize (e.g., lfq -> intensities, test with other input)
@@ -83,8 +83,7 @@ class cImpute:
         d_max = df[cols_quant].max().max()
         return d_min, up_mnar, d_max
 
-    def run(self, df=None, groups=None, min_cs=0.5,
-            loc_up_mnar=0.25, std_factor=0.5, n_neighbors=5):
+    def run(self, df=None, groups=None, min_cs=0.5, loc_up_mnar=0.25, n_neighbors=5):
         """Hybrid method for imputation of omics data called conditional imputation (cImpute)
         using MinProb for MNAR (Missing Not at Random) missing values and KNN imputation for
         MCAR (Missing completely at Random) missing values.
@@ -99,8 +98,7 @@ class cImpute:
             Minimum of confidence score used for selecting values for protein in groups to apply imputation on.
         loc_up_mnar: int, default 0.25 [0-1]
             Factor to determine the location of the upper detection limit bound. In percent of total value range.
-        std_factor: int, default = 0.5 (MinProb parameter)
-            Factor to control size of standard deviation of left-censored distribution relative to distance of upMNAR and Dmin.
+
         n_neighbors : int, default=5 (KNN imputation parameter)
             Number of neighboring samples to use for imputation.
 
@@ -108,45 +106,18 @@ class cImpute:
         ------
         df_imp: DataFrame
             DataFrame with (a) imputed intensities values and (b) group-wise confidence score and NaN classification.
-        """
-        # TODO refactor, simplify, optimize n clusters, optimize for performance, use arrays
-        df = df.copy()
-        df.index = df[self.str_id]
-        df = df.sort_index()
-        dict_group_cols_quant = ut.get_dict_group_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
-        cols_quant = ut.get_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
-        d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_up_mnar=loc_up_mnar)
-        # TODO change to numpy Arrays & compute summary statistic (n MVs per class and group)
-        list_df_groups = []
-        list_mv_classes = []
-        cs_vals = []
-        for group in dict_group_cols_quant:
-            cols_quant = dict_group_cols_quant[group]
-            df_group = df[cols_quant]
-            mv_classes = classify_of_mvs(df_group=df_group, up_mnar=up_mnar)
-            list_cs = compute_cs(df_group=df_group, mv_classes=mv_classes)
-            df_group = impute(df_group=df_group, mv_classes=mv_classes, list_cs=list_cs,
-                              min_cs=min_cs,
-                              d_min=d_min, up_mnar=up_mnar,
-                              std_factor=std_factor,
-                              n_neighbors=n_neighbors)
-            list_df_groups.append(df_group)
-            list_mv_classes.append(mv_classes)
-            cs_vals.append(list_cs)
 
-        # Merge imputation for all groups
-        df_imp = pd.concat(list_df_groups, axis=1)
-        # Add aggregated CS values (mean and std)
-        cs_means = np.array(cs_vals).mean(axis=0).round(2)
-        cs_stds = np.array(cs_vals).std(axis=0).round(2)
-        df_imp.insert(len(list(df_imp)), ut.COL_C_SCORE, cs_means)
-        df_imp.insert(len(list(df_imp)), ut.COL_CS_STD, cs_stds)
-        # Add  CS values per group
-        df_cs = pd.DataFrame(cs_vals).T
-        df_cs.columns = [f"CS_{group}" for group in dict_group_cols_quant]
-        df_cs.index = df.index
-        df_nan = pd.DataFrame(list_mv_classes).T
-        df_nan.columns = [f"NaN_{group}" for group in dict_group_cols_quant]
-        df_nan.index = df.index
-        df_imp = pd.concat([df_imp, df_cs, df_nan], axis=1)
+        Notes
+        -----
+        MAR is only imputed if ``min_cs=0`` using the imputation for MCAR.
+        """
+        # Check input
+
+        # Run cImpute algorithm
+        df_imp = run_cimpute(df=df, groups=groups,
+                             min_cs=min_cs, loc_up_mnar=loc_up_mnar, n_neighbors=n_neighbors,
+                             str_quant=self.str_quant, str_id=self.str_id)
         return df_imp
+
+
+

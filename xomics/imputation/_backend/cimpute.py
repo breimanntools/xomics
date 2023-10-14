@@ -24,19 +24,8 @@ def _compute_cs(vals=None, mv_class=None, n=None):
         return round(count_nan(vals) / n, 2)
 
 
-def _impute_mnr(df=None, std_factor=0.5, d_min=None, up_mnar=None):
+def _impute_mnr(df=None, d_min=None, up_mnar=None):
     """MinProb imputation as suggested by Lazar et al., 2016
-
-    Arguments
-    --------
-    df: DataFrame
-        DataFrame with missing values just classified as MNAR
-    std_factor: int, default = 0.5
-        Factor to control size of standard deviation of distribution relative to distance of upMNAR and Dmin.
-
-    Notes
-    -----
-    std = (up_mnar - d_min) * std_factor
 
     See also
     --------
@@ -45,8 +34,9 @@ def _impute_mnr(df=None, std_factor=0.5, d_min=None, up_mnar=None):
     """
     df = df.copy()
     d1, d2 = df.shape
-    # TODO optimize
-    scale = (up_mnar - d_min/2) # * std_factor   # Standard deviation (spread, scale, or "width")
+    # TODO optimize or justify scale factor (middle of MNAR so far. Could be adjusted based on std of distribution)
+    # Factor to control size of standard deviation of left-censored distribution
+    scale = (up_mnar - d_min/2)
     # Generate random numbers using truncated (left-censored) normal distribution
     vals = truncnorm.rvs(a=0, b=1, size=d1*d2, loc=d_min, scale=scale).reshape((d1, d2))
     mask = df.isnull()
@@ -72,16 +62,32 @@ def _impute_mcar(df=None, n_neighbors=6):
     return df
 
 
-def _impute(df=None, mv_class=None, d_min=None, up_mnar=None, std_factor=0.5, n_neighbors=6):
+def _impute(df=None, mv_class=None, d_min=None, up_mnar=None, n_neighbors=6, min_cs=0.5):
     """Wrapper for imputation methods applied on an experimental group"""
     if mv_class == ut.STR_NM:
         return df
     elif mv_class == ut.STR_MAR:
+        # Missing at random only imputed if cs == 0
+        if min_cs == 0:
+            return _impute_mcar(df=df, n_neighbors=n_neighbors)
         return df
     elif mv_class == ut.STR_MCAR:
         return _impute_mcar(df=df, n_neighbors=n_neighbors)
     elif mv_class == ut.STR_MNAR:
-        return _impute_mnr(df=df, d_min=d_min, std_factor=std_factor, up_mnar=up_mnar)
+        return _impute_mnr(df=df, d_min=d_min, up_mnar=up_mnar)
+
+
+def _create_groupwise_dfs(cs_vals=None, mv_classes=None, group_dict=None, index=None, prefixes=None):
+    """Creates and concatenates dataframes for CS and NaN values per group."""
+    df_cs = pd.DataFrame(cs_vals).T
+    df_cs.columns = [f"{prefixes[0]}_{group}" for group in group_dict]
+
+    df_nan = pd.DataFrame(mv_classes).T
+    df_nan.columns = [f"{prefixes[1]}_{group}" for group in group_dict]
+
+    both_dfs = pd.concat([df_cs, df_nan], axis=1)
+    both_dfs.index = index
+    return both_dfs
 
 
 # II Main Functions
@@ -131,21 +137,61 @@ def compute_cs(df_group=None, mv_classes=None):
     return list_cs
 
 
-def impute(df_group=None, mv_classes=None, list_cs=None, min_cs=0.5, d_min=None, up_mnar=None,
-           n_neighbors=5, std_factor=0.5):
+def impute(df_group=None, mv_classes=None, list_cs=None, min_cs=0.5, d_min=None, up_mnar=None, n_neighbors=5):
     """Group-wise imputation over whole data set"""
     df_group = df_group.copy()
     list_df = []
     for mv_class in ut.LIST_MV_CLASSES:
         mask = np.array([True if (l == mv_class and cs >= min_cs) else False for l, cs in zip(mv_classes, list_cs)])
         df = df_group[mask]
-        df_imped = _impute(df=df, mv_class=mv_class,
-                             n_neighbors=n_neighbors, std_factor=std_factor,
-                             d_min=d_min, up_mnar=up_mnar)
-        list_df.append(df_imped)
+        df_imput = _impute(df=df, mv_class=mv_class,
+                           n_neighbors=n_neighbors,
+                           d_min=d_min,
+                           up_mnar=up_mnar,
+                           min_cs=min_cs)
+        list_df.append(df_imput)
     df_group_imputed = pd.concat(list_df, axis=0).sort_index()
     mask = np.array([True if i in df_group_imputed.index else False for i in df_group.index])
     df_group[mask] = df_group_imputed
     return df_group
 
 
+# TODO optimize n_neighbors, optimize for performance
+# Main function
+def run_cimpute(df=None, groups=None, min_cs=0.5, loc_up_mnar=0.25, n_neighbors=5, str_id=None, str_quant=None):
+    """Run complete cImpute pipeline"""
+    df = df.copy()
+    df.index = df[str_id]
+    dict_group_cols_quant = ut.get_dict_group_cols_quant(df=df, groups=groups, str_quant=str_quant)
+    cols_quant = ut.get_cols_quant(df=df, groups=groups, str_quant=str_quant)
+    d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_up_mnar=loc_up_mnar)
+    list_df_groups = []
+    list_mv_classes = []
+    cs_vals = []
+    for group in dict_group_cols_quant:
+        cols_quant = dict_group_cols_quant[group]
+        df_group = df[cols_quant]
+        mv_classes = classify_of_mvs(df_group=df_group, up_mnar=up_mnar)
+        list_cs = compute_cs(df_group=df_group, mv_classes=mv_classes)
+        df_group = impute(df_group=df_group, mv_classes=mv_classes, list_cs=list_cs, min_cs=min_cs, d_min=d_min,
+                          up_mnar=up_mnar, n_neighbors=n_neighbors)
+        list_df_groups.append(df_group)
+        list_mv_classes.append(mv_classes)
+        cs_vals.append(list_cs)
+
+    # Merge imputation for all groups
+    df_imp = pd.concat(list_df_groups, axis=1)
+
+    # Add aggregated CS values (mean and std)
+    cs_means = np.array(cs_vals).mean(axis=0).round(2)
+    cs_stds = np.array(cs_vals).std(axis=0).round(2)
+    df_imp[ut.COL_C_SCORE], df_imp[ut.COL_CS_STD] = cs_means, cs_stds
+
+    # Add  CS values per group
+    # Concatenate CS and NaN values per group and merge with df_imp
+    df_cs_nan = _create_groupwise_dfs(cs_vals=cs_vals,
+                                      mv_classes=list_mv_classes,
+                                      group_dict=dict_group_cols_quant,
+                                      index=df.index, prefixes=["CS", "MV"])
+    df_imp = pd.concat([df_imp, df_cs_nan], axis=1)
+    return df_imp
