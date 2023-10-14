@@ -13,8 +13,8 @@ from xomics.plotting.utils_plotting import set_legend_handles_labels
 
 # II Main Functions
 def plot_enrich_map(df=None, row_colors=None, col_colors=None,
-                      method="complete", figsize=(8, 7), wide=False,
-                      font_scale=0.8, x_legend=1.2):
+                    method="complete", figsize=(8, 7), wide=False,
+                    font_scale=0.8, x_legend=1.2):
     """"""
     fg_ratio = figsize[1]/figsize[0]
     ratio = 0.15

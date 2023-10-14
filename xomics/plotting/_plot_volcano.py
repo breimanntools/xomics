@@ -4,7 +4,7 @@ This is a script for ...
 from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
-
+import numpy as np
 
 import xomics.utils as ut
 from .utils_plotting import (color_filter, label_filter, set_labels)
@@ -28,7 +28,7 @@ def _check_gene_values(gene=None, x=None, y=None):
 
 # II Main Functions
 def plot_volcano(df=None, col_fc=None, col_pval=None, gene_list=None,
-                 th_filter=(0.05, 0.5), th_text=None,
+                 th_filter=(0.05, 0.5),
                  precision=0.01, force=(0.5, 0.5, 0.25), avoid_conflict=0.25,
                  fig_format="png", verbose=False, loc_legnd=2,
                  filled_circle=True, box=True, label_bold=False, label_size=8, minor_ticks=True):
@@ -47,8 +47,6 @@ def plot_volcano(df=None, col_fc=None, col_pval=None, gene_list=None,
          List of specific genes to label on the plot.
      th_filter : tuple, default=(0.05, 0.5)
          Thresholds for p-value and fold-change for filtering.
-     th_text : tuple, optional
-         Thresholds for labeling; format is (p_val, lower_ratio, upper_ratio).
      precision : float, default=0.01
          Precision level for text placement.
      force : tuple, default=(0.5, 0.5, 0.25)
@@ -85,15 +83,9 @@ def plot_volcano(df=None, col_fc=None, col_pval=None, gene_list=None,
 
     # Unpack thresholds
     th_p, th_ratio = th_filter
-    if th_text is None:
-        th_text = (th_p, -th_ratio, th_ratio)
-    th_p_text, th_neg_ratio, th_pos_ratio = th_text
-
     # Rescale p-value if needed
     if th_p < 0.5:
         th_p = -np.log10(th_p)
-    if th_p_text < 0.5:
-        th_p_text = -np.log10(th_p_text)
 
     # Pre-processing for labels and colors
     kwargs = {}

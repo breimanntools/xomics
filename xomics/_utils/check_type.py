@@ -44,6 +44,14 @@ def check_str(name=None, val=None, accept_none=False):
         raise ValueError(f"'{name}' ('{val}') should be string.")
 
 
+def check_str_in_list(name=None, val=None, list_options=None, accept_none=False):
+    """Check if val is one of the given options"""
+    if accept_none and val is None:
+        return None
+    if not isinstance(val, str) or val not in list_options:
+        raise ValueError(f"'{name}' ('{val}') should be of the following: {list_options}")
+
+
 def check_bool(name=None, val=None):
     """Check if the provided value is a boolean."""
     if not isinstance(val, bool):
@@ -70,13 +78,15 @@ def check_tuple(name=None, val=None, n=None, check_n=True, accept_none=False):
         raise ValueError(f"'{name}' ({val}) should be a tuple with {n} elements.")
 
 
-def check_list_like(name=None, val=None, accept_none=False, convert=True):
+def check_list_like(name=None, val=None, accept_none=False, convert=True, accept_str=False):
     """"""
     if accept_none and val is None:
         return None
     if not convert:
         if not isinstance(val, list):
             raise ValueError(f"'{name}' (type: {type(val)}) should be a list.")
+    elif accept_str and isinstance(val, str):
+        return list(val)
     else:
         allowed_types = (list, tuple, np.ndarray, pd.Series)
         if not isinstance(val, allowed_types):
@@ -85,6 +95,7 @@ def check_list_like(name=None, val=None, accept_none=False, convert=True):
             raise ValueError(f"'{name}' is a multi-dimensional numpy array and cannot be considered as a list.")
         val = list(val)
     return val
+
 
 # Check special types
 def check_ax(ax=None, accept_none=False):
