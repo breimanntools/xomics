@@ -22,6 +22,7 @@ Data Handling
 .. autosummary::
     :toctree: generated/
 
+        xomics.PreProcess
 
 .. _imputation_api:
 
