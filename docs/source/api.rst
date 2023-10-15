@@ -32,7 +32,7 @@ Imputation
 .. autosummary::
     :toctree: generated/
 
-    xomics.cImpute
+        xomics.cImpute
 
 .. _ranking_api:
 
@@ -42,6 +42,7 @@ Ranking
 .. autosummary::
     :toctree: generated/
 
+        xomics.pRank
 
 
 Integration
