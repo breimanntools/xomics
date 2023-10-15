@@ -51,11 +51,21 @@ Integration
 
 .. _plot_api:
 
+
+Plotting
+--------
+.. autosummary::
+    :toctree: generated/
+
+        xomics.plot_volcano
+
 Plot Utilities
 --------------
 .. autosummary::
     :toctree: generated/
 
         xomics.plot_settings
+        xomics.plot_legend
         xomics.plot_get_clist
+        xomics.plot_gcfs
 

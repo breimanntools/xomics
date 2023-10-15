@@ -3,38 +3,45 @@ This is a script for pre the interface of preprocessing omics data.
 """
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from typing import Optional
 
 import xomics.utils as ut
 from ._backend.preprocess_run import run_preprocess
-from ._backend.preprocess_filter import filter_df
+from ._backend.preprocess_filter import filter_df, filter_names
 
 # TODO finish testing, test on real data in dev_scripts
+# TODO Filter for number of quantifications
 
 
 # I Helper Functions
-def check_match_df_groups(df=None, groups=None):
+def check_match_df_groups(df=None, groups=None, name_groups="groups", str_quant=None):
     """"""
-    groups_df = [x.split("_") for x in list(df)]
-    wrong_groups = [x for x in groups if x not in groups_df]
+    if str_quant is None:
+        raise ValueError("'str_quant' must be given.")
+    list_substr_cols = [col.replace(str_quant, "").split("_") for col in list(df)]
+    list_substr_cols = ut.flatten_list(list_substr_cols)
+    wrong_groups = [x for x in groups if x not in list_substr_cols]
     if len(wrong_groups) > 0:
-        raise ValueError(f"The following entries from 'groups' are not in 'df': {wrong_groups}")
+        raise ValueError(f"The following entries from '{name_groups}' are not in 'df': {wrong_groups}")
 
 
-def check_match_df_ids(df=None, ids=None, str_id=None):
+def check_base(base=None):
+    """Ensure 'base' is a valid numerical type and has an acceptable value"""
+    if not isinstance(base, (int, float)) or base not in [2.0, 10.0]:
+        raise ValueError("'base' must be a numerical value and either 2.0 or 10.0")
+
+
+def check_match_df_ids(df=None, list_ids=None):
     """"""
-    if ids is None:
-        if str_id not in list(df):
-            raise ValueError(f"'ids' should not be None if 'str_id' ({str_id}) attribute not 'df' columns: {list(df)}")
-        else:
-            return df[str_id].to_list()
-    if len(ids) != len(df):
-        raise ValueError(f"'ids' (len={len(ids)}) should have the same length as 'df' (len={len(df)}")
-    if isinstance(ids, pd.Series):
-        return ids.to_list()
-    elif isinstance(ids, list):
-        return ids
+
+    if list_ids is None:
+        raise ValueError("'list_ids' should not be None")
+    if len(list_ids) != len(df):
+        raise ValueError(f"'ids' (len={len(list_ids)}) should have the same length as 'df' (len={len(df)}")
+    if isinstance(list_ids, pd.Series):
+        return list_ids.to_list()
+    elif isinstance(list_ids, list):
+        return list_ids
     else:
         raise ValueError("'ids' should be a list or a pandas.DataFrame column")
 
@@ -69,60 +76,10 @@ class PreProcess:
         self.str_quant = str_quant
 
     @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
-    def get_dict_col_quant_group(self,
-                                 df: pd.DataFrame = None,
-                                 groups: list = None
-                                 ) -> dict:
-        """
-        Create a dictionary with groups from df based on lfq_str and given groups
-
-        Parameters
-        ----------
-        {doc_param_df_groups}
-
-        Return
-        ------
-        dict_col_quant_group
-            Dictionary assigning names of columns with quantifications (keys) to group names (values)
-        """
-        # Check input
-        df = ut.check_df(df=df, accept_none=False)
-        groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        check_match_df_groups(groups=groups, df=df)
-        # Get dictionary for quantifications
-        dict_col_quant_group = ut.get_dict_col_quant_group(df=df, groups=groups, str_quant=self.str_quant)
-        return dict_col_quant_group
-
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
-    def get_dict_group_cols_quant(self,
-                                  df: pd.DataFrame = None,
-                                  groups: list = None
-                                  ) -> dict:
-        """
-        Create a dictionary with groups from df based on lfq_str and given groups
-
-        Parameters
-        ----------
-        {doc_param_df_groups}
-
-        Return
-        ------
-        dict_group_cols_quant
-            Dictionary assigning group names (keys) to list of columns with quantifications (values)
-        """
-        # Check input
-        df = ut.check_df(df=df, accept_none=False)
-        groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        check_match_df_groups(groups=groups, df=df)
-        # Get dictionary for quantifications
-        dict_group_cols_quant = ut.get_dict_group_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
-        return dict_group_cols_quant
-
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
-    def get_cols_quant(self,
-                       df: pd.DataFrame = None,
-                       groups: list = None
-                       ) -> list:
+    def get_qcols(self,
+                  df: pd.DataFrame = None,
+                  groups: list = None
+                  ) -> list:
         """
         Create a list with groups from df based on str_quant and given groups
 
@@ -138,17 +95,65 @@ class PreProcess:
         # Check input
         df = ut.check_df(df=df, accept_none=False)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        check_match_df_groups(groups=groups, df=df)
+        check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
         # Get columns with quantifications
-        cols_quant = ut.get_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
+        cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=self.str_quant)
         return cols_quant
+
+    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
+    def get_dict_qcol_group(self,
+                            df: pd.DataFrame = None,
+                            groups: list = None
+                            ) -> dict:
+        """
+        Create a dictionary with quantification columns and the group they are subordinated to
+
+        Parameters
+        ----------
+        {doc_param_df_groups}
+
+        Return
+        ------
+        dict_qcol_group
+            Dictionary assigning names of columns with quantifications (keys) to group names (values)
+        """
+        # Check input
+        df = ut.check_df(df=df, accept_none=False)
+        groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
+        check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        # Get dictionary for quantifications
+        dict_qcol_group = ut.get_dict_qcol_group(df=df, groups=groups, str_quant=self.str_quant)
+        return dict_qcol_group
+
+    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
+    def get_dict_group_qcols(self,
+                             df: pd.DataFrame = None,
+                             groups: list = None
+                             ) -> dict:
+        """
+        Create a dictionary with for groups from df and their corresponding columns with quantifications
+
+        Parameters
+        ----------
+        {doc_param_df_groups}
+
+        Return
+        ------
+        dict_group_qcols
+            Dictionary assigning group names (keys) to list of columns with quantifications (values)
+        """
+        # Check input
+        df = ut.check_df(df=df, accept_none=False)
+        groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
+        check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        # Get dictionary for quantifications
+        dict_group_qcols = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=self.str_quant)
+        return dict_group_qcols
 
     @staticmethod
     def filter(df: pd.DataFrame = None,
                cols: list = None,
                drop_na: bool = True,
-               col_split_names: Optional[str] = None,
-               str_split: Optional[str] = ";"
                ) -> pd.DataFrame:
         """
         Filter and optionally modify the provided DataFrame based on specified parameters.
@@ -156,47 +161,66 @@ class PreProcess:
         Parameters:
         -----------
         df
-            The DataFrame to filter and optionally modify.
+            The DataFrame with quantifications to filter. ``Rows`` typically correspond to proteins
+            and ``columns`` to conditions.
         cols
-            List of column names to consider for filtering.
+            List of columns from ``df`` to consider for filtering.
         drop_na
             Whether to drop rows containing NaN values in the specified `cols`.
-        col_split_names
-            Name of the column in which to perform string splitting (if applicable).
-        str_split
-            The string character(s) to use for splitting string values in ``col_split_names``.
 
         Returns:
         --------
-        pd.DataFrame
-            The filtered (and optionally modified) DataFrame.
-
-        Notes:
-        ------
-        - The function performs a series of checks to validate the provided parameters
-          before proceeding with the filtering. It uses utility methods from an object
-          `ut` for these checks, which is not defined in the provided code snippet.
-        - After validation, a `filter_df` function (also not defined in the provided code)
-          is called to perform the actual filtering based on the checked/processed parameters.
-        - Raises ValueError: if validation checks fail for `df`, `cols`, `drop_na`,
-          `col_split_names`, or `str_split`.
+        df
+            The filtered DataFrame.
         """
         ut.check_df(df=df)
-        cols = ut.check_list_like(name="cols", val=cols, accept_none=False, accept_str=True)
-        ut.check_col_in_df(df=df, name_df="df", cols=cols, accept_nan=True)
+        cols = ut.check_list_like(name="cols", val=cols, accept_none=True, accept_str=True)
+        ut.check_col_in_df(df=df, name_df="df", cols=cols, accept_none=True, accept_nan=True)
         ut.check_bool(name="drop_na", val=drop_na)
-        col_split_names = ut.check_col_in_df(df=df, name_df="df", cols=col_split_names, accept_nan=True, accept_none=True)
-        ut.check_str(name="str_split", val=str_split)
         # Filtering
-        df = filter_df(df=df, cols=cols, drop_na=drop_na, col_split_names=col_split_names, str_split=str_split)
+        df = filter_df(df=df, cols=cols, drop_na=drop_na)
         return df
 
     @staticmethod
-    def adjust_log(df: pd.DataFrame = None,
-                   cols: list = None,
-                   log2: bool = True,
-                   neg: bool = False
-                   ) -> pd.DataFrame:
+    def filter_names(df: pd.DataFrame = None,
+                     col: list = None,
+                     str_split: str = ";",
+                     drop_na: bool = True,
+                     ) -> pd.DataFrame:
+        """
+        Split names from column in dataframe and filter duplicates.
+
+        Parameters:
+        -----------
+        df
+            The DataFrame with quantifications to filter. ``Rows`` typically correspond to proteins
+            and ``columns`` to conditions.
+        col
+            Column from ``df`` in which to perform string splitting and filtering.
+        str_split
+            The string character(s) to use for splitting string values in ``col``.
+        drop_na
+            Whether to drop rows containing NaN values in the specified `cols`.
+
+        Returns:
+        --------
+        df
+            The modified and filtered DataFrame.
+        """
+        ut.check_df(df=df)
+        ut.check_col_in_df(df=df, name_df="df", cols=col, accept_nan=True, accept_none=False)
+        ut.check_str(name="str_split", val=str_split)
+        ut.check_bool(name="drop_na", val=drop_na)
+        # Filtering
+        df = filter_names(df=df, col=col, str_split=str_split, drop_na=drop_na)
+        return df
+
+    @staticmethod
+    def apply_log(df: pd.DataFrame = None,
+                  cols: list = None,
+                  log2: bool = True,
+                  neg: bool = False,
+                  ) -> pd.DataFrame:
         """
         Apply a logarithmic transformation to specified columns of a DataFrame.
 
@@ -223,6 +247,8 @@ class PreProcess:
         """
         # Check input
         df = ut.check_df(df=df, all_positive=True)
+        if cols is None:
+            cols = list(df)
         cols = ut.check_list_like(name="cols", val=cols, accept_none=False, accept_str=True)
         ut.check_col_in_df(df=df, cols=cols, accept_nan=True)
         ut.check_bool(name="log2", val=log2)
@@ -234,13 +260,67 @@ class PreProcess:
             df[cols] *= -1
         return df
 
+    @staticmethod
+    def apply_exp(df: pd.DataFrame = None,
+                  cols: list = None,
+                  base: float = 2.0,
+                  neg: bool = False, ) -> pd.DataFrame:
+        """
+        Apply an exponential transformation to specified columns of a DataFrame.
+
+        Parameters
+        ----------
+        df : pd.DataFrame, optional
+            DataFrame containing data to transform.
+        cols : list, optional
+            Names of columns to apply the exponential transformation to.
+        base : float, default=2.0
+            The base of the exponential function. If base=2.0, apply a 2**x transformation,
+            otherwise apply a 10**x transformation if base=10.0.
+        neg : bool, default=False
+            If True, multiply the exponential result by -1.
+
+        Returns
+        -------
+        df : pd.DataFrame
+            DataFrame with specified columns exponentially transformed.
+
+        Notes
+        -----
+        - NaN values will remain NaN after the transformation.
+        """
+        # Check input
+        df = ut.check_df(df=df)
+        if cols is None:
+            cols = list(df)
+        cols = ut.check_list_like(name="cols", val=cols, accept_none=False, accept_str=True)
+        ut.check_col_in_df(df=df, cols=cols, accept_nan=True)
+        ut.check_bool(name="neg", val=neg)
+        check_base(base=base)
+        # Exponential transform
+        if neg:
+            df[cols] *= -1
+        df[cols] = df[cols].apply(lambda x: np.power(base, x))
+        return df
+
+    @staticmethod
+    def add_id(df=None, list_ids=None, col_name="Protein IDs"):
+        """"""
+        # Check input
+        df = ut.check_df(df=df, accept_none=False)
+        ut.check_list_like(name="list_ids", val=list_ids)
+        list_ids = check_match_df_ids(df=df, list_ids=list_ids)
+        ut.check_str(name="col_name", val=col_name, accept_none=False)
+        # Add column with ids
+        df.insert(0, col_name, list_ids)
+        return df
+
     @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def run(self,
             df: pd.DataFrame = None,
             groups: list = None,
-            ids: ut.ArrayLike1D = None,
-            drop_na: bool = False,
-            pvals_method: Optional[str] = None,
+            groups_ctrl: list = None,
+            pvals_correction: Optional[str] = None,
             pvals_neg_log10: bool = True
             ) -> pd.DataFrame:
         """
@@ -254,7 +334,7 @@ class PreProcess:
             List or array of protein identifiers.
         drop_na
             Whether to drop rows with missing values
-        pvals_method
+        pvals_correction
             Correction method for t-tests {"bonferroni", "sidak", "holm", "hommel", "fdr_bh"}.
         pvals_neg_log10
             Whether to return p-values in -log10 scale.
@@ -264,18 +344,19 @@ class PreProcess:
         df_fc
             DataFrame with p-values and log2 fold changes for each group comparison.
         """
-        # Check functions
+        # Check input
         df = ut.check_df(df=df, accept_none=False)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        ut.check_list_like(name="ids", val=ids, accept_none=True)
-        ut.check_str_in_list(name="pvals_method", val=pvals_method,
+        if groups_ctrl is None:
+            groups_ctrl = groups
+        groups_ctrl = ut.check_list_like(name="groups_ctrl", val=groups_ctrl)
+        ut.check_str_in_list(name="pvals_method", val=pvals_correction, accept_none=True,
                              list_options=["bonferroni", "sidak", "holm", "hommel", "fdr_bh"])
         ut.check_bool(name="pvals_neg_log10", val=pvals_neg_log10)
-        ut.check_bool(name="drop_na", val=drop_na)
-        check_match_df_groups(groups=groups, df=df)
-        check_match_df_ids(ids=ids, df=df, str_id=self.str_id)
+        check_match_df_groups(df=df, groups=groups, str_quant=self.str_quant)
+        check_match_df_groups(df=df, groups=groups_ctrl, name_groups="groups_ctrl", str_quant=self.str_quant)
         # Get the mapping dictionaries
-        df_fc = run_preprocess(df=df, ids=ids, groups=groups, drop_na=drop_na,
-                               pvals_method=pvals_method, pvals_neg_log10=pvals_neg_log10,
-                               str_id=self.str_id)
+        df_fc = run_preprocess(df=df, groups=groups, groups_ctrl=groups_ctrl,
+                               pvals_method=pvals_correction, pvals_neg_log10=pvals_neg_log10,
+                               str_quant=self.str_quant)
         return df_fc

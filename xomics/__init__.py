@@ -8,6 +8,7 @@ from .plotting import (plot_volcano,
                        plot_rank_scatter,
                        plot_imput_histo,
                        plot_settings,
+                       plot_legend,
                        plot_get_clist,
                        plot_gcfs)
 
@@ -22,6 +23,7 @@ __all__ = [
     "plot_rank_scatter",
     "plot_imput_histo",
     "plot_settings",
+    "plot_legend",
     "plot_get_clist",
     "plot_gcfs"
 ]

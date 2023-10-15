@@ -5,138 +5,259 @@ from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
 import seaborn as sns
 import numpy as np
+import pandas as pd
+from typing import Optional, Tuple, Union
+from adjustText import adjust_text
 
+import xomics as xo
 import xomics.utils as ut
-from .utils_plotting import (color_filter, label_filter, set_labels)
+
+# Constants
+STR_SIG_POS = "Down"
+STR_SIG_NEG = "Up"
+STR_NON_SIG = "Not Sig."
+
+
+# ---------------------------------
+"""
+# TODO make correct (wrong FDR formula
+def plot_fdr_curve(df: pd.DataFrame, col_fc: str, col_pval: str, c=1.5, s0=1.0):
+    Hyperbolic FDR Curve Plotting Function
+
+    Purpose:
+    To plot hyperbolic FDR curves, primarily used in mass spectrometry and proteomics studies for multiple hypothesis
+     testing correction. These curves represent a balance between significance (p-value) and effect size (fold change).
+
+    Background:
+    The concept of the hyperbolic threshold originates from the understanding that we may tolerate weaker p-values
+    (less statistical significance) when the effect size (fold change) is large, and vice-versa. Thus, the hyperbolic
+    curves represent a combination of significance and effect size, controlling the overall false discovery rate (FDR).
+
+    Relevant Paper:
+    - "Perseus: A Bioinformatics Platform for Integrative Analysis of Proteomics Data in Cancer Research" Tyanova et al.
+    - Fudge factor: https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/10.1002/pmic.201600132
+
+    Challenges:
+    Translate FDR curve code from Perseus (not cleare where described) or this R code:
+    https://github.com/Scavetta/Volcanto_Plots_FDR..
+
+
+    # Define the hyperbolic curve function
+    def fdr_curve(x, c, s0):
+        return c * (np.abs(x) - s0 + np.sqrt(x ** 2 + s0 ** 2))
+    x = np.linspace(-np.abs(df[col_fc].max()), np.abs(df[col_fc].max()), 1000)
+    y_curve = fdr_curve(x, c, s0)
+    x = np.linspace(-np.abs(df[col_fc].max()), np.abs(df[col_fc].max()), 1000)
+    # Plotting the curves
+    plt.plot(x, y_curve, label='Hyperbolic FDR curve', linestyle='--', color='gray')
+    # TODO does not work
+"""
+# ---------------------------------
 
 
 # I Helper Functions
-def _check_gene_list(df=None, gene_list=None):
+def check_match_df_names(df=None, list_names=None, col_names=None):
     """Check if gene in df"""
-    if gene_list is not None:
-        all_genes = df["Gene_Name"].tolist()
-        not_in_all_genes = [x for x in gene_list if x not in all_genes]
-        if len(not_in_all_genes):
-            raise ValueError("Genes from 'gene_list' not in 'df_ratio_pval': {}".format(not_in_all_genes))
+    if col_names is None:
+        raise ValueError(f"'col_names' should not be None.")
+    all_names = df[col_names].to_list()
+    if list_names is None:
+        return all_names
+    else:
+        wrong_names = [x for x in list_names if x not in all_names]
+        if len(wrong_names):
+            raise ValueError(f"Following names from 'list_names' are not in 'col_names': {wrong_names}")
+    return list_names
 
 
-def _check_gene_values(gene=None, x=None, y=None):
-    """Check if x or y is missing value"""
-    if str(x) == "nan" or str(y) == "nan":
-        raise ValueError("Missing values for gene '{}'".format(gene))
+def get_sig_classes(df=None, col_fc=None, col_pval=None, th_pval=None, th_fc=None):
+    """"""
+    sig_classes = []
+    for index, row in df.iterrows():
+        if row[col_pval] >= th_pval:
+            if row[col_fc] >= th_fc:
+                sig_classes.append(STR_SIG_POS)
+            elif row[col_fc] <= -th_fc:
+                sig_classes.append(STR_SIG_NEG)
+            else:
+                sig_classes.append(STR_NON_SIG)
+        else:
+            sig_classes.append(STR_NON_SIG)
+    return sig_classes
 
 
 # II Main Functions
-def plot_volcano(df=None, col_fc=None, col_pval=None, gene_list=None,
-                 th_filter=(0.05, 0.5),
-                 precision=0.01, force=(0.5, 0.5, 0.25), avoid_conflict=0.25,
-                 fig_format="png", verbose=False, loc_legnd=2,
-                 filled_circle=True, box=True, label_bold=False, label_size=8, minor_ticks=True):
+def plot_volcano(ax: Optional[plt.Axes] = None,
+                 figsize: Tuple[int, int] = (6,6),
+                 df: pd.DataFrame = None,
+                 col_fc: str = None,
+                 col_pval: str = None,
+                 col_names: Optional[str] = None,
+                 th_fc: float = 0.5,
+                 th_pval: float = 0.05,
+                 names_to_annotate: Optional[list] = None,
+                 colors: Optional[Union[str, list[str]]] = None,
+                 colors_pos_neg_non: Optional[Tuple[str, str, str]] = None,
+                 size: int = 50,
+                 sizes_pos_neg_non: Optional[Tuple[int, int, int]] = None,
+                 alpha: float = 1.0,
+                 edge_color: str = "white",
+                 edge_width: float = 0.5,
+                 label_fontdict: Optional[dict] = None,
+                 label_adjust_text_dict: Optional[dict] = None,
+                 loc_legend: int = 2,
+                 legend: bool = True,
+                 minor_ticks: bool = False,
+                 ) -> plt.Axes:
     """
-     Generate and display a volcano plot based on fold-change and p-value data.
+    Generate and display a volcano plot based on fold-change and p-value data.
 
-     Parameters
-     ----------
-     df : DataFrame
-         DataFrame containing fold-change and p-values.
-     col_fc : str
-         Column name containing fold change values.
-     col_pval : str
-         Column name containing p-values.
-     gene_list : list, optional
-         List of specific genes to label on the plot.
-     th_filter : tuple, default=(0.05, 0.5)
-         Thresholds for p-value and fold-change for filtering.
-     precision : float, default=0.01
-         Precision level for text placement.
-     force : tuple, default=(0.5, 0.5, 0.25)
-         Repulsion forces to adjust text (points, text, objects).
-     avoid_conflict : float, default=0.25
-         Level of label overlap to avoid.
-     fig_format : str, default="png"
-         File format for saving the plot.
-     verbose : bool, default=False
-         If True, print additional information.
-     loc_legnd : int, default=2
-         Location index for the plot legend.
-     filled_circle : bool, default=True
-         If True, circles in the plot are filled.
-     box : bool, default=True
-         If True, labels will have a bounding box.
-     label_bold : bool, default=False
-         If True, labels will be bold.
-     label_size : int, default=8
-         Font size for labels.
-     minor_ticks : bool, default=True
-         If True, shows minor ticks in plot.
-
-     Returns
-     -------
-     matplotlib.Axes
-         The Axes object representing the plot.
-     """
-    # TODO Include labeling for selected genes (e.g., for GO terms), add FDR correction
-    # Initial parameter validation (your _check_col function and _check_gene_list function)
-    ut.check_col_in_df(name_df="df", df=df, cols=[col_fc, col_pval])
-    if gene_list:
-        _check_gene_list(df=df, gene_list=gene_list)
-
-    # Unpack thresholds
-    th_p, th_ratio = th_filter
+    Parameters
+    ----------
+    ax
+        Axes object for the plot. If not provided, a new Axes object is created.
+    figsize
+        Size of the figure.
+    df
+        DataFrame containing fold-change and p-values.
+    col_fc
+        Column name containing fold change values.
+    col_pval
+        Column name containing p-values.
+    col_names
+        Columns with protein/gene names.
+    th_fc
+        Threshold for fold-change, applied for negative and positive values.
+    th_pval
+        Threshold for p-value, -log10 transformed before applied.
+    names_to_annotate
+        List of specific protein/gene names to label on the plot.
+    colors
+        Colors to use for the plot. Either a single color or a list of colors.
+    colors_pos_neg_non
+        Tuple containing colors for significant positive, significant negative, and non-significant points.
+    size
+        Size of the points.
+    sizes_pos_neg_non
+        Tuple containing sizes for significant positive, significant negative, and non-significant points.
+    alpha
+        Alpha transparency level for points.
+    edge_color
+        Color of the edge of the points.
+    edge_width
+        Width of the edge of the points.
+    label_fontdict
+        Dictionary of font properties for labels.
+    label_adjust_text_dict
+        Dictionary of properties for adjust_text function to adjust overlapping labels.
+    loc_legend
+        Location index for the plot legend.
+    legend
+        If True, display the legend. If False, hide the legend.
+    minor_ticks
+        If True, shows minor ticks in plot.
+    Returns
+    -------
+    ax
+        The Axes object representing the plot.
+    """
+    # Initial parameter validation
+    ut.check_ax(ax=ax, accept_none=True)
+    ut.check_tuple(name="figsize", val=figsize, n=2, accept_none=True)
+    df = ut.check_df(name="df", df=df, cols_req=[col_fc, col_pval])
+    if col_names is not None:
+        ut.check_col_in_df(name_df="df", df=df, cols=col_names)
+        names_to_annotate = ut.check_list_like(name="names_to_annotate", val=names_to_annotate, accept_none=True)
+        names_to_annotate = check_match_df_names(df=df, list_names=names_to_annotate, col_names=col_names)
+    ut.check_number_range(name="th_fc", val=th_fc, min_val=0, just_int=False)
+    ut.check_number_range(name="th_pval", val=th_pval, min_val=0, max_val=1, just_int=False)
+    colors = ut.check_list_like(name="colors", val=colors, accept_none=True, accept_str=True)
+    ut.check_tuple(name="colors_pos_neg_non", val=colors_pos_neg_non, accept_none=True, n=3, check_n=True)
+    ut.check_number_range(name="size", val=size, min_val=1, just_int=True)
+    ut.check_tuple(name="size_pos_neg_non", val=colors_pos_neg_non, accept_none=True, n=3, check_n=True)
+    ut.check_number_range(name="alpha", val=alpha, min_val=0, max_val=1, just_int=False)
+    ut.check_number_range(name="edge_width", val=edge_width, min_val=0, just_int=False)
+    ut.check_dict(name="label_fontdict", val=label_fontdict, accept_none=True)
+    ut.check_dict(name="label_adjust_text_dict", val=label_adjust_text_dict, accept_none=True)
+    ut.check_bool(name="legend", val=legend)
+    ut.check_bool(name="minor_ticks", val=minor_ticks)
     # Rescale p-value if needed
-    if th_p < 0.5:
-        th_p = -np.log10(th_p)
-
-    # Pre-processing for labels and colors
-    kwargs = {}
-    labels = []
-    if gene_list:
-        kwargs_filter = dict(df=df, col_ratio=col_fc, col_pval=col_pval, gene_list=gene_list)
-        colors = color_filter(**kwargs_filter, th_p=th_p, th_ratio=th_ratio)
-        labels = label_filter(**kwargs_filter, th_p_text=th_p_text, th_neg_ratio=th_neg_ratio,
-                              th_pos_ratio=th_pos_ratio, avoid_conflict=avoid_conflict)
-        kwargs['color'] = colors
-        if not filled_circle:
-            kwargs['edgecolor'] = colors
-            kwargs['facecolor'] = 'none'
+    th_pval = -np.log10(th_pval)
 
     # Plot settings
-    df.plot(x=col_fc, y=col_pval, kind="scatter", figsize=(5, 5), **kwargs)
+    if colors_pos_neg_non is None:
+        color_non_sig, color_sig_pos, color_sig_neg = xo.plot_get_clist(n_colors=3)
+    else:
+        color_sig_pos, color_sig_neg, color_non_sig = colors_pos_neg_non
+    if sizes_pos_neg_non is None:
+        size_sig_pos = size_sig_neg = size_non_sig = 1
+        size_max = size
+    else:
+        size_sig_pos, size_sig_neg, size_non_sig = sizes_pos_neg_non
+        size_max = max(sizes_pos_neg_non)/min(sizes_pos_neg_non)*size
+
+    dict_color = {STR_SIG_POS: color_sig_pos, STR_SIG_NEG: color_sig_neg, STR_NON_SIG: color_non_sig}
+    dict_size = {STR_SIG_POS: size_sig_pos, STR_SIG_NEG: size_sig_neg, STR_NON_SIG: size_non_sig}
+    df["sig_classes"] = get_sig_classes(df=df, col_fc=col_fc, col_pval=col_pval, th_pval=th_pval, th_fc=th_fc)
+    df_plot = df.copy()
+    df_plot["sig_size"] = [dict_size[c] for c in df["sig_classes"]]
+    kwargs = dict(edgecolor=edge_color, linewidth=edge_width)
+
+    # Plotting
+    if ax is None:
+        plt.figure(figsize=figsize)
+    ax = sns.scatterplot(data=df_plot,
+                         x=col_fc,
+                         y=col_pval,
+                         hue='sig_classes',
+                         size="sig_size",
+                         sizes=(size, size_max),
+                         alpha=alpha,
+                         palette=dict_color,
+                         **kwargs)
+    plt.xlabel(col_fc)
+    plt.ylabel(col_pval)
+    sns.despine()
+
+    # Adjust plot
+    # Set customized colors
+    if colors is not None:
+        if len(colors) == 1:
+            colors = colors * len(df)
+        scatter = ax.collections[-1]  # Get the underlying scatter object
+        scatter.set_facecolor(colors)
+
+    # Add threshold lines and set plot limits
+    lw = ut.plot_gco(option="axes.linewidth") * 0.8
+    plt.axhline(y=th_pval, linestyle='--', color='black', linewidth=lw)
+    plt.axvline(x=th_fc, linestyle='--', color='black', linewidth=lw)
+    plt.axvline(x=-th_fc, linestyle='--', color='black', linewidth=lw)
+    plt.xlim((df[col_fc].min() - 1, df[col_fc].max() + 1))
+    plt.ylim((0, df[col_pval].max() * 1.1))
 
     # Minor ticks
     if minor_ticks:
         plt.minorticks_on()
 
-    # Add threshold lines and set plot limits
-    plt.axhline(y=th_p, linestyle='--', color='grey', linewidth=1.5)
-    plt.axvline(x=th_ratio, linestyle='--', color='grey', linewidth=1.5)
-    plt.axvline(x=-th_ratio, linestyle='--', color='grey', linewidth=1.5)
-    plt.xlim([df[col_fc].min() - 1, df[col_fc].max() + 1])
-    plt.ylim([0, df[col_pval].max() * 1.1])
-
-    # If gene_list is provided, set labels
-    if gene_list:
-        objects = [plt.gca().lines[-3], plt.gca().lines[-2], plt.gca().lines[-1]]
-        set_labels(labels,
-                   objects=objects,
-                   th_filter=th_filter,
-                   fig_format=fig_format,
-                   force_points=force[0],
-                   force_text=force[1],
-                   force_objects=force[2],
-                   box=box,
-                   verbose=verbose,
-                   precision=precision,
-                   label_size=label_size,
-                   label_bold=label_bold)
+    # Set annotation
+    if names_to_annotate is not None:
+        labels = [(row[col_names], row[col_fc], row[col_pval]) for i, row in df.iterrows()
+                  if row[col_names] in names_to_annotate and not np.isnan(row[col_fc])]
+        fontdict = dict(size=xo.plot_gcfs()-8)
+        if label_fontdict is not None:
+            fontdict.update(**label_fontdict)
+        texts = [plt.text(x, y, label, fontdict=fontdict) for label, x, y in labels]
+        label_adjust_text_dict = {} if label_adjust_text_dict is None else label_adjust_text_dict
+        adjust_text(texts, **label_adjust_text_dict)
 
     # Legend and Labels
-    plt.legend(handles=[
-        mpatches.Patch(color=ut.COLOR_UP, label='Up'),
-        mpatches.Patch(color=ut.COLOR_DOWN, label='Down'),
-        mpatches.Patch(color=ut.COLOR_NOT_SIG, label='Not Sig')
-    ], loc=loc_legnd, frameon=False)
+    if not legend:
+        ax.legend().set_visible(False)
+    else:
+        xo.plot_legend(dict_color=dict_color,
+                       list_cat=[STR_SIG_NEG, STR_SIG_POS, STR_NON_SIG],
+                       ncol=1, marker="o", loc=loc_legend,
+                       labelspacing=0.1, handletextpad=0.0)
 
-    plt.xlabel(col_fc, weight="bold")
-    plt.ylabel(col_pval, weight="bold")
+    plt.tight_layout()
     return plt.gca()

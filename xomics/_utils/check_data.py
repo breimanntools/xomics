@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from sklearn.utils import check_array
 
+
 # Helper functions
 def check_array_like(name=None, val=None, dtype=None, ensure_2d=False, allow_nan=False):
     """
@@ -62,7 +63,6 @@ def check_labels(labels=None):
         raise ValueError(f"'labels' should not be None.")
     # Convert labels to a numpy array if it's not already
     labels = np.asarray(labels)
-
     unique_labels = set(labels)
     if len(unique_labels) == 1:
        raise ValueError(f"'labels' should contain more than one different value ({unique_labels}).")
@@ -90,6 +90,7 @@ def check_superset_subset(subset=None, superset=None, name_subset=None, name_sup
 # df checking functions
 def check_df(name="df", df=None, cols_req=None, accept_none=False, accept_nan=True, all_positive=False):
     """"""
+    df = df.copy()
     if not accept_none and df is None:
         raise ValueError(f"'{name}' should not be None")
     if not isinstance(df, pd.DataFrame):
@@ -114,7 +115,9 @@ def check_col_in_df(df=None, name_df=None, cols=None, accept_nan=False, error_if
     # Check if the column already exists and raise error if error_if_exists is True
     if error_if_exists and (cols in df.columns):
         raise ValueError(f"Column '{cols}' already exists in '{name_df}'")
-    if accept_none and cols is None:
+    if cols is None:
+        if not accept_none:
+            raise ValueError(f"'cols' should not be None.")
         return None
     # Check if the column exists in the DataFrame
     if isinstance(cols, str):

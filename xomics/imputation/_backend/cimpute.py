@@ -162,8 +162,8 @@ def run_cimpute(df=None, groups=None, min_cs=0.5, loc_up_mnar=0.25, n_neighbors=
     """Run complete cImpute pipeline"""
     df = df.copy()
     df.index = df[str_id]
-    dict_group_cols_quant = ut.get_dict_group_cols_quant(df=df, groups=groups, str_quant=str_quant)
-    cols_quant = ut.get_cols_quant(df=df, groups=groups, str_quant=str_quant)
+    dict_group_cols_quant = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=str_quant)
+    cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=str_quant)
     d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_up_mnar=loc_up_mnar)
     list_df_groups = []
     list_mv_classes = []

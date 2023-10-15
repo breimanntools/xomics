@@ -6,14 +6,6 @@ from datetime import datetime
 
 
 # Helper functions
-def _filter_split_names(df, split_names, str_split=";"):
-    """
-    Split names for provided column and filter duplicates by keeping first occurring.
-    """
-    if split_names not in df.columns:
-        raise ValueError(f"'split_names' ({split_names}) should be in columns of 'df': {list(df)}")
-    df[split_names] = df[split_names].apply(lambda x: x.split(str_split)[0] if isinstance(x, str) and str_split in x else x)
-    return df.drop_duplicates(subset=split_names, keep="first")
 
 
 def _filter_invalid_and_duplicates(df, col):
@@ -33,12 +25,11 @@ def _filter_na(df, cols):
     return df.dropna(subset=cols)
 
 
-def filter_df(df, cols=None, drop_na=True, col_split_names=None, str_split=";"):
+# Main functions
+def filter_df(df=None, cols=None, drop_na=True):
     """
     Filter DataFrame according to specified criteria and columns.
     """
-    if col_split_names is not None:
-        df = _filter_split_names(df, col_split_names, str_split=str_split)
     if cols is not None:
         if isinstance(cols, list):
             for col in cols:
@@ -48,3 +39,14 @@ def filter_df(df, cols=None, drop_na=True, col_split_names=None, str_split=";"):
     if drop_na:
         df = _filter_na(df, cols if cols is not None else df.columns)
     return df
+
+
+def filter_names(df=None, col=None, str_split=";", drop_na=True):
+    """
+    Split names for provided column and filter duplicates by keeping first occurring.
+    """
+    df[col] = df[col].apply(lambda x: x.split(str_split)[0] if isinstance(x, str) and str_split in x else x)
+    if drop_na:
+        df = df.drop_duplicates(subset=col, keep="first")
+    return df
+

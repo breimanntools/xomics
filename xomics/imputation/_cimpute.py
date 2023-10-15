@@ -78,7 +78,7 @@ class cImpute:
         """
         df = df.copy()
         if cols_quant is None:
-            cols_quant = ut.get_cols_quant(df=df, groups=groups, str_quant=self.str_quant)
+            cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=self.str_quant)
         d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_up_mnar=loc_pct_up_mnar)
         d_max = df[cols_quant].max().max()
         return d_min, up_mnar, d_max

@@ -29,7 +29,7 @@ from ._utils.decorators import (catch_runtime_warnings, CatchRuntimeWarnings,
                                 doc_params)
 
 from ._utils.utils_output import (print_out, print_start_progress, print_progress, print_finished_progress)
-from ._utils.utils_groups import get_dict_col_quant_group, get_dict_group_cols_quant, get_cols_quant
+from ._utils.utils_groups import get_dict_qcol_group, get_dict_group_qcols, get_qcols
 from ._utils.utils_plotting import plot_gco
 
 # Folder structure

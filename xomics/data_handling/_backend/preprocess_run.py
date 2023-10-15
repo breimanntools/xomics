@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from statsmodels.stats.multitest import multipletests
 from scipy.stats import ttest_ind
+import warnings
 
 import xomics.utils as ut
 
@@ -24,59 +25,58 @@ def _correct_p_val(p_vals=None, method=None):
 
 
 # II Main Functions
-def run_preprocess(df=None, ids=None, groups=None, drop_na=False, pvals_method=None, pvals_neg_log10=True, str_id=None):
+def run_preprocess(df=None, groups=None, groups_ctrl=None, pvals_method=None, pvals_neg_log10=True,  str_quant=None):
     """
     Perform pairwise t-tests for groups to obtain -log10 p-values and log2 fold changes,
     with optional p-value correction, nan policy, and log-scale output.
     """
+    df = df.copy()
     # Get the mapping dictionaries
-    dict_group_cols_quant = ut.get_dict_group_cols_quant(df=df, groups=groups)
-    cols_quant = ut.get_cols_quant(df=df, groups=groups)
-    # Remove rows with NaNs if policy is 'omit'
-    df_filtered = df[cols_quant]
-    if drop_na:
-        df_filtered = df_filtered.dropna()
-    # Initialize result dictionary
+    dict_group_cols_quant = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=str_quant)
+    cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=str_quant)
+    # Remove rows with NaNs
+    df_quant = df[cols_quant]
     # Initialize lists to collect results
     log2_FC_columns = {}
     p_value_columns = {}
     ratio_pairs = set()
 
-    for group1 in groups:
-        for group2 in groups:
+    for group in groups:
+        for group_ctrl in groups_ctrl:
             # Use frozenset to ensure the pair is unique regardless of order
-            pair = frozenset([group1, group2])
-            if group1 == group2 or pair in ratio_pairs:
+            pair = frozenset([group, group_ctrl])
+            if group == group_ctrl or pair in ratio_pairs:
                 continue
             # Calculate mean for each group
-            mean1 = _calculate_group_stats(df_filtered, dict_group_cols_quant[group1])
-            mean2 = _calculate_group_stats(df_filtered, dict_group_cols_quant[group2])
+            mean1 = _calculate_group_stats(df_quant, dict_group_cols_quant[group])
+            mean2 = _calculate_group_stats(df_quant, dict_group_cols_quant[group_ctrl])
 
             # Calculate log2 fold change and p-values
             fold_change = mean2 - mean1
-            _, p_values = ttest_ind(df_filtered[dict_group_cols_quant[group1]],
-                                    df_filtered[dict_group_cols_quant[group2]], axis=1, nan_policy="omit")
-
+            # Ignore RuntimeWarning due to missing values
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=RuntimeWarning)
+                _, p_values = ttest_ind(df_quant[dict_group_cols_quant[group]],
+                                        df_quant[dict_group_cols_quant[group_ctrl]],
+                                        axis=1, nan_policy="omit")
             # Correct p-values if method is specified
             if pvals_method is not None:
                 p_values = _correct_p_val(p_vals=p_values, method=pvals_method)
             # Create column names
-            log2_FC_col_name = f"{ut.STR_FC} ({group1}/{group2})"
-            p_value_col_name = f"{ut.STR_PVAL} ({group1}/{group2})"
+            log2_FC_col_name = f"{ut.STR_FC} ({group}/{group_ctrl})"
+            p_value_col_name = f"{ut.STR_PVAL} ({group}/{group_ctrl})"
 
             # Convert pandas Series or numpy arrays to lists
             fold_change_list = fold_change.tolist()
             p_value_list = (-np.log10(p_values) if pvals_neg_log10 else p_values).tolist()
-
             # Append the results to the respective lists
             log2_FC_columns[log2_FC_col_name] = fold_change_list
             p_value_columns[p_value_col_name] = p_value_list
-
             # Add to ratio pairs to avoid duplicate comparisons
             ratio_pairs.add(pair)
+
     # Combine both dictionaries
     results = {**log2_FC_columns, **p_value_columns}
     # Convert dictionary to DataFrame
-    df = pd.DataFrame(results)
-    df.insert(0, str_id, ids)
-    return df
+    df_fc = pd.DataFrame(results)
+    return df_fc
