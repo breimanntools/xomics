@@ -25,6 +25,14 @@ References
 
 Algorithms
 ----------
+.. [Lazar16] Lazar et al. (2016)
+    *Accounting for the Multiple Natures of Missing Values in Label-Free Quantitative Proteomics
+    Data Sets to Compare Imputation Strategies*
+    `Journal of Proteome Research <https://pubs.acs.org/doi/10.1021/acs.jproteome.5b00981>`__.
+
+.. [Wei18] Wei et al. (2018)
+    *Missing Value Imputation Approach for Mass Spectrometry-based Metabolomics Data*
+    `scientific reports <https://www.nature.com/articles/s41598-017-19120-0>`__.
 
 Datasets and Benchmarks
 -----------------------

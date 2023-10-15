@@ -1,26 +1,5 @@
 """
-cImpute (conditional Imputation) is a hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
-Missing values can be distinguished into three categories as described by Lazar et al., 2016 and Wei et al., 2018
-for proteomic data sets as follows:
-
-    a) Missing Completely At Random (MCAR): MVs due to random errors and stochastic fluctuations during process of
-        data acquisition. Since MCAR MVs can not be explained by measured intensities, they are uniformly distributed.
-    b) Missing At Random (MAR): MVs due to suboptimal data processing and conditional dependencies. MAR is a more
-        general class than MCAR, where all MCAR MVs are MAR MVs. The distribution of MAR MVs can just be speculated
-        and likely differs highly between experiments.
-    c) Missing Not At Random (MNAR): MVs due to experimental bias (i.e., the detection limit in mass-spectrometry
-        experiments). Commonly, MNAR MVs are described by a left-censored Gaussian distribution (i.e., the Gaussian
-        distribution is truncated on the region of lower abundances, which is the left side of the distribution).
-
-cImpute aims to impute only MVs matching well-defined confidence criteria and consists of following four steps:
-
-    1. Definition of upper bound for MNAR MVs to distinguish between MNAR and MCAR
-    2. Classification of MVs for detected proteins in an experimental group
-    3. Computation of confidence score (CS)
-    4. Group-wise imputation for proteins with CS higher than given threshold
-
-For more details look into the README
-
+This is a script for interface of the cImpute (conditional Imputation) class.
 """
 import pandas as pd
 import numpy as np
@@ -39,7 +18,18 @@ from ._backend.cimpute import run_cimpute, get_up_mnar
 
 # II Main Functions
 class cImpute:
-    """Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
+    """Hybrid data imputation method.
+
+    `cImpute` (conditional Imputation) is a hybrid imputation algorithm designed to address missing values (MVs)
+    specifically in (prote)omics data. The types of missing values can be broadly categorized into three groups based
+    on their nature and the reasons behind their occurrence, as detailed in [Lazar16] and [Wei18]:
+
+    - **Missing Completely At Random (MCAR)**: MVs resulting from random errors in data acquisition. Due to the inherent
+      randomness of MCAR MVs, they cannot be explained purely by measured intensities and are uniformly distributed.
+    - **Missing At Random (MAR)**: MVs due to data processing flaws and variable dependencies. While MAR includes all
+      MCAR MVs, its distribution is speculative and varies significantly across different experiments.
+    - **Missing Not At Random (MNAR)**: MVs caused by experimental biases like detection limits in mass-spectrometry.
+      They often follow a left-censored Gaussian distribution, indicating truncation at lower abundances.
 
     Parameters
     ----------
@@ -47,6 +37,16 @@ class cImpute:
         Column name of entry ids of input DataFrame for associated methods
     str_quant: str, default = "log2 LFQ"
         Common substring of intensity columns of input DataFrame for associated methods
+
+    Notes
+    -----
+    The primary goal of `cImpute` is to focus on the imputation of MVs that align with well-defined confidence criteria.
+    This approach comprises four main steps:
+
+    1. Establishing the upper bound for MNAR MVs to distinguish between MNAR and MCAR.
+    2. Categorizing MVs for detected proteins within a specific experimental group.
+    3. Calculating a confidence score (CS) for each protein.
+    4. Performing group-wise imputation for proteins whose CS exceeds a predefined threshold.
 
     """
     def __init__(self, str_id="Protein IDs", str_quant="log2 LFQ"):
