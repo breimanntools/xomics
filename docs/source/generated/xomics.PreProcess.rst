@@ -15,6 +15,7 @@
    
       ~PreProcess.__init__
       ~PreProcess.add_id
+      ~PreProcess.add_significance
       ~PreProcess.apply_exp
       ~PreProcess.apply_log
       ~PreProcess.filter
