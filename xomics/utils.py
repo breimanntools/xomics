@@ -32,6 +32,7 @@ from ._utils.utils_output import (print_out, print_start_progress, print_progres
 from ._utils.utils_groups import get_dict_qcol_group, get_dict_group_qcols, get_qcols
 from ._utils.utils_plotting import plot_gco
 
+
 # Folder structure
 def _folder_path(super_folder, folder_name):
     """Modification of separator (OS-depending)"""
@@ -71,6 +72,12 @@ COLOR_NOT_SIG = "gray"
 COLOR_TH = "black"
 COLOR_GEM = "#69C2CA"
 
+# Constants significance volcano
+STR_SIG_POS = "Up"
+STR_SIG_NEG = "Down"
+STR_NON_SIG = "Not Sig."
+COL_SIG_CLASS = "sig_class"
+
 
 # II Helper functions
 # General helper functions
@@ -96,6 +103,22 @@ def flatten_list(list_in, sep=","):
         if item not in unique_items:
             unique_items.append(item)
     return unique_items
+
+
+def get_sig_classes(df=None, col_fc=None, col_pval=None, th_pval=None, th_fc=None):
+    """Get significance classes for proteins based on thresholds for fold change and p-values"""
+    sig_classes = []
+    for index, row in df.iterrows():
+        if row[col_pval] >= th_pval:
+            if row[col_fc] >= th_fc:
+                sig_classes.append(STR_SIG_POS)
+            elif row[col_fc] <= -th_fc:
+                sig_classes.append(STR_SIG_NEG)
+            else:
+                sig_classes.append(STR_NON_SIG)
+        else:
+            sig_classes.append(STR_NON_SIG)
+    return sig_classes
 
 
 # III MAIN FUNCTIONS

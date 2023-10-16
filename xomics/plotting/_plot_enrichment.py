@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 
 import xomics.utils as ut
-from xomics.plotting.utils_plotting import set_legend_handles_labels
+from xomics.plotting._utils_plot import set_legend_handles_labels
 
 
 # I Helper Functions

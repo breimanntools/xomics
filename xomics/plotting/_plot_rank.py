@@ -2,11 +2,10 @@
 This is a script for ...
 """
 from matplotlib import pyplot as plt
-import matplotlib.patches as mpatches
 import seaborn as sns
 
 import xomics.utils as ut
-from xomics.plotting.utils_plotting import set_legend_handles_labels, _adjust_text
+from xomics.plotting._utils_plot  import set_legend_handles_labels, _adjust_text
 
 
 # I Helper Functions

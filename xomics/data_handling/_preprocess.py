@@ -264,25 +264,26 @@ class PreProcess:
     def apply_exp(df: pd.DataFrame = None,
                   cols: list = None,
                   base: float = 2.0,
-                  neg: bool = False, ) -> pd.DataFrame:
+                  neg: bool = False,
+                  ) -> pd.DataFrame:
         """
         Apply an exponential transformation to specified columns of a DataFrame.
 
         Parameters
         ----------
-        df : pd.DataFrame, optional
+        df
             DataFrame containing data to transform.
-        cols : list, optional
+        cols
             Names of columns to apply the exponential transformation to.
-        base : float, default=2.0
+        base
             The base of the exponential function. If base=2.0, apply a 2**x transformation,
             otherwise apply a 10**x transformation if base=10.0.
-        neg : bool, default=False
+        neg
             If True, multiply the exponential result by -1.
 
         Returns
         -------
-        df : pd.DataFrame
+        df
             DataFrame with specified columns exponentially transformed.
 
         Notes
@@ -304,15 +305,74 @@ class PreProcess:
         return df
 
     @staticmethod
-    def add_id(df=None, list_ids=None, col_name="Protein IDs"):
-        """"""
+    def add_id(df=None, list_ids=None, col_name_to_add="Protein IDs"):
+        """
+        Add column with protein ids to DataFrame.
+
+        Parameters
+        ----------
+        df
+            DataFrame containing fold-change and p-values.
+        list_ids
+            List or array of protein/gene identifiers.
+        col_name_to_add
+            The name of the column for the protein/gene identifiers to be added.
+
+        Returns
+        -------
+        df
+            DataFrame with added significance column.
+        """
         # Check input
         df = ut.check_df(df=df, accept_none=False)
         ut.check_list_like(name="list_ids", val=list_ids)
         list_ids = check_match_df_ids(df=df, list_ids=list_ids)
-        ut.check_str(name="col_name", val=col_name, accept_none=False)
+        ut.check_str(name="col_name", val=col_name_to_add, accept_none=False)
         # Add column with ids
-        df.insert(0, col_name, list_ids)
+        df.insert(0, col_name_to_add, list_ids)
+        return df
+
+    @staticmethod
+    def add_significance(df: pd.DataFrame = None,
+                         col_fc: str = None,
+                         col_pval: str = None,
+                         th_fc: float = 0.5,
+                         th_pval: float = 0.05
+                         ) -> pd.DataFrame:
+        """Add a column indicating significance regarding threshold for fold change and p-value
+
+        Three types of significance classes are defined:
+
+        - **Up**: Significant hits that are 'up-regulated'(i.e., right quadrant of volcano plot)
+        - **Down**: Significant hits that are 'down-regulated' (i.e., left quadrant of volcano plot)
+        - **Not Sig.**: Hits that are not significant.
+
+        Parameters
+        ----------
+        df
+            DataFrame containing fold-change and p-values.
+        col_fc
+            Column name containing fold change values.
+        col_pval
+            Column name containing p-values.
+        th_fc
+            Threshold for fold-change, applied for negative and positive values.
+        th_pval
+            Threshold for p-value, -log10 transformed before applied.
+
+        Returns
+        -------
+        df
+            DataFrame with added significance column.
+        """
+        # Check input
+        df = ut.check_df(name="df", df=df, cols_req=[col_fc, col_pval])
+        ut.check_number_range(name="th_fc", val=th_fc, min_val=0, just_int=False)
+        ut.check_number_range(name="th_pval", val=th_pval, min_val=0, max_val=1, just_int=False)
+        # Rescale p-value
+        th_pval = -np.log10(th_pval)
+        # Add significant classes (Up, Down, Not Sig.)
+        df[ut.COL_SIG_CLASS] = ut.get_sig_classes(df=df, col_fc=col_fc, col_pval=col_pval, th_pval=th_pval, th_fc=th_fc)
         return df
 
     @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
@@ -327,22 +387,25 @@ class PreProcess:
         Perform pairwise t-tests for groups to obtain -log10 p-values and log2 fold changes,
         with optional p-value correction, nan policy, and log-scale output.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         {doc_param_df_groups}
-        ids
-            List or array of protein identifiers.
-        drop_na
-            Whether to drop rows with missing values
+        groups_ctrl
+            List with names control grouping conditions from ``df`` columns.
         pvals_correction
             Correction method for t-tests {"bonferroni", "sidak", "holm", "hommel", "fdr_bh"}.
         pvals_neg_log10
             Whether to return p-values in -log10 scale.
 
-        Returns:
-        --------
+        Returns
+        -------
         df_fc
             DataFrame with p-values and log2 fold changes for each group comparison.
+
+        Notes
+        -----
+        Fold changes (FC) and P-values will be computed for each group in ``groups`` compared against
+        each group in ``group_ctrl`` (group/group_ctrl), where self-comparison is omitted.
         """
         # Check input
         df = ut.check_df(df=df, accept_none=False)

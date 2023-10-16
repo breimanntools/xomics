@@ -12,11 +12,8 @@ from adjustText import adjust_text
 import xomics as xo
 import xomics.utils as ut
 
-# Constants
-STR_SIG_POS = "Down"
-STR_SIG_NEG = "Up"
-STR_NON_SIG = "Not Sig."
-
+# Constats
+COL_SIG_SIZE = "sig_size"
 
 # ---------------------------------
 """
@@ -68,22 +65,6 @@ def check_match_df_names(df=None, list_names=None, col_names=None):
         if len(wrong_names):
             raise ValueError(f"Following names from 'list_names' are not in 'col_names': {wrong_names}")
     return list_names
-
-
-def get_sig_classes(df=None, col_fc=None, col_pval=None, th_pval=None, th_fc=None):
-    """"""
-    sig_classes = []
-    for index, row in df.iterrows():
-        if row[col_pval] >= th_pval:
-            if row[col_fc] >= th_fc:
-                sig_classes.append(STR_SIG_POS)
-            elif row[col_fc] <= -th_fc:
-                sig_classes.append(STR_SIG_NEG)
-            else:
-                sig_classes.append(STR_NON_SIG)
-        else:
-            sig_classes.append(STR_NON_SIG)
-    return sig_classes
 
 
 # II Main Functions
@@ -181,7 +162,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     ut.check_dict(name="label_adjust_text_dict", val=label_adjust_text_dict, accept_none=True)
     ut.check_bool(name="legend", val=legend)
     ut.check_bool(name="minor_ticks", val=minor_ticks)
-    # Rescale p-value if needed
+    # Rescale p-value
     th_pval = -np.log10(th_pval)
 
     # Plot settings
@@ -196,11 +177,11 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
         size_sig_pos, size_sig_neg, size_non_sig = sizes_pos_neg_non
         size_max = max(sizes_pos_neg_non)/min(sizes_pos_neg_non)*size
 
-    dict_color = {STR_SIG_POS: color_sig_pos, STR_SIG_NEG: color_sig_neg, STR_NON_SIG: color_non_sig}
-    dict_size = {STR_SIG_POS: size_sig_pos, STR_SIG_NEG: size_sig_neg, STR_NON_SIG: size_non_sig}
-    df["sig_classes"] = get_sig_classes(df=df, col_fc=col_fc, col_pval=col_pval, th_pval=th_pval, th_fc=th_fc)
+    dict_color = {ut.STR_SIG_POS: color_sig_pos, ut.STR_SIG_NEG: color_sig_neg, ut.STR_NON_SIG: color_non_sig}
+    dict_size = {ut.STR_SIG_POS: size_sig_pos, ut.STR_SIG_NEG: size_sig_neg, ut.STR_NON_SIG: size_non_sig}
+    df[ut.COL_SIG_CLASS] = ut.get_sig_classes(df=df, col_fc=col_fc, col_pval=col_pval, th_pval=th_pval, th_fc=th_fc)
     df_plot = df.copy()
-    df_plot["sig_size"] = [dict_size[c] for c in df["sig_classes"]]
+    df_plot[COL_SIG_SIZE] = [dict_size[c] for c in df[ut.COL_SIG_CLASS]]
     kwargs = dict(edgecolor=edge_color, linewidth=edge_width)
 
     # Plotting
@@ -209,8 +190,8 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     ax = sns.scatterplot(data=df_plot,
                          x=col_fc,
                          y=col_pval,
-                         hue='sig_classes',
-                         size="sig_size",
+                         hue=ut.COL_SIG_CLASS,
+                         size=COL_SIG_SIZE,
                          sizes=(size, size_max),
                          alpha=alpha,
                          palette=dict_color,
@@ -255,7 +236,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
         ax.legend().set_visible(False)
     else:
         xo.plot_legend(dict_color=dict_color,
-                       list_cat=[STR_SIG_NEG, STR_SIG_POS, STR_NON_SIG],
+                       list_cat=[ut.STR_SIG_NEG, ut.STR_SIG_POS, ut.STR_NON_SIG],
                        ncol=1, marker="o", loc=loc_legend,
                        labelspacing=0.1, handletextpad=0.0)
 
