@@ -13,12 +13,12 @@ import xomics.utils as ut
 
 
 # II Main Functions
-def plot_imput_histo(ax=None, figsize=(6, 5), df_raw=None, df_imp=None, cols_quant=None, d_min=None, up_mnar=None,
+def plot_imput_histo(ax=None, figsize=(6, 5), df_raw=None, df_imp=None, cols_quant=None,
+                     d_min=None, up_mnar=None,
                      alpha=0.75, binwidth=0.4, colors=None, y_max=None, x_max=None, **kwargs):
     """Plot histogram of raw and imputed data"""
     colors = xo.plot_get_clist(n_colors=3) if colors is None else colors
     _args = dict(binwidth=binwidth, **kwargs)
-
     vals_imp = df_imp[cols_quant].values.flatten()
     vals_raw = df_raw[cols_quant].values.flatten()
     # Drop missing values (NaNs) from vals_imp and vals_raw

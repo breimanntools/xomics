@@ -3,10 +3,36 @@ This is a script for interface of the pRank (protein-centric ranking) class.
 """
 import pandas as pd
 import numpy as np
+from typing import Optional
 
 import xomics.utils as ut
 from ._backend.prank import p_score, e_score, c_score
 from ._backend.ehits import e_hits
+
+
+# TODO use for testing
+# ----------------
+def _adjust_log2_xvals(x_vals):
+    """Heuristic test and conduction of log2 transformation for fold changes/enrichment values
+    (performed for absolute values)"""
+    # Check if transformation is needed
+    if 10 < max(x_vals):
+        x_vals = np.log2(x_vals)
+        return x_vals, True
+    else:
+        return x_vals, False
+
+
+def _adjust_log10_pvals(x_pvals):
+    """Heuristic test and conduction of -log10 transformation for p-values"""
+    # Check if transformation is needed
+    p_log10 = (max(x_pvals) - min(x_pvals)) > 1
+    if not p_log10:
+        x_pvals = -np.log10(x_pvals)
+        return x_pvals, True
+    else:
+        return x_pvals, False
+#-----------------
 
 
 # I Helper Functions
@@ -116,24 +142,7 @@ def _check_terms_sub_list(name=None, terms_sub_list=None, terms=None):
     return terms_sub_list
 
 
-def _check_non_negative_number(name=None, val=None, min_val=0, max_val=None, accept_none=False, just_int=True):
-    """Check if value of given name variable is non-negative integer"""
-    check_types = [int] if just_int else [float, int]
-    str_check = "non-negative int" if just_int else "non-negative float or int"
-    add_str = f"n>{min_val}" if max_val is None else f"{min_val}<=n<={max_val}"
-    if accept_none:
-        add_str += " or None"
-    error = f"'{name}' ({val}) should be {str_check} n, where " + add_str
-    if accept_none and val is None:
-        return None
-    if type(val) not in check_types:
-        raise ValueError(error)
-    if val < min_val:
-        raise ValueError(error)
-    if max_val is not None and val > max_val:
-        raise ValueError(error)
-
-
+# TODO finsih docuemtnation, typing, add check for log2, -log10, accepting df_fc as input
 # II Main Functions
 class pRank:
     """Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
@@ -146,53 +155,78 @@ class pRank:
         Common substring of intensity columns of input DataFrame for associated methods
 
     """
-    def __init__(self, str_id="Protein IDs", str_quant="log2 LFQ"):
+    def __init__(self,
+                 str_id: str = "protein_id",
+                 str_quant: str = "log2_lfq"
+                 ):
         self.list_mv_classes = ut.LIST_MV_CLASSES
         self.str_id = str_id
         self.str_quant = str_quant
 
     @staticmethod
-    def p_score(ids=None, x_fc=None, x_pvals=None, adjust_log=True, verbose=True):
+    def p_score(df_fc: Optional[pd.DataFrame] = None,
+                col_fc: Optional[str] = None,
+                col_pval: Optional[str] = None,
+                x_fc: Optional[ut.ArrayLike1D] = None,
+                x_pval: Optional[ut.ArrayLike1D] = None,
+                ignore_log_check: bool = False,
+                ) -> np.ndarray:
         """
         Calculate the single protein proteomics ranking score (P score) by first z-normalizing fold change scores
         and p-values, and then integrating them protein-wise to obtain min-max normalized ranking scores.
 
         Parameters
         ----------
-        ids : list or array-like
-            List or array of protein identifiers.
+        df_fc
+            DataFrame containing fold change (FC) and P-values. ``Rows`` typically correspond to proteins and
+            ``columns`` contain FC and P-values for comparing different conditions.
+        col_fc
+            Column from ``df_fc`` with fold change values. Should correspond to ``col_pval``.
+        col_pval
+            Column from ``df_fc`` with p-values. Should correspond to ``col_fc``.
         x_fc : array-like
-            Array of fold changes for each protein (log2 fold recommanded).
-        x_pvals : array-like
-            Array of p-values for each protein (log10 fold recommanded).
-        adjust_log : bool, default=True
-            Whether to automatically test and conduct
-            - log2 transformormation for fold enrichment values
-            - -log10 transformation for p-values.
-        verbose : bool, default = True
-            Verbosity mode on or off
+            Array of fold changes for each protein (log2 fold recommanded). Should correspond to ``x_pval``.
+        x_pval : array-like
+            Array of p-values for each protein (log10 fold recommanded). Should correspond to ``x_fc``.
 
         Returns
         -------
-        p_scores : numpy.ndarray
+        p_scores
             Array of proteomics ranking scores (P scores) for each protein.
+
+        Notes
+        -----
+        Function can either be used by providing ``df_fc`` with its ``col_fc`` and ``col_pval`` column,
+        or by providing the FC and P-values directly as array using ``x_fc`` and ``x_pval``.
 
         Examples
         --------
-        >>> p_score(ids=['protein1', 'protein2'], x_fc=[2.4, 1.5], x_pvals=[0.05, 0.2])
+        >>> p_score(x_fc=[2.4, 1.5], x_pvals=[0.05, 0.2])
         array([1.0, 0.])
         """
         # Checking functions
-        ids, x_fc, x_pvals = check_input_scoring_match(ids, x_fc, x_pvals)
+        x_fc, x_pval = check_input_scoring_match(x_fc, x_pval)
         check_numeric_elements(x_fc, name="x_fc")
-        check_numeric_elements(x_pvals, name="x_pvals")
-        ut.check_bool(name="verbose", val=verbose)
+        check_numeric_elements(x_pval, name="x_pvals")
         # Get P-score
-        p_scores = p_score(ids=ids, x_fc=x_fc, x_pvals=x_pvals, adjust_log=adjust_log, verbose=verbose)
+        if df_fc is not None:
+            x_fc = df_fc[col_fc].values
+            x_pval = df_fc[col_pval].values
+        p_scores = p_score(x_fc=x_fc, x_pvals=x_pval)
         return p_scores
 
     @staticmethod
-    def e_score(ids=None, id_lists=None, x_fe=None, x_pvals=None, adjust_log=True, verbose=True):
+    def e_score(ids: ut.ArrayLike1D = None,
+                id_lists: list[list] = None,
+                x_fe: Optional[ut.ArrayLike1D] = None,
+                x_pval: Optional[ut.ArrayLike1D] = None,
+                df_fe: Optional[pd.DataFrame] = None,
+                col_id: Optional[str] = None,
+                col_id_lists: Optional[str] = None,
+                col_fe: Optional[str] = None,
+                col_pval: Optional[str] = None,
+                ignore_log_check: bool = False,
+                ) -> np.ndarray:
         """
         Calculate the single protein enrichment score (E score) by first z-normalizing fold enrichment scores and
         p-values, and then integrating them protein-wise to obtain a min-max normalized ranking score.
@@ -205,14 +239,8 @@ class pRank:
             List of protein identifier sets from enrichment analysis (e.g., set of proteins linked to specific GO term)
         x_fe : array-like
             Array of fold enrichments for each protein set.
-        x_pvals : array-like
+        x_pval : array-like
             Array of p-values for each protein set.
-        adjust_log : bool, default=True
-            Whether to automatically test and conduct.
-            - log2 transformormation for fold enrichment values
-            - -log10 transformation for p-values.
-        verbose : bool, default = True
-            Verbosity mode on or off
 
         Returns
         -------
@@ -227,18 +255,24 @@ class pRank:
         """
         # Checking functions
         # TODO check for duplicated Term
-        _, x_fe, x_pvals = check_input_scoring_match(id_lists, x_fe, x_pvals)
+        _, x_fe, x_pval = check_input_scoring_match(id_lists, x_fe, x_pval)
         check_numeric_elements(x_fe, name="x_fe")
-        check_numeric_elements(x_pvals, name="x_pvals")
+        check_numeric_elements(x_pval, name="x_pvals")
         check_all_non_negative(x_fe, name="x_fe")
-        ut.check_bool(name="verbose", val=verbose)
+        if df_fe is not None:
+            x_fe = df_fe[col_fe].values
+            x_pval = df_fe[col_pval].values
+            ids = df_fe[col_id].values
+            id_lists = df_fe[col_id_lists].values
         # Get E-score
-        e_scores = e_score(ids=ids, id_lists=id_lists, x_fe=x_fe, x_pvals=x_pvals,
-                           adjust_log=adjust_log, verbose=verbose)
+        e_scores = e_score(ids=ids, id_lists=id_lists, x_fe=x_fe, x_pvals=x_pval)
         return e_scores
 
     @staticmethod
-    def c_score(ids=None, df_imp=None, col_id=None):
+    def c_score(df_imp: pd.DataFrame = None,
+                ids: ut.ArrayLike1D = None,
+                col_id=None
+                ):
         """Obtain protein proteomics confidence score (C score) from cImpute output
 
         Parameters
@@ -305,8 +339,8 @@ class pRank:
         _check_duplicates(name="ids", lst=ids)
         _check_all_strings(name="terms", lst=terms)
         _check_duplicates(name="terms", lst=terms)
-        _check_non_negative_number(name="n_ids", val=n_ids, min_val=1, accept_none=True, just_int=True)
-        _check_non_negative_number(name="n_terms", val=n_terms, min_val=1, accept_none=True, just_int=True)
+        ut.check_number_range(name="n_ids", val=n_ids, min_val=1, accept_none=True, just_int=True)
+        ut.check_number_range(name="n_terms", val=n_terms, min_val=1, accept_none=True, just_int=True)
         # Obtain gene/protein associations with enrichment terms
         df_e_hits = e_hits(ids=ids, id_lists=id_lists, terms=terms, terms_sub_list=terms_sub_list, n_ids=n_ids,
                            n_terms=n_terms, sort_alpha=sort_alpha)

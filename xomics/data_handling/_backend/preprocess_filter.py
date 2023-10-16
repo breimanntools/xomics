@@ -18,13 +18,6 @@ def _filter_invalid_and_duplicates(df, col):
     return df.drop_duplicates(subset=col, keep="first")
 
 
-def _filter_na(df, cols):
-    """
-    Filter out rows based on NA values in specified columns.
-    """
-    return df.dropna(subset=cols)
-
-
 # Main functions
 def filter_df(df=None, cols=None, drop_na=True):
     """
@@ -37,7 +30,8 @@ def filter_df(df=None, cols=None, drop_na=True):
         elif isinstance(cols, str):
             df = _filter_invalid_and_duplicates(df, cols)
     if drop_na:
-        df = _filter_na(df, cols if cols is not None else df.columns)
+        columns = cols if cols is not None else df.columns
+        df = df.dropna(subset=columns)
     return df
 
 

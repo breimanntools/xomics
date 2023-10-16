@@ -1,6 +1,7 @@
 from .ranking import pRank
 from .imputation import cImpute
-from .data_handling import PreProcess
+from .data_handling import (PreProcess,
+                            load_dataset)
 from .plotting import (plot_volcano,
                        plot_enrich_rank,
                        plot_enrich_map,
@@ -15,6 +16,7 @@ from .plotting import (plot_volcano,
 __all__ = [
     "pRank",
     "cImpute",
+    "load_dataset",
     "PreProcess",
     "plot_volcano",
     "plot_enrich_rank",

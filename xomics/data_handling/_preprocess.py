@@ -27,8 +27,8 @@ def check_match_df_groups(df=None, groups=None, name_groups="groups", str_quant=
 
 def check_base(base=None):
     """Ensure 'base' is a valid numerical type and has an acceptable value"""
-    if not isinstance(base, (int, float)) or base not in [2.0, 10.0]:
-        raise ValueError("'base' must be a numerical value and either 2.0 or 10.0")
+    if not isinstance(base, (int, float)) or base not in [2, 10]:
+        raise ValueError("'base' must be a numerical value and either 2 or 10")
 
 
 def check_match_df_ids(df=None, list_ids=None):
@@ -59,14 +59,14 @@ groups: list of str
 
 class PreProcess:
     def __init__(self,
-                 str_id: str = "Protein IDs",
-                 str_quant: str = "log2 LFQ"
+                 str_id: str = "protein_id",
+                 str_quant: str = "log2_lfq"
                  ):
         """
         Initialize the PreProcessor object with specific string identifiers for ID and LFQ columns.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         str_id
             Identifier for the protein ID column in the dataframe.
         str_quant
@@ -158,8 +158,8 @@ class PreProcess:
         """
         Filter and optionally modify the provided DataFrame based on specified parameters.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         df
             The DataFrame with quantifications to filter. ``Rows`` typically correspond to proteins
             and ``columns`` to conditions.
@@ -168,8 +168,8 @@ class PreProcess:
         drop_na
             Whether to drop rows containing NaN values in the specified `cols`.
 
-        Returns:
-        --------
+        Returns
+        -------
         df
             The filtered DataFrame.
         """
@@ -190,8 +190,8 @@ class PreProcess:
         """
         Split names from column in dataframe and filter duplicates.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         df
             The DataFrame with quantifications to filter. ``Rows`` typically correspond to proteins
             and ``columns`` to conditions.
@@ -202,8 +202,8 @@ class PreProcess:
         drop_na
             Whether to drop rows containing NaN values in the specified `cols`.
 
-        Returns:
-        --------
+        Returns
+        -------
         df
             The modified and filtered DataFrame.
         """
@@ -263,7 +263,7 @@ class PreProcess:
     @staticmethod
     def apply_exp(df: pd.DataFrame = None,
                   cols: list = None,
-                  base: float = 2.0,
+                  base: int = 2.0,
                   neg: bool = False,
                   ) -> pd.DataFrame:
         """
@@ -276,8 +276,8 @@ class PreProcess:
         cols
             Names of columns to apply the exponential transformation to.
         base
-            The base of the exponential function. If base=2.0, apply a 2**x transformation,
-            otherwise apply a 10**x transformation if base=10.0.
+            The base of the exponential function. If ``base=2``, apply a 2**x transformation,
+            otherwise apply a 10**x transformation if ``base=10``.
         neg
             If True, multiply the exponential result by -1.
 

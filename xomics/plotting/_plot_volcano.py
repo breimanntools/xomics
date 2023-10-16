@@ -69,11 +69,12 @@ def check_match_df_names(df=None, list_names=None, col_names=None):
 
 # II Main Functions
 def plot_volcano(ax: Optional[plt.Axes] = None,
-                 figsize: Tuple[int, int] = (6,6),
+                 figsize: Tuple[int, int] = (6, 6),
                  df: pd.DataFrame = None,
                  col_fc: str = None,
                  col_pval: str = None,
                  col_names: Optional[str] = None,
+                 col_cbar: Optional[str] = None,
                  th_fc: float = 0.5,
                  th_pval: float = 0.05,
                  names_to_annotate: Optional[list] = None,
@@ -84,6 +85,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
                  alpha: float = 1.0,
                  edge_color: str = "white",
                  edge_width: float = 0.5,
+                 cmap: Optional[str] = 'viridis',
                  label_fontdict: Optional[dict] = None,
                  label_adjust_text_dict: Optional[dict] = None,
                  loc_legend: int = 2,
@@ -131,16 +133,23 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
         Dictionary of font properties for labels.
     label_adjust_text_dict
         Dictionary of properties for adjust_text function to adjust overlapping labels.
+    label_arrow
+        If True, black arrows are used for annotations (can be adjusted using ``label_adjust_text_dict``)
     loc_legend
         Location index for the plot legend.
     legend
         If True, display the legend. If False, hide the legend.
     minor_ticks
         If True, shows minor ticks in plot.
+
     Returns
     -------
     ax
         The Axes object representing the plot.
+
+    See Also
+    --------
+    - Adjust text package: `Adjust text <https://adjusttext.readthedocs.io/en/latest/>`_
     """
     # Initial parameter validation
     ut.check_ax(ax=ax, accept_none=True)
@@ -150,6 +159,8 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
         ut.check_col_in_df(name_df="df", df=df, cols=col_names)
         names_to_annotate = ut.check_list_like(name="names_to_annotate", val=names_to_annotate, accept_none=True)
         names_to_annotate = check_match_df_names(df=df, list_names=names_to_annotate, col_names=col_names)
+    if col_cbar is not None:
+        ut.check_col_in_df(name_df="df", df=df, cols=col_cbar, accept_nan=True)
     ut.check_number_range(name="th_fc", val=th_fc, min_val=0, just_int=False)
     ut.check_number_range(name="th_pval", val=th_pval, min_val=0, max_val=1, just_int=False)
     colors = ut.check_list_like(name="colors", val=colors, accept_none=True, accept_str=True)
@@ -182,20 +193,35 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     df[ut.COL_SIG_CLASS] = ut.get_sig_classes(df=df, col_fc=col_fc, col_pval=col_pval, th_pval=th_pval, th_fc=th_fc)
     df_plot = df.copy()
     df_plot[COL_SIG_SIZE] = [dict_size[c] for c in df[ut.COL_SIG_CLASS]]
-    kwargs = dict(edgecolor=edge_color, linewidth=edge_width)
 
     # Plotting
     if ax is None:
         plt.figure(figsize=figsize)
-    ax = sns.scatterplot(data=df_plot,
-                         x=col_fc,
-                         y=col_pval,
-                         hue=ut.COL_SIG_CLASS,
-                         size=COL_SIG_SIZE,
-                         sizes=(size, size_max),
-                         alpha=alpha,
-                         palette=dict_color,
-                         **kwargs)
+    kwargs = dict(data=df_plot,
+                  x=col_fc,
+                  y=col_pval,
+                  edgecolor=edge_color,
+                  linewidth=edge_width,
+                  size=COL_SIG_SIZE,
+                  sizes=(size, size_max),
+                  alpha=alpha)
+    if col_cbar is None:
+        ax = sns.scatterplot(**kwargs,
+                             hue=ut.COL_SIG_CLASS,
+                             palette=dict_color)
+    else:
+        ax = sns.scatterplot(**kwargs,
+                             hue=col_cbar,
+                             palette=cmap)
+
+        # Create mappable object for colorbar
+        norm = plt.Normalize(df[col_cbar].min(), df[col_cbar].max())
+        mappable = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
+        # Add colorbar
+        cbar = plt.colorbar(mappable, ax=ax, shrink=0.5)
+        cbar.set_label(col_cbar)
+        cbar.ax.spines['left'].set_visible(False)  # Hide the left spine
+        cbar.outline.set_visible(False)
     plt.xlabel(col_fc)
     plt.ylabel(col_pval)
     sns.despine()
@@ -229,16 +255,18 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
             fontdict.update(**label_fontdict)
         texts = [plt.text(x, y, label, fontdict=fontdict) for label, x, y in labels]
         label_adjust_text_dict = {} if label_adjust_text_dict is None else label_adjust_text_dict
-        adjust_text(texts, **label_adjust_text_dict)
+        adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='->', color='black'), **label_adjust_text_dict)
 
     # Legend and Labels
-    if not legend:
+    if not legend or col_cbar is not None:
         ax.legend().set_visible(False)
     else:
         xo.plot_legend(dict_color=dict_color,
-                       list_cat=[ut.STR_SIG_NEG, ut.STR_SIG_POS, ut.STR_NON_SIG],
-                       ncol=1, marker="o", loc=loc_legend,
+                       list_cat=[ut.STR_SIG_NEG, ut.STR_SIG_POS, ut.STR_NON_SIG], ncol=1,
+                       marker="o",
+                       loc=loc_legend,
                        labelspacing=0.1, handletextpad=0.0)
+
 
     plt.tight_layout()
     return plt.gca()

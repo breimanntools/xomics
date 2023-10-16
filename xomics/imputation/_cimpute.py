@@ -18,10 +18,10 @@ from ._backend.cimpute import run_cimpute, get_up_mnar
 
 # II Main Functions
 class cImpute:
-    """Hybrid data imputation method.
+    """Transparent hybrid data imputation method.
 
-    `cImpute` (conditional Imputation) is a hybrid imputation algorithm designed to address missing values (MVs)
-    specifically in (prote)omics data. The types of missing values can be broadly categorized into three groups based
+    `cImpute` (conditional Imputation) is a transparent hybrid imputation algorithm designed to address missing values
+    (MVs) in (prote)omics data. The types of missing values can be broadly categorized into three groups based
     on their nature and the reasons behind their occurrence, as detailed in [Lazar16] and [Wei18]:
 
     - **Missing Completely At Random (MCAR)**: MVs resulting from random errors in data acquisition. Due to the inherent
@@ -49,7 +49,10 @@ class cImpute:
     4. Performing group-wise imputation for proteins whose CS exceeds a predefined threshold.
 
     """
-    def __init__(self, str_id="Protein IDs", str_quant="log2 LFQ"):
+    def __init__(self,
+                 str_id: str = "protein_id",
+                 str_quant: str = "log2_lfq"
+                 ):
         self.list_mv_classes = ut.LIST_MV_CLASSES
         self.str_id = str_id
         self.str_quant = str_quant
