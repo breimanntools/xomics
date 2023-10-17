@@ -2,8 +2,10 @@
 This is a script for comparing raw vs imputed data by histogram.
 """
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
+from typing import Optional, Union, Tuple, List
 
 import xomics as xo
 import xomics.utils as ut
@@ -13,10 +15,60 @@ import xomics.utils as ut
 
 
 # II Main Functions
-def plot_imput_histo(ax=None, figsize=(6, 5), df_raw=None, df_imp=None, cols_quant=None,
-                     d_min=None, up_mnar=None,
-                     alpha=0.75, binwidth=0.4, colors=None, y_max=None, x_max=None, **kwargs):
-    """Plot histogram of raw and imputed data"""
+# TODO add check function, improve interface and make consistent, add tests, add tutorial
+def plot_imput_histo(ax: Optional[plt.Axes] = None,
+                     figsize: Tuple[int, int] = (6, 5),
+                     df_raw: pd.DataFrame = None,
+                     df_imp: pd.DataFrame = None,
+                     cols_quant: List[str] = None,
+                     d_min: Optional[float] = None,
+                     up_mnar: Optional[float] = None,
+                     alpha: float = 0.75,
+                     binwidth: float = 0.4,
+                     colors: Optional[List[str]] = None,
+                     y_max: Optional[float] = None,
+                     x_max: Optional[float] = None,
+                     **kwargs):
+    """
+    Plot histogram of raw and imputed data
+
+    Parameters
+    ----------
+    ax
+        The axes upon which to draw the plot. If None, a new figure and axes are created.
+    figsize
+        The size of the figure to create.
+    df_raw
+        Dataframe containing the raw data.
+    df_imp
+        Dataframe containing the imputed data.
+    cols_quant
+        Columns to consider for the quantitative analysis.
+    d_min
+        The minimum value of the data for annotation.
+    up_mnar
+        Upper value for MNAR annotation.
+    alpha
+        Transparency level of the histogram bars for imputed data.
+    binwidth
+        Width of the histogram bins.
+    colors
+        List of colors for the histogram bars. If None, a default set of colors is used.
+    y_max
+        The maximum value for the y-axis.
+    x_max
+        The maximum value for the x-axis.
+    **kwargs
+        Additional keyword arguments passed to seaborn's histplot.
+
+    Returns
+    -------
+    ax
+        Axes object.
+    """
+    # Check input
+
+    # Pre-process data
     colors = xo.plot_get_clist(n_colors=3) if colors is None else colors
     _args = dict(binwidth=binwidth, **kwargs)
     vals_imp = df_imp[cols_quant].values.flatten()
@@ -58,7 +110,4 @@ def plot_imput_histo(ax=None, figsize=(6, 5), df_raw=None, df_imp=None, cols_qua
     # Adjust plot
     sns.despine()
     plt.tight_layout()
-    if ax is None:
-        return fig, ax
-    else:
-        return ax
+    return ax

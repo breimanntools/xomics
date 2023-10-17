@@ -60,6 +60,7 @@ Plotting
     :toctree: generated/
 
         xomics.plot_volcano
+        xomics.plot_imput_histo
 
 Plot Utilities
 --------------

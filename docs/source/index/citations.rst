@@ -8,5 +8,8 @@ If you use 'xOmics' in your work, please cite the respective publication as foll
 **cImpute**:
    [Citation details and link if available]
 
+**pRank**:
+   [Citation details and link if available]
+
 **pIntegrate**:
    [Citation details and link if available]

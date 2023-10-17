@@ -18,13 +18,11 @@ from ._backend.cimpute import run_cimpute, get_up_mnar
 doc_param_df_groups_upmnar = \
 """\
 df
-    DataFrame containing quantified values with MVs. ``Rows`` typically correspond to proteins  and ``columns`` 
-    to conditions.
+    DataFrame containing quantified values with MVs. ``Rows`` typically correspond to proteins  and ``columns``  to conditions.
 groups
     List of quantification group (substrings of columns in ``df``).
-loc_pct_up_mnar
-    Location factor [0-1] for the upper MNAR limit (upMNAR) given as relative proportion (percentage) of the
-    detection range.\
+loc_pct_upmnar
+    Location factor [0-1] for the upper MNAR limit (upMNAR) given as relative proportion (percentage) of the detection range.\
 """
 
 
@@ -43,13 +41,6 @@ class cImpute:
     - **Missing Not At Random (MNAR)**: MVs caused by experimental biases like detection limits in mass-spectrometry.
       They often follow a left-censored Gaussian distribution, indicating truncation at lower abundances.
 
-    Parameters
-    ----------
-    str_id
-        Column name of entry ids of input DataFrame for associated methods
-    str_quant
-        Common substring of intensity columns of input DataFrame for associated methods
-
     Notes
     -----
     The primary goal of `cImpute` is to focus on the imputation of MVs that align with well-defined confidence criteria.
@@ -65,18 +56,27 @@ class cImpute:
                  str_id: str = "protein_id",
                  str_quant: str = "log2_lfq"
                  ):
+        """
+        Parameters
+        ----------
+        str_id
+            Column name of entry ids of input DataFrame for associated methods
+        str_quant
+            Common substring of intensity columns of input DataFrame for associated methods
+        """
         self.list_mv_classes = ut.LIST_MV_CLASSES
         self.str_id = str_id
         self.str_quant = str_quant
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups_upmnar)
+    @ut.doc_params(doc_param_df_groups_upmnar=doc_param_df_groups_upmnar)
     def get_limits(self,
                    df: pd.DataFrame = None,
                    groups: ut.ArrayLike1D = None,
                    loc_pct_upmnar: float = 0.25,
                    cols_quant: ut.ArrayLike1D = None
                    ) -> Tuple[float, float, float]:
-        """Get minimum of detected values (d_min, i.e., detection limit), upper bound of MNAR MVs (up_mnar),
+        """
+        Get minimum of detected values (d_min, i.e., detection limit), upper bound of MNAR MVs (up_mnar),
         and maximum of detected values (d_max).
 
         Parameters
@@ -108,7 +108,7 @@ class cImpute:
         d_max = df[cols_quant].max().max()
         return d_min, up_mnar, d_max
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups_upmnar)
+    @ut.doc_params(doc_param_df_groups_upmnar=doc_param_df_groups_upmnar)
     def run(self,
             df: pd.DataFrame = None,
             groups: ut.ArrayLike1D = None,
@@ -116,7 +116,10 @@ class cImpute:
             min_cs: float = 0.5,
             n_neighbors: int = 5
             ) -> pd.DataFrame:
-        """Hybrid method for imputation of omics data called conditional imputation (cImpute)
+        """
+        Run cImpute algorithm.
+
+        Hybrid method for imputation of omics data called conditional imputation (cImpute)
         using MinProb for MNAR (Missing Not at Random) missing values and KNN imputation for
         MCAR (Missing completely at Random) missing values.
 

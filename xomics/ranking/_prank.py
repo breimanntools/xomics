@@ -10,7 +10,8 @@ from ._backend.prank import p_score, e_score, c_score
 from ._backend.ehits import e_hits
 
 
-# TODO use for testing
+# TODO use log2 check for testing (if data are not properly log-transformed, trhough error;
+# TODO can be disabled by user via 'ignore_log_check')
 # ----------------
 def _adjust_log2_xvals(x_vals):
     """Heuristic test and conduction of log2 transformation for fold changes/enrichment values
@@ -36,6 +37,8 @@ def _adjust_log10_pvals(x_pvals):
 
 
 # I Helper Functions
+# TODO assess whether check functions can be replaced by ut.check functions.
+# TODO refactor check functions
 # Check functions
 def check_all_non_negative(val_list, name=None):
     """Check if all values in the list are non-negative numbers."""
@@ -142,16 +145,16 @@ def _check_terms_sub_list(name=None, terms_sub_list=None, terms=None):
     return terms_sub_list
 
 
-# TODO finsih docuemtnation, typing, add check for log2, -log10, accepting df_fc as input
+# TODO finsih docuemtnation, typing, refactor check functions (include log check), testing, tutorial
 # II Main Functions
 class pRank:
     """Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
 
     Parameters
     ----------
-    str_id: str, default = "Protein IDs"
+    str_id
         Column name of entry ids of input DataFrame for associated methods
-    str_quant: str, default = "log2 LFQ"
+    str_quant
         Common substring of intensity columns of input DataFrame for associated methods
 
     """
@@ -164,10 +167,7 @@ class pRank:
         self.str_quant = str_quant
 
     @staticmethod
-    def p_score(df_fc: Optional[pd.DataFrame] = None,
-                col_fc: Optional[str] = None,
-                col_pval: Optional[str] = None,
-                x_fc: Optional[ut.ArrayLike1D] = None,
+    def p_score(x_fc: Optional[ut.ArrayLike1D] = None,
                 x_pval: Optional[ut.ArrayLike1D] = None,
                 ignore_log_check: bool = False,
                 ) -> np.ndarray:
@@ -177,16 +177,9 @@ class pRank:
 
         Parameters
         ----------
-        df_fc
-            DataFrame containing fold change (FC) and P-values. ``Rows`` typically correspond to proteins and
-            ``columns`` contain FC and P-values for comparing different conditions.
-        col_fc
-            Column from ``df_fc`` with fold change values. Should correspond to ``col_pval``.
-        col_pval
-            Column from ``df_fc`` with p-values. Should correspond to ``col_fc``.
-        x_fc : array-like
+        x_fc
             Array of fold changes for each protein (log2 fold recommanded). Should correspond to ``x_pval``.
-        x_pval : array-like
+        x_pval
             Array of p-values for each protein (log10 fold recommanded). Should correspond to ``x_fc``.
 
         Returns
@@ -209,9 +202,6 @@ class pRank:
         check_numeric_elements(x_fc, name="x_fc")
         check_numeric_elements(x_pval, name="x_pvals")
         # Get P-score
-        if df_fc is not None:
-            x_fc = df_fc[col_fc].values
-            x_pval = df_fc[col_pval].values
         p_scores = p_score(x_fc=x_fc, x_pvals=x_pval)
         return p_scores
 
@@ -220,11 +210,6 @@ class pRank:
                 id_lists: list[list] = None,
                 x_fe: Optional[ut.ArrayLike1D] = None,
                 x_pval: Optional[ut.ArrayLike1D] = None,
-                df_fe: Optional[pd.DataFrame] = None,
-                col_id: Optional[str] = None,
-                col_id_lists: Optional[str] = None,
-                col_fe: Optional[str] = None,
-                col_pval: Optional[str] = None,
                 ignore_log_check: bool = False,
                 ) -> np.ndarray:
         """
@@ -233,13 +218,13 @@ class pRank:
 
         Parameters
         ----------
-        ids : list or array-like
+        ids
             List or array of protein identifiers.
-        id_lists : list of lists
+        id_lists
             List of protein identifier sets from enrichment analysis (e.g., set of proteins linked to specific GO term)
-        x_fe : array-like
+        x_fe
             Array of fold enrichments for each protein set.
-        x_pval : array-like
+        x_pval
             Array of p-values for each protein set.
 
         Returns
@@ -259,11 +244,6 @@ class pRank:
         check_numeric_elements(x_fe, name="x_fe")
         check_numeric_elements(x_pval, name="x_pvals")
         check_all_non_negative(x_fe, name="x_fe")
-        if df_fe is not None:
-            x_fe = df_fe[col_fe].values
-            x_pval = df_fe[col_pval].values
-            ids = df_fe[col_id].values
-            id_lists = df_fe[col_id_lists].values
         # Get E-score
         e_scores = e_score(ids=ids, id_lists=id_lists, x_fe=x_fe, x_pvals=x_pval)
         return e_scores
@@ -272,29 +252,37 @@ class pRank:
     def c_score(df_imp: pd.DataFrame = None,
                 ids: ut.ArrayLike1D = None,
                 col_id=None
-                ):
+                ) -> np.ndarray:
         """Obtain protein proteomics confidence score (C score) from cImpute output
 
         Parameters
         ----------
-        ids : list or array-like
+        df_imp
+            Data Frame with imputed values from ``cImpute``.
+        ids
             List or array of protein identifiers.
-        df_imp : pandas.DataFrame
-            Data Frame from cImpute.
-        col_id : str, default=None
+        col_id
             Name of id column from 'df_imp'. If None, index will be considered for ids.
 
         Returns
         -------
-        c_scores : numpy.ndarray
+        c_scores
             Array of confidence scores (C scores) from imputation for each protein.
         """
         c_scores = c_score(ids=ids, df_imp=df_imp, col_id=col_id)
         return c_scores
 
     @staticmethod
-    def e_hits(ids=None, id_lists=None, terms=None, terms_sub_list=None, n_ids=None, n_terms=None, sort_alpha=False):
-        """Get association matrix for protein ids and enrichment terms.
+    def e_hits(ids=None,
+               id_lists=None,
+               terms=None,
+               terms_sub_list=None,
+               n_ids=None,
+               n_terms=None,
+               sort_alpha=False
+               ) -> pd.DataFrame:
+        """
+        Get association matrix for protein ids and enrichment terms.
 
         Get matrix with associations between protein/gene ids and id sets representing protein/gene lists
         associated with specific biological terms obtained from an enrichment analysis (referred to as 'enrichment terms')

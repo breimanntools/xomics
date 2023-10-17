@@ -41,7 +41,7 @@ doc_param_df_groups = \
 """\
 df
     DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
-groups: list of str
+groups
     List with names grouping conditions from ``df`` columns.\
 """
 
