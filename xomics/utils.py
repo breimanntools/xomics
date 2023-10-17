@@ -151,3 +151,14 @@ def check_verbose(verbose):
         check_bool(name="verbose", val=verbose)
     return verbose
 
+
+def check_match_df_groups(df=None, groups=None, name_groups="groups", str_quant=None):
+    """"""
+    if str_quant is None:
+        raise ValueError("'str_quant' must be given.")
+    list_substr_cols = [col.replace(str_quant, "").split("_") for col in list(df)]
+    list_substr_cols = flatten_list(list_substr_cols)
+    wrong_groups = [x for x in groups if x not in list_substr_cols]
+    if len(wrong_groups) > 0:
+        raise ValueError(f"The following entries from '{name_groups}' are not in 'df': {wrong_groups}")
+

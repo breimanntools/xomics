@@ -14,7 +14,7 @@ from xomics.plotting._utils_plot  import set_legend_handles_labels, _adjust_text
 # TODO provide simple highlighted functions for plotting
 
 # II Main Functions
-def plot_rank(df=None, show_names=False, force_text=0.2, force_points=0.2, force_object=0.2):
+def plot_prank(df=None, show_names=False, force_text=0.2, force_points=0.2, force_object=0.2):
     """"""
 
     plt.figure(figsize=(5, 5))
@@ -45,7 +45,7 @@ def plot_rank(df=None, show_names=False, force_text=0.2, force_points=0.2, force
                               y=1, x=0.8)
 
 
-def plot_rank_scatter(df=None, show_names=False, force_text=0.2, force_points=0.2, force_object=0.2):
+def plot_prank_scatter(df=None, show_names=False, force_text=0.2, force_points=0.2, force_object=0.2):
     """"""
     plt.figure(figsize=(5, 5))
     args = dict(size=2, x=ut.COL_P_SCORE, y=ut.COL_E_SCORE,

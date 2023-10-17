@@ -4,6 +4,7 @@ This is a script for interface of the cImpute (conditional Imputation) class.
 import pandas as pd
 import numpy as np
 import xomics.utils as ut
+from typing import Tuple
 
 from ._backend.cimpute import run_cimpute, get_up_mnar
 
@@ -14,6 +15,17 @@ from ._backend.cimpute import run_cimpute, get_up_mnar
 # TODO d) Extend to other omics data
 
 # I Helper Functions
+doc_param_df_groups_upmnar = \
+"""\
+df
+    DataFrame containing quantified values with MVs. ``Rows`` typically correspond to proteins  and ``columns`` 
+    to conditions.
+groups
+    List of quantification group (substrings of columns in ``df``).
+loc_pct_up_mnar
+    Location factor [0-1] for the upper MNAR limit (upMNAR) given as relative proportion (percentage) of the
+    detection range.\
+"""
 
 
 # II Main Functions
@@ -33,9 +45,9 @@ class cImpute:
 
     Parameters
     ----------
-    str_id: str, default = "Protein IDs"
+    str_id
         Column name of entry ids of input DataFrame for associated methods
-    str_quant: str, default = "log2 LFQ"
+    str_quant
         Common substring of intensity columns of input DataFrame for associated methods
 
     Notes
@@ -57,68 +69,87 @@ class cImpute:
         self.str_id = str_id
         self.str_quant = str_quant
 
-    def get_limits(self, df=None, loc_pct_up_mnar=0.25, groups=None, cols_quant=None):
+    @ut.doc_params(doc_param_df_groups=doc_param_df_groups_upmnar)
+    def get_limits(self,
+                   df: pd.DataFrame = None,
+                   groups: ut.ArrayLike1D = None,
+                   loc_pct_upmnar: float = 0.25,
+                   cols_quant: ut.ArrayLike1D = None
+                   ) -> Tuple[float, float, float]:
         """Get minimum of detected values (d_min, i.e., detection limit), upper bound of MNAR MVs (up_mnar),
         and maximum of detected values (d_max).
 
         Parameters
         ----------
-        df: DataFrame
-            DataFrame containing quantified features including missing values
-        loc_pct_up_mnar: int, default=0.1, [0-1]
-            Location factor for the upMNAR given as relative proportion (percentage) of the detection range
-        groups: list or array-like
-            List of all group columns
+        {doc_param_df_groups_upmnar}
+        cols_quant
+            Column names with quantification data in ``df``.
 
         Return
         ------
-        d_min: int
+        d_min
             Minimum of detected values
-        up_mnar: int
+        up_mnar
             upper bound of MNAR MVs
-        d_max: int
+        d_max
             Maximum of detected values
         """
-        df = df.copy()
+        # Check input
+        cols_quant = ut.check_list_like(name="cols_quant", val=cols_quant, accept_none=False)
+        df = ut.check_df(df=df, accept_none=False, cols_req=cols_quant)
+        groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
+        ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        ut.check_number_range(name="loc_pct_upmnar", val=loc_pct_upmnar, min_val=0, max_val=1,
+                              just_int=False, accept_none=False)
+        # Compute limits
         if cols_quant is None:
             cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=self.str_quant)
-        d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_up_mnar=loc_pct_up_mnar)
+        d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_upmnar=loc_pct_upmnar)
         d_max = df[cols_quant].max().max()
         return d_min, up_mnar, d_max
 
-    def run(self, df=None, groups=None, min_cs=0.5, loc_up_mnar=0.25, n_neighbors=5):
+    @ut.doc_params(doc_param_df_groups=doc_param_df_groups_upmnar)
+    def run(self,
+            df: pd.DataFrame = None,
+            groups: ut.ArrayLike1D = None,
+            loc_pct_upmnar: float = 0.25,
+            min_cs: float = 0.5,
+            n_neighbors: int = 5
+            ) -> pd.DataFrame:
         """Hybrid method for imputation of omics data called conditional imputation (cImpute)
         using MinProb for MNAR (Missing Not at Random) missing values and KNN imputation for
         MCAR (Missing completely at Random) missing values.
 
         Parameters
         ----------
-        df: DataFrame
-            DataFrame containing quantified features including missing values
-        groups
-            List of quantification group (substrings of columns in ``df``)
-        min_cs: int, default 0.5 [0-1]
-            Minimum of confidence score used for selecting values for protein in groups to apply imputation on.
-        loc_up_mnar: int, default 0.25 [0-1]
-            Factor to determine the location of the upper detection limit bound. In percent of total value range.
-
-        n_neighbors : int, default=5 (KNN imputation parameter)
-            Number of neighboring samples to use for imputation.
+        {doc_param_df_groups_upmnar}
+        min_cs
+            Minimum of confidence score [0-1] used for selecting values for protein in groups to apply imputation on.
+        n_neighbors
+            Number of neighboring samples to use for MCAR imputation by KNN.
 
         Return
         ------
-        df_imp: DataFrame
+        df_imp
             DataFrame with (a) imputed intensities values and (b) group-wise confidence score and NaN classification.
 
         Notes
         -----
-        MAR is only imputed if ``min_cs=0`` using the imputation for MCAR.
+        - MAR is only imputed if ``min_cs=0`` using the imputation for MCAR.
         """
         # Check input
-
-        # Run cImpute algorithm
+        df = ut.check_df(df=df, accept_none=False)
+        groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
+        ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        ut.check_number_range(name="loc_pct_upmnar", val=loc_pct_upmnar, min_val=0, max_val=1,
+                              just_int=False, accept_none=False)
+        ut.check_number_range(name="min_cs", val=min_cs, min_val=0, max_val=1,
+                              just_int=False, accept_none=False)
+        ut.check_number_range(name="n_neighbors", val=n_neighbors, min_val=1,
+                              just_int=True, accept_none=False)
+        # Run imputation
         df_imp = run_cimpute(df=df, groups=groups,
-                             min_cs=min_cs, loc_up_mnar=loc_up_mnar, n_neighbors=n_neighbors,
+                             min_cs=min_cs, loc_pcat_upmnar=loc_pct_upmnar, n_neighbors=n_neighbors,
                              str_quant=self.str_quant, str_id=self.str_id)
         return df_imp
 

@@ -155,9 +155,9 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     ut.check_ax(ax=ax, accept_none=True)
     ut.check_tuple(name="figsize", val=figsize, n=2, accept_none=True)
     df = ut.check_df(name="df", df=df, cols_req=[col_fc, col_pval])
-    if col_names is not None:
-        ut.check_col_in_df(name_df="df", df=df, cols=col_names)
-        names_to_annotate = ut.check_list_like(name="names_to_annotate", val=names_to_annotate, accept_none=True)
+    if col_names is not None or names_to_annotate is not None:
+        ut.check_col_in_df(name_df="df", df=df, cols=col_names, name_cols="col_names")
+        names_to_annotate = ut.check_list_like(name="names_to_annotate", val=names_to_annotate, accept_none=False)
         names_to_annotate = check_match_df_names(df=df, list_names=names_to_annotate, col_names=col_names)
     if col_cbar is not None:
         ut.check_col_in_df(name_df="df", df=df, cols=col_cbar, accept_nan=True)

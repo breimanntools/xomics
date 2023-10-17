@@ -108,7 +108,7 @@ def check_df(name="df", df=None, cols_req=None, accept_none=False, accept_nan=Tr
     return df.copy()
 
 
-def check_col_in_df(df=None, name_df=None, cols=None, accept_nan=False, error_if_exists=False, accept_none=False):
+def check_col_in_df(df=None, name_df=None, cols=None, name_cols=None, accept_nan=False, error_if_exists=False, accept_none=False):
     """
     Check if the column or columns exists in the DataFrame, if the values have the correct type, and if NaNs are allowed.
     """
@@ -117,7 +117,7 @@ def check_col_in_df(df=None, name_df=None, cols=None, accept_nan=False, error_if
         raise ValueError(f"Column '{cols}' already exists in '{name_df}'")
     if cols is None:
         if not accept_none:
-            raise ValueError(f"'cols' should not be None.")
+            raise ValueError(f"'{name_cols}' should not be None.")
         return None
     # Check if the column exists in the DataFrame
     if isinstance(cols, str):

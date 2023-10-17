@@ -36,6 +36,10 @@ Algorithms
 
 Datasets and Benchmarks
 -----------------------
+.. [Penkert] Penkert et al. (2021),
+    *Proteomic and lipidomic profiling of demyelinating lesions identifies fatty acids as modulators in lesion recovery*
+    `Cell Reports <https://www.sciencedirect.com/science/article/pii/S2211124721013681>`__
+
 .. [Monasor20] Monasor et al. (2020),
     *Fibrillar Aβ triggers microglial proteome alterations and dysfunction in Alzheimer mouse models*
     `eLife <https://elifesciences.org/articles/54083>`__.

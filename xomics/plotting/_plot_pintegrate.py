@@ -12,6 +12,6 @@ import xomics.utils as ut
 
 
 # II Main Functions
-def plot_integ_scatter():
+def plot_pintegrate():
     """"""
     # TODO Clarissa

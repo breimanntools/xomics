@@ -13,6 +13,7 @@ import xomics.utils as ut
 def _compute_cs(vals=None, mv_class=None, n=None):
     """Compute confidence score (CS) depending on missing value category and
     proportion of missing values"""
+    # TODO adjust for MNAR to go up if number of values increase again (minimum if n nan == n/2)
     count_nan = lambda val: len([x for x in val if str(x) == "nan"])
     if mv_class == ut.STR_NM:
         return 1
@@ -91,12 +92,12 @@ def _create_groupwise_dfs(cs_vals=None, mv_classes=None, group_dict=None, index=
 
 
 # II Main Functions
-def get_up_mnar(df=None, loc_pct_up_mnar=0.25):
+def get_up_mnar(df=None, loc_pct_upmnar=0.25):
     """Get upper bound for MNAR MVs for whole data set"""
     d_min = df.min().min()  # Detection limit
     d_max = df.max().max()  # Largest detected value
     dr = d_max - d_min      # Detection range
-    up_mnar = d_min + loc_pct_up_mnar * dr   # Upper MNAR border
+    up_mnar = d_min + loc_pct_upmnar * dr   # Upper MNAR border
     return d_min, up_mnar
 
 
@@ -108,15 +109,15 @@ def classify_of_mvs(df_group=None, up_mnar=None):
         n_nan = row.isnull().sum()
         n_higher_up_mnar = np.array((row > up_mnar)).sum()
         n_lower_or_equal_up_mnar = np.array((row <= up_mnar)).sum()
-        # MNAR (Missing Not At Random)
-        if n_lower_or_equal_up_mnar + n_nan == n_groups:
+        # NM (No Missing values)
+        if n_nan == 0:
+            mv_classes.append(ut.STR_NM)
+        # MNAR (Missing Not At Random: all values are nan or lower than up_mnar)
+        elif n_lower_or_equal_up_mnar + n_nan == n_groups:
             mv_classes.append(ut.STR_MNAR)
-        # MCAR (Missing Completely At Random)
+        # MCAR (Missing Completely At Random: all values are nan or higher than up_mnar)
         elif n_higher_up_mnar + n_nan == n_groups:
             mv_classes.append(ut.STR_MCAR)
-        # NM (No Missing values)
-        elif n_higher_up_mnar + n_lower_or_equal_up_mnar == n_groups:
-            mv_classes.append(ut.STR_NM)
         # MAR (Missing At Random)
         else:
             mv_classes.append(ut.STR_MAR)
@@ -144,12 +145,13 @@ def impute(df_group=None, mv_classes=None, list_cs=None, min_cs=0.5, d_min=None,
     for mv_class in ut.LIST_MV_CLASSES:
         mask = np.array([True if (l == mv_class and cs >= min_cs) else False for l, cs in zip(mv_classes, list_cs)])
         df = df_group[mask]
-        df_imput = _impute(df=df, mv_class=mv_class,
-                           n_neighbors=n_neighbors,
-                           d_min=d_min,
-                           up_mnar=up_mnar,
-                           min_cs=min_cs)
-        list_df.append(df_imput)
+        if len(df) > 0:
+            df_imput = _impute(df=df, mv_class=mv_class,
+                               n_neighbors=n_neighbors,
+                               d_min=d_min,
+                               up_mnar=up_mnar,
+                               min_cs=min_cs)
+            list_df.append(df_imput)
     df_group_imputed = pd.concat(list_df, axis=0).sort_index()
     mask = np.array([True if i in df_group_imputed.index else False for i in df_group.index])
     df_group[mask] = df_group_imputed
@@ -158,13 +160,13 @@ def impute(df_group=None, mv_classes=None, list_cs=None, min_cs=0.5, d_min=None,
 
 # TODO optimize n_neighbors, optimize for performance
 # Main function
-def run_cimpute(df=None, groups=None, min_cs=0.5, loc_up_mnar=0.25, n_neighbors=5, str_id=None, str_quant=None):
+def run_cimpute(df=None, groups=None, min_cs=0.5, loc_pcat_upmnar=0.25, n_neighbors=5, str_id=None, str_quant=None):
     """Run complete cImpute pipeline"""
     df = df.copy()
     df.index = df[str_id]
     dict_group_cols_quant = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=str_quant)
     cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=str_quant)
-    d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_up_mnar=loc_up_mnar)
+    d_min, up_mnar = get_up_mnar(df=df[cols_quant], loc_pct_upmnar=loc_pcat_upmnar)
     list_df_groups = []
     list_mv_classes = []
     cs_vals = []

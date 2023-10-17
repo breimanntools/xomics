@@ -14,17 +14,6 @@ from ._backend.preprocess_filter import filter_df, filter_names
 
 
 # I Helper Functions
-def check_match_df_groups(df=None, groups=None, name_groups="groups", str_quant=None):
-    """"""
-    if str_quant is None:
-        raise ValueError("'str_quant' must be given.")
-    list_substr_cols = [col.replace(str_quant, "").split("_") for col in list(df)]
-    list_substr_cols = ut.flatten_list(list_substr_cols)
-    wrong_groups = [x for x in groups if x not in list_substr_cols]
-    if len(wrong_groups) > 0:
-        raise ValueError(f"The following entries from '{name_groups}' are not in 'df': {wrong_groups}")
-
-
 def check_base(base=None):
     """Ensure 'base' is a valid numerical type and has an acceptable value"""
     if not isinstance(base, (int, float)) or base not in [2, 10]:
@@ -95,7 +84,7 @@ class PreProcess:
         # Check input
         df = ut.check_df(df=df, accept_none=False)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
         # Get columns with quantifications
         cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=self.str_quant)
         return cols_quant
@@ -120,7 +109,7 @@ class PreProcess:
         # Check input
         df = ut.check_df(df=df, accept_none=False)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
         # Get dictionary for quantifications
         dict_qcol_group = ut.get_dict_qcol_group(df=df, groups=groups, str_quant=self.str_quant)
         return dict_qcol_group
@@ -145,7 +134,7 @@ class PreProcess:
         # Check input
         df = ut.check_df(df=df, accept_none=False)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
-        check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
         # Get dictionary for quantifications
         dict_group_qcols = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=self.str_quant)
         return dict_group_qcols
@@ -416,8 +405,8 @@ class PreProcess:
         ut.check_str_in_list(name="pvals_method", val=pvals_correction, accept_none=True,
                              list_options=["bonferroni", "sidak", "holm", "hommel", "fdr_bh"])
         ut.check_bool(name="pvals_neg_log10", val=pvals_neg_log10)
-        check_match_df_groups(df=df, groups=groups, str_quant=self.str_quant)
-        check_match_df_groups(df=df, groups=groups_ctrl, name_groups="groups_ctrl", str_quant=self.str_quant)
+        ut.check_match_df_groups(df=df, groups=groups, str_quant=self.str_quant)
+        ut.check_match_df_groups(df=df, groups=groups_ctrl, name_groups="groups_ctrl", str_quant=self.str_quant)
         # Get the mapping dictionaries
         df_fc = run_preprocess(df=df, groups=groups, groups_ctrl=groups_ctrl,
                                pvals_method=pvals_correction, pvals_neg_log10=pvals_neg_log10,
