@@ -58,7 +58,7 @@ Overview of different omics analysis software tools such as `MaxQuant <https://w
 
 ADD-TABLE
 
-.. _t3_omics_post-analysis_tools_XXX:
+.. _t3_omics_post_analysis_tools_XXX:
 
 Post-Analysis Tools
 -------------------
@@ -69,7 +69,7 @@ such as `Perseus <https://maxquant.net/perseus/>`_ to Python-based packages tail
 
 ADD-TABLE
 
-.. _t4_gene_enrichment_toolsXXX:
+.. _t4_gene_enrichment_tools_XXX:
 
 Gene Enrichment Tools
 ---------------------

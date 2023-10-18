@@ -72,11 +72,13 @@ def plot_imput_histo(ax: Optional[plt.Axes] = None,
     # Pre-process data
     colors = xo.plot_get_clist(n_colors=3) if colors is None else colors
     _args = dict(binwidth=binwidth, **kwargs)
-    vals_imp = df_imp[cols_quant].values.flatten()
     vals_raw = df_raw[cols_quant].values.flatten()
+    n_raw = len(df_raw)
+    vals_imp = df_imp[cols_quant].values.flatten()
+    n_imp = len(df_imp)
     # Drop missing values (NaNs) from vals_imp and vals_raw
-    vals_imp = vals_imp[~np.isnan(vals_imp)]
     vals_raw = vals_raw[~np.isnan(vals_raw)]
+    vals_imp = vals_imp[~np.isnan(vals_imp)]
 
     # Plot
     if ax is None:

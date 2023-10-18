@@ -49,7 +49,7 @@ All tables from the xOmics documentation are listed here, in chronological order
    * - t2_omics_analysis_tools
      - Analysis tools for omics data
      - nan
-   * - t3_omics_post-analysis_tools
+   * - t3_omics_post_analysis_tools
      - Post-analysis tools for omics data
      - nan
    * - t4_gene_enrichment_tools
@@ -215,7 +215,7 @@ Overview of different omics analysis software tools such as `MaxQuant <https://w
      - [Link to paper]
 
 
-.. _t3_omics_post-analysis_tools_XXX:
+.. _t3_omics_post_analysis_tools:
 
 Post-Analysis Tools
 -------------------
@@ -240,119 +240,163 @@ such as `Perseus <https://maxquant.net/perseus/>`_ to Python-based packages tail
      - Advantages
      - Disadvantages
      - Publication
-   * - MaxQuant
-     - Proteomics data analysis, especially for label-free quantification
-     - Proteomics
-     - No
-     - Excellent
-     - Active
-     - Moderate
-     - Standalone / GUI
-     - Robust algorithms, widely used
-     - Requires high computational resources
-     - [Link to paper]
-   * - Spectronaut
-     - Analysis of DIA (data-independent acquisition) mass spectrometry data
+   * - Perseus
+     - Comprehensive platform for in-depth analysis of proteomics data
      - Proteomics
      - No
      - Good
-     - Managed by Biognosys
+     - Moderate
      - Limited
-     - Standalone / GUI
-     - Optimized for DIA, high reproducibility
-     - Proprietary software
+     - GUI
+     - Comprehensive analysis for MaxQuant data
+     - Limited to specific datasets
      - [Link to paper]
-   * - DIA-NN
-     - Software suite for DIA data analysis
+   * - PEPPI
+     - Tool for analyzing protein-protein interactions and functional associations
+     - Proteomics
+     - Unknown
+     - Moderate
+     - Unknown
+     - Unknown
+     - Likely GUI
+     - Protein interaction analysis
+     - Unknown support and documentation
+     - Unknown
+   * - MSstats
+     - Statistical relative quantification in mass spectrometry-based proteomics
+     - Proteomics
+     - Yes
+     - Good
+     - Active
+     - Moderate
+     - R / GUI
+     - Robust statistical framework
+     - R learning curve for some
+     - [Link to paper]
+   * - Pyteomics
+     - Collection of tools for various tasks in proteomics data analysis
+     - Proteomics
+     - Yes
+     - Good
+     - Moderate
+     - Good
+     - Python
+     - Python-based, flexible
+     - Requires Python expertise
+     - [Link to paper]
+   * - AlphaPept
+     - Peptide identification and quantification
      - Proteomics
      - Yes
      - Good
      - Growing
-     - Good
-     - Command-line
-     - Open-source, versatile
-     - Command-line based
+     - Limited
+     - Python / GUI
+     - Fast and accurate peptide identification
+     - Still maturing
      - [Link to paper]
-   * - Skyline
-     - Targeted mass spec data analysis
-     - Proteomics
+   * - Seurat
+     - Toolkit for quality control, analysis, and exploration of single-cell RNA-seq data
+     - scRNA-seq
      - Yes
      - Excellent
-     - Active
-     - Excellent
-     - Standalone / GUI
-     - Supports multiple instrument vendors, extensible
-     - Mainly for targeted proteomics
-     - [Link to paper]
-   * - LipidSearch
-     - Software for lipidomics data processing and identification
-     - Lipidomics
-     - No
+     - Very Active
      - Good
-     - Managed by Thermo Fisher
-     - Moderate
-     - Standalone / GUI
-     - Comprehensive lipid databases, integration with mass spec instruments
-     - Proprietary software
+     - R / GUI
+     - Comprehensive scRNA-seq toolkit
+     - R learning curve for some
      - [Link to paper]
-   * - LipidHunter
-     - Identification of lipids from LC-MS/MS data
-     - Lipidomics
+   * - Scanpy
+     - Analyzing and visualizing single-cell RNA-seq data with emphasis on scalability and speed
+     - scRNA-seq
+     - Yes
+     - Excellent
+     - Very Active
+     - Excellent
+     - Python
+     - Scalable, integration with other tools
+     - Python-centric
+     - [Link to paper]
+   * - SCope
+     - Fast, scalable, and user-friendly tool for visualizing and interpreting large datasets from scRNA-seq
+     - scRNA-seq
      - Yes
      - Good
      - Active
+     - Good
+     - Web-based
+     - User-friendly, web-based
+     - Limited to visualization
+     - [Link to paper]
+   * - AnnData
+     - Handling matrix data with annotations
+     - scRNA-seq
+     - Yes
+     - Good
+     - Associated with Scanpy
      - Good
      - Python
-     - Open-source, comprehensive output
-     - Requires good understanding of lipidomics
-     - [Link to paper]
-   * - MZmine
-     - Framework for processing, visualization, and analysis of mass spectrometry data
-     - Metabolomics
-     - Yes
-     - Good
-     - Active
-     - Good
-     - Java
-     - Modular, supports various data processing tasks
-     - Java-centric, learning curve
+     - Efficient data structure for large datasets
+     - Primarily a data structure, not a full toolkit
      - [Link to paper]
    * - MetaboAnalyst
-     - Comprehensive web-based tool for metabolomics data analysis
+     - Comprehensive platform for metabolomics data analysis and interpretation
      - Metabolomics
      - Yes
      - Excellent
      - Active
      - Good
      - Web-based
-     - Wide range of statistical methods, user-friendly interface
-     - Web-based, can limit very large analyses
+     - Comprehensive, user-friendly
+     - Web-based might limit large-scale analyses
      - [Link to paper]
    * - XCMS
-     - Processing and analysis of untargeted metabolomics data
+     - LC/MS and GC/MS data preprocessing
      - Metabolomics
+     - Yes
+     - Excellent
+     - Very Active
+     - Excellent
+     - R / GUI
+     - Industry standard for LC/MS data
+     - R learning curve for some
+     - [Link to paper]
+   * - MZmine
+     - MS-based molecular profile data processing and analysis
+     - Metabolomics, Lipidomics
      - Yes
      - Good
      - Active
      - Good
-     - R
-     - Widely used in the community, high flexibility
-     - Requires R programming knowledge
+     - Java / GUI
+     - Versatile and supports various data formats
+     - Java-based, might be slower on large data
      - [Link to paper]
-   * - Compound Discoverer
-     - Software for metabolite identification and quantitative analysis
-     - Metabolomics
+   * - LipidSearch
+     - Accurate identification and quantification of lipids from LC-MS/MS data
+     - Lipidomics
      - No
      - Good
-     - Managed by Thermo Fisher
+     - Managed by Thermo
+     - Limited
+     - GUI
+     - Accurate lipid identification
+     - Proprietary and expensive
+     - [Link to paper]
+   * - LipidHunter
+     - Direct annotation of lipid species from LC-MS datasets
+     - Lipidomics
+     - Yes
      - Moderate
-     - Standalone / GUI
-     - Comprehensive workflow, integration with mass spec instruments
-     - Proprietary software
+     - Moderate
+     - Moderate
+     - Python
+     - Direct lipid species annotation
+     - Requires command-line experience
      - [Link to paper]
 
 
-.. _t4_gene_enrichment_toolsXXX:
+.. _t4_gene_enrichment_tools:
 
 Gene Enrichment Tools
 ---------------------
@@ -361,4 +405,130 @@ or proteins are statistically over-represented in a large set of genes or protei
 biological significance behind large-scale molecular data by linking genes to known pathways, functions, or other
 biological categories.
 
-ADD-TABLE
+
+.. list-table::
+   :header-rows: 1
+   :widths: 8 8 8 8 8 8 8 8 8 8 8
+
+   * - Tool
+     - Description
+     - Usability
+     - Open-source
+     - Documentation
+     - Community & Support
+     - Integration
+     - Programming Language/GUI
+     - Advantages
+     - Disadvantages
+     - Publication
+   * - GSEA
+     - Tool for gene set enrichment analysis
+     - Genomics
+     - Yes
+     - Excellent
+     - Active
+     - Good
+     - Java / GUI
+     - Benchmark for GSEA, widely used
+     - Java-centric, may be slower on huge datasets
+     - [Link to paper]
+   * - Enrichr
+     - Web-based tool for gene set enrichment analysis
+     - Genomics
+     - Yes
+     - Excellent
+     - Active
+     - Excellent
+     - Web-based
+     - Comprehensive databases, user-friendly interface
+     - Web-based might limit very large analyses
+     - [Link to paper]
+   * - DAVID
+     - Bioinformatics resources for gene functional classification
+     - Genomics
+     - No
+     - Good
+     - Moderate
+     - Limited
+     - Web-based
+     - Multiple annotation tools, widely recognized
+     - Outdated interface, limited updates
+     - [Link to paper]
+   * - WebGestalt
+     - Web-based gene set analysis toolkit
+     - Genomics
+     - Unknown
+     - Good
+     - Active
+     - Good
+     - Web-based
+     - Multiple enrichment methods, integrated databases
+     - Limited by web-interface constraints
+     - [Link to paper]
+   * - g:Profiler
+     - Functional profiling of gene lists from large-scale experiments
+     - Genomics
+     - Yes
+     - Good
+     - Active
+     - Good
+     - Web-based
+     - Multi-level annotation, user-friendly interface
+     - Web-based, can have slow response times
+     - [Link to paper]
+   * - PANTHER
+     - Protein ANalysis THrough Evolutionary Relationships
+     - Genomics
+     - No
+     - Excellent
+     - Managed by PANTHER
+     - Limited
+     - Web-based
+     - Classification system, evolutionary data
+     - Mainly for protein-centric analysis
+     - [Link to paper]
+   * - Metascape
+     - Tool for gene annotation and analysis resource
+     - Genomics
+     - Unknown
+     - Good
+     - Active
+     - Good
+     - Web-based
+     - Multiple methods and databases combined
+     - Limited to predefined gene sets
+     - [Link to paper]
+   * - LION/web
+     - Lipidome isotope labeling-based ontology
+     - Lipidomics
+     - Unknown
+     - Good
+     - Growing
+     - Moderate
+     - Web-based
+     - Comprehensive lipid databases
+     - Web-based constraints
+     - [Link to paper]
+   * - ClueGO
+     - Cytoscape plug-in to decipher functionally grouped gene ontology networks
+     - Genomics
+     - Unknown
+     - Good
+     - Active
+     - Excellent
+     - Cytoscape plug-in
+     - Visual representation, integrates multiple data
+     - Requires Cytoscape
+     - [Link to paper]
+   * - FAST
+     - Functional Annotation of the Mammalian Genome
+     - Genomics
+     - Unknown
+     - Good
+     - Managed by FANTOM
+     - Limited
+     - Web-based
+     - Broad mammalian genome annotation
+     - Focused on mammalian genomes
+     - [Link to paper]
+
