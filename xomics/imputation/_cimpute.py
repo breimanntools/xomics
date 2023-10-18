@@ -95,7 +95,7 @@ class cImpute:
             Maximum of detected values
         """
         # Check input
-        cols_quant = ut.check_list_like(name="cols_quant", val=cols_quant, accept_none=False)
+        cols_quant = ut.check_list_like(name="cols_quant", val=cols_quant, accept_none=True)
         df = ut.check_df(df=df, accept_none=False, cols_req=cols_quant)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
         ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)

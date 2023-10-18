@@ -3,7 +3,7 @@ This is a script for interface of the pRank (protein-centric ranking) class.
 """
 import pandas as pd
 import numpy as np
-from typing import Optional
+from typing import Optional, List
 
 import xomics.utils as ut
 from ._backend.prank import p_score, e_score, c_score
@@ -167,8 +167,8 @@ class pRank:
         self.str_quant = str_quant
 
     @staticmethod
-    def p_score(x_fc: Optional[ut.ArrayLike1D] = None,
-                x_pval: Optional[ut.ArrayLike1D] = None,
+    def p_score(x_fc: ut.ArrayLike1D = None,
+                x_pval: ut.ArrayLike1D = None,
                 ignore_log_check: bool = False,
                 ) -> np.ndarray:
         """
@@ -207,9 +207,9 @@ class pRank:
 
     @staticmethod
     def e_score(ids: ut.ArrayLike1D = None,
-                id_lists: list[list] = None,
-                x_fe: Optional[ut.ArrayLike1D] = None,
-                x_pval: Optional[ut.ArrayLike1D] = None,
+                id_lists: List[list] = None,
+                x_fe: ut.ArrayLike1D = None,
+                x_pval: ut.ArrayLike1D = None,
                 ignore_log_check: bool = False,
                 ) -> np.ndarray:
         """
@@ -251,7 +251,7 @@ class pRank:
     @staticmethod
     def c_score(df_imp: pd.DataFrame = None,
                 ids: ut.ArrayLike1D = None,
-                col_id=None
+                col_id: str = None
                 ) -> np.ndarray:
         """Obtain protein proteomics confidence score (C score) from cImpute output
 

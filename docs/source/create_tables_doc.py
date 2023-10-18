@@ -23,7 +23,9 @@ COLUMN_WIDTH = 8
 STR_REMOVE = "_XXX" # Check with tables_template.rst for consistency
 STR_ADD_TABLE = "ADD-TABLE"
 
-EXCLUDE_FROM_REF_CHECK = []
+EXCLUDE_FROM_REF_CHECK = ["t2_omics_analysis_tools",
+                          "t3_omics_post-analysis_tools",
+                          "t4_gene_enrichment_tools"]
 
 
 # Helper Functions

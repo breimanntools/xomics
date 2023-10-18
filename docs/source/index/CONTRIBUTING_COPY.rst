@@ -283,3 +283,75 @@ To generate the documentation locally:
   make html
 
 - Open `_build/html/index.html` in a browser.
+
+
+Test with ChatGPT
+=================
+To optimize testing, use ChatGPT with the template below and fill in the blank spaces between ``START OF CODE``
+and ``END OF CODE``. For testing templates,
+utilize `our <https://github.com/breimanntools/xomics/blob/master/tests/unit/plotting_tests/test_plot_legend.py>`_
+or any custom testing template.
+
+.. code-block:: none
+
+    "
+    Generate test functions for a given TARGET FUNCTION using the style of the provided TESTING TEMPLATE.
+
+    Inputs:
+    TARGET FUNCTION:
+    - START OF CODE
+    -------------------------------------
+    [your code here]
+    -------------------------------------
+    - END OF CODE
+
+    TESTING TEMPLATE:
+    - START OF CODE
+    -------------------------------------
+    your code
+    -------------------------------------
+    - END OF CODE
+
+    **Key Directive**: For the Normal Cases Test Class, EACH function MUST test ONLY ONE individual parameter of the TARGET FUNCTION using Hypothesis for property-based testing. This is crucial.
+
+    Requirements:
+
+    1. Normal Cases Test Class:
+    - Name: 'Test[TARGET FUNCTION NAME]'.
+    - Objective: Test EACH parameter *INDIVIDUALLY*.
+    - Tests: Test EACH parameter, at least 10 positive and 10 negative tests for this class.
+
+    2. Complex Cases Test Class:
+    - Name: 'Test[TARGET FUNCTION NAME]Complex'.
+    - Objective: Test combinations of the TARGET FUNCTION parameters.
+    - Tests: At least 5 positive and 5 negative that intricately challenge the TARGET FUNCTION.
+
+    3. General Guidelines:
+    - Use Hypothesis for property-based testing, but test parameters individually for the Normal Cases Test Class .
+    - Tests should be clear, concise, and non-redundant.
+    - Do not leave any placeholders like "TODO", "Fill this", "Add ..." incomplete.
+    - Expose potential issues in the TARGET FUNCTION.
+
+    Output Expectations:
+    - Two test classes: one for normal cases (individual parameters) and one for complex cases (combinations).
+    - In Normal Cases, one function = one parameter tested.
+    - Total: at least 30 unique tests, 150+ lines of code.
+
+    Reminder: In Normal Cases, it's crucial to test parameters individually.
+    "
+
+ChatGPT has a token limit, which may truncate responses. To continue, simply ask **continue processing** or something
+similar. Repeat as necessary and compile the results. Once done, provide the script to ChatGPT for further refinement.
+
+Test Guided Development (TGD)
+-----------------------------
+Leverage ChatGPT-provided testing scripts to refine your code and its interface. If ChatGPT struggles or produces
+erroneous tests, it often indicates ambiguities or complexities in your function's naming or logic. Address these
+insights to ensure intuitive and robust code design through the TGD approach. You can provide the complete function or
+only its **signature & docstring**:
+
+**Signature & Docstring**: Focus on interface testing by providing the function's signature and docstring,
+aiming to ensure alignment with its external behavior and documentation.
+
+**Complete Function**: Submit the entire function code for deeper test generation, targeting comprehensive
+coverage that accounts for internal logic and intricacies.

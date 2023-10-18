@@ -44,7 +44,38 @@ Proteomics Example Datasets
 Example proteomic datasets are given for different mouse models for neurodegenerative diseases.
 
 Datasets are named according to the assessed disease (e.g., Alzheimer´s disease (AD)) and the name of the mouse models,
-as described in <https://www.alzforum.org/research-models> or defined in the respective publication. Datasets
+as described in `Alzforum <https://www.alzforum.org/research-models>`_ or defined in the respective publication. Datasets
 were obtained by mass spectrometry (MS)-based proteomics.
+
+ADD-TABLE
+
+.. _t2_omics_analysis_tools_XXX:
+
+Omics Analysis Tools
+--------------------
+Overview of different omics analysis software tools such as `MaxQuant <https://www.maxquant.org/>`_ or
+`DIA-NN <https://www.nature.com/articles/s41592-019-0638-x>`_ for proteomics data are given.
+
+ADD-TABLE
+
+.. _t3_omics_post-analysis_tools_XXX:
+
+Post-Analysis Tools
+-------------------
+Post-analysis tools for omics data are diverse software solutions that facilitate specialized types of data evaluations,
+like differential gene expression analysis. These tools span from Graphical User Interface (GUI) applications
+such as `Perseus <https://maxquant.net/perseus/>`_ to Python-based packages tailored for specific analyses, such as
+`Scanpy <https://scanpy.readthedocs.io/en/stable/>`_ for single-cell RNAseq data analysis.
+
+ADD-TABLE
+
+.. _t4_gene_enrichment_toolsXXX:
+
+Gene Enrichment Tools
+---------------------
+Gene enrichment analysis for omics data is a computational method used to identify which predefined sets of genes
+or proteins are statistically over-represented in a large set of genes or proteins. It helps in deciphering the
+biological significance behind large-scale molecular data by linking genes to known pathways, functions, or other
+biological categories.
 
 ADD-TABLE

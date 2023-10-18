@@ -6,7 +6,7 @@ import matplotlib.patches as mpatches
 import seaborn as sns
 import numpy as np
 import pandas as pd
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, List
 from adjustText import adjust_text
 
 import xomics as xo
@@ -78,7 +78,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
                  th_fc: float = 0.5,
                  th_pval: float = 0.05,
                  names_to_annotate: Optional[list] = None,
-                 colors: Optional[Union[str, list[str]]] = None,
+                 colors: Optional[Union[str, List[str]]] = None,
                  colors_pos_neg_non: Optional[Tuple[str, str, str]] = None,
                  size: int = 50,
                  sizes_pos_neg_non: Optional[Tuple[int, int, int]] = None,
