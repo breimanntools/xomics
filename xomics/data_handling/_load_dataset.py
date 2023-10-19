@@ -61,7 +61,7 @@ def load_dataset(name: str = "Overview",
 
     See Also
     --------
-    * Overview of all benchmarks in :ref:`t1_overview_datasets`.
+    * Overview of all benchmarks in :ref:`t3_overview_datasets`.
     * Step-by-step guide in the `Data Loading Tutorial <tutorial2a_data_loader.html>`_.
     """
     check_name_of_dataset(name=name, folder_in=FOLDER_USE_CASES)

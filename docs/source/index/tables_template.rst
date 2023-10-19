@@ -33,11 +33,27 @@ Tables
 
 Overview Table
 --------------
-All tables from the xOmics documentation are listed here, in chronological order based on the project history.
+All tables from the xOmics documentation are listed here:
 
 ADD-TABLE
 
-.. _t1_overview_datasets_XXX:
+.. _t1_omics_fields_XXX:
+
+Omics fields
+------------
+All omics field of which data can be analyzed by the xOmics toolkit are summarized in the following table:
+
+ADD-TABLE
+
+.. _t2_quantification_methods_XXX:
+
+Quantification methods
+----------------------
+The different quantification methods used in these omic fields are described in this overview:
+
+ADD-TABLE
+
+.. _t3_overview_datasets_XXX:
 
 Overview of Datasets
 --------------------
@@ -49,7 +65,7 @@ were obtained by mass spectrometry (MS)-based proteomics.
 
 ADD-TABLE
 
-.. _t2_omics_analysis_tools_XXX:
+.. _t4_omics_analysis_tools_XXX:
 
 Omics Analysis Tools
 --------------------
@@ -58,7 +74,7 @@ Overview of different omics analysis software tools such as `MaxQuant <https://w
 
 ADD-TABLE
 
-.. _t3_omics_post_analysis_tools_XXX:
+.. _t5_omics_post_analysis_tools_XXX:
 
 Post-Analysis Tools
 -------------------
@@ -69,13 +85,16 @@ such as `Perseus <https://maxquant.net/perseus/>`_ to Python-based packages tail
 
 ADD-TABLE
 
-.. _t4_gene_enrichment_tools_XXX:
+.. _t6_enrichment_tools_XXX:
 
-Gene Enrichment Tools
----------------------
-Gene enrichment analysis for omics data is a computational method used to identify which predefined sets of genes
-or proteins are statistically over-represented in a large set of genes or proteins. It helps in deciphering the
-biological significance behind large-scale molecular data by linking genes to known pathways, functions, or other
-biological categories.
+Enrichment Tools
+----------------
+Enrichment analysis for omics data (most often genes) is a computational method used to identify which predefined sets
+of genes are statistically over-represented in a large set of genes. It helps in deciphering the biological significance
+behind large-scale molecular data by linking genes to known pathways, functions, or other biological categories.
+While proteins are analyzed based on their gene names using `Gene Ontology terms <https://geneontology.org/>`_ or
+pathway terms of databases such as `Reactome <https://reactome.org/>`_, enrichment analysis tools for lipids are
+improving with the annotation scope of the  `Lipid Ontology <https://lipidomicssociety.org/interest_groups/lipid-ontology/>`_.
+See on overview of diverse enrichment tools here:
 
 ADD-TABLE

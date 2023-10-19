@@ -33,7 +33,7 @@ Tables
 
 Overview Table
 --------------
-All tables from the xOmics documentation are listed here, in chronological order based on the project history.
+All tables from the xOmics documentation are listed here:
 
 
 .. list-table::
@@ -43,21 +43,98 @@ All tables from the xOmics documentation are listed here, in chronological order
    * - Table
      - Description
      - See Also
-   * - t1_overview_datasets
+   * - t1_omics_fields
+     - Omic fields targeted by xOmics
+     - nan
+   * - t2_quantification_methods
+     - Quantification methods used in omic fields
+     - nan
+   * - t3_overview_datasets
      - Omics example datasets
      - aa.load_dataset
-   * - t2_omics_analysis_tools
+   * - t4_omics_analysis_tools
      - Analysis tools for omics data
      - nan
-   * - t3_omics_post_analysis_tools
+   * - t5_omics_post_analysis_tools
      - Post-analysis tools for omics data
      - nan
-   * - t4_gene_enrichment_tools
-     - Gene enrichment analysis tools
+   * - t6_enrichment_tools
+     - Enrichment analysis tools
      - nan
 
 
-.. _t1_overview_datasets:
+.. _t1_omics_fields:
+
+Omics fields
+------------
+All omics field of which data can be analyzed by the xOmics toolkit are summarized in the following table:
+
+
+.. list-table::
+   :header-rows: 1
+   :widths: 8 8 8
+
+   * - Omics Field
+     - Short Description
+     - Associated Quantification Methods
+   * - Proteomics
+     - Study of the entire set of proteins, including their abundances, modifications, and interactions, in a cell, tissue, or organism.
+     - Label-Free Quantification (LFQ), Stable Isotope Labeling, TMT/iTRAQ, MRM/PRM
+   * - Transcriptomics
+     - Study of the total mRNA content within a cell or tissue, providing insights into gene expression patterns and regulatory networks.
+     - RNA-seq, qRT-PCR, Microarrays
+   * - Lipidomics
+     - Analysis of lipids in a sample, which includes the identification and quantification of thousands of underlying lipid species.
+     - Label-Free Quantification (LFQ), Stable Isotope Labeling, Internal Standards, MRM/PRM, Shotgun Lipidomics
+   * - Metabolomics
+     - Comprehensive analysis of small molecule metabolites in biological samples, providing insights into metabolic pathways and physiological state.
+     - Label-Free Quantification (LFQ), Stable Isotope Labeling, Internal Standards, MRM/PRM
+
+
+.. _t2_quantification_methods:
+
+Quantification methods
+----------------------
+The different quantification methods used in these omic fields are described in this overview:
+
+
+.. list-table::
+   :header-rows: 1
+   :widths: 8 8 8
+
+   * - Quantification Method
+     - Description
+     - Omics Fields Utilizing the Method
+   * - Label-Free Quantification (LFQ)
+     - Direct comparison of ion intensities or other signal outputs for specific molecules between samples without any labels.
+     - Proteomics, Lipidomics, Metabolomics
+   * - Stable Isotope Labeling
+     - Incorporation of heavy isotopes (e.g., ^13C, ^15N, ^2H) into molecules of interest, allowing quantification by comparing signal intensities of labeled versus unlabeled molecules.
+     - Proteomics, Lipidomics, Metabolomics
+   * - TMT, iTRAQ
+     - Isobaric labeling methods where chemical tags fragment in a mass spectrometer to produce reporter ions. Intensity of reporter ions is used for quantification.
+     - Proteomics
+   * - Internal Standards
+     - Use of specific molecules (often isotopically labeled) added to samples as a reference for quantification, correcting for potential variability in analysis.
+     - Lipidomics, Metabolomics
+   * - MRM/PRM
+     - Targeted mass spectrometry techniques. MRM monitors specific transitions between precursor and product ions, while PRM captures all product ions from a chosen precursor.
+     - Proteomics, Lipidomics, Metabolomics
+   * - RNA-seq
+     - A sequencing method to quantify RNA molecules. Abundance is determined based on read counts or TPM (transcripts per million).
+     - Transcriptomics
+   * - qRT-PCR
+     - A targeted method to measure RNA abundance using quantitative PCR after reverse transcription.
+     - Transcriptomics
+   * - Microarrays
+     - Measures gene expression by hybridizing labeled cDNA or cRNA to probes on a slide. Signal intensity from each probe corresponds to transcript abundance.
+     - Transcriptomics
+   * - Shotgun Lipidomics
+     - Direct infusion of lipid samples into a mass spectrometer without prior separation.
+     - Lipidomics
+
+
+.. _t3_overview_datasets:
 
 Overview of Datasets
 --------------------
@@ -92,7 +169,7 @@ were obtained by mass spectrometry (MS)-based proteomics.
      - :ref:`Penkert21 <Penkert21>`
 
 
-.. _t2_omics_analysis_tools:
+.. _t4_omics_analysis_tools:
 
 Omics Analysis Tools
 --------------------
@@ -227,7 +304,7 @@ Overview of different omics analysis software tools such as `MaxQuant <https://w
      - [Link to paper]
 
 
-.. _t3_omics_post_analysis_tools:
+.. _t5_omics_post_analysis_tools:
 
 Post-Analysis Tools
 -------------------
@@ -408,14 +485,17 @@ such as `Perseus <https://maxquant.net/perseus/>`_ to Python-based packages tail
      - [Link to paper]
 
 
-.. _t4_gene_enrichment_tools:
+.. _t6_enrichment_tools:
 
-Gene Enrichment Tools
----------------------
-Gene enrichment analysis for omics data is a computational method used to identify which predefined sets of genes
-or proteins are statistically over-represented in a large set of genes or proteins. It helps in deciphering the
-biological significance behind large-scale molecular data by linking genes to known pathways, functions, or other
-biological categories.
+Enrichment Tools
+----------------
+Enrichment analysis for omics data (most often genes) is a computational method used to identify which predefined sets
+of genes are statistically over-represented in a large set of genes. It helps in deciphering the biological significance
+behind large-scale molecular data by linking genes to known pathways, functions, or other biological categories.
+While proteins are analyzed based on their gene names using `Gene Ontology terms <https://geneontology.org/>`_ or
+pathway terms of databases such as `Reactome <https://reactome.org/>`_, enrichment analysis tools for lipids are
+improving with the annotation scope of the  `Lipid Ontology <https://lipidomicssociety.org/interest_groups/lipid-ontology/>`_.
+See on overview of diverse enrichment tools here:
 
 
 .. list-table::
