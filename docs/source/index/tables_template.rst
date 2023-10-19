@@ -37,10 +37,10 @@ All tables from the xOmics documentation are listed here, in chronological order
 
 ADD-TABLE
 
-.. _t1_overview_proteomics_XXX:
+.. _t1_overview_datasets_XXX:
 
-Proteomics Example Datasets
----------------------------
+Overview of Datasets
+--------------------
 Example proteomic datasets are given for different mouse models for neurodegenerative diseases.
 
 Datasets are named according to the assessed disease (e.g., Alzheimer´s disease (AD)) and the name of the mouse models,

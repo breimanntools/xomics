@@ -1,5 +1,5 @@
 """
-This is a script for the interface of a parser class for proteomics data (e.g., from MaxQuant or Spectronaut)
+This is a script for the interface of a parser class for use_cases data (e.g., from MaxQuant or Spectronaut)
 """
 import time
 import pandas as pd

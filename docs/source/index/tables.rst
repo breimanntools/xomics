@@ -43,8 +43,8 @@ All tables from the xOmics documentation are listed here, in chronological order
    * - Table
      - Description
      - See Also
-   * - t1_overview_proteomics
-     - Proteomic example datasets
+   * - t1_overview_datasets
+     - Omics example datasets
      - aa.load_dataset
    * - t2_omics_analysis_tools
      - Analysis tools for omics data
@@ -57,10 +57,10 @@ All tables from the xOmics documentation are listed here, in chronological order
      - nan
 
 
-.. _t1_overview_proteomics:
+.. _t1_overview_datasets:
 
-Proteomics Example Datasets
----------------------------
+Overview of Datasets
+--------------------
 Example proteomic datasets are given for different mouse models for neurodegenerative diseases.
 
 Datasets are named according to the assessed disease (e.g., Alzheimer´s disease (AD)) and the name of the mouse models,
@@ -70,14 +70,26 @@ were obtained by mass spectrometry (MS)-based proteomics.
 
 .. list-table::
    :header-rows: 1
-   :widths: 8 8 8
+   :widths: 8 8 8 8 8 8
 
    * - Dataset
+     - Data Type
      - Description
+     - Condition
+     - Quantification
      - Reference
-   * - XX
-     - XX
-     - :ref:`Monasor20 <Monasor20>`
+   * - PROT_DEMYELINATION
+     - Proteomic
+     - Demylination recovery experiment in mouse
+     - 4 timepoints in days [‘d00’, ‘d04’, ‘d10’, ‘d14’]
+     - LFQ
+     - :ref:`Penkert21 <Penkert21>`
+   * - LIPID_DEMYELINATION
+     - Lipidomics
+     - Demylination recovery experiment in mouse
+     - 4 timepoints in days [‘d00’, ‘d04’, ‘d10’, ‘d14’]
+     - Internal Standards
+     - :ref:`Penkert21 <Penkert21>`
 
 
 .. _t2_omics_analysis_tools:

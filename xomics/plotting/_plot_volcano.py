@@ -22,7 +22,7 @@ def plot_fdr_curve(df: pd.DataFrame, col_fc: str, col_pval: str, c=1.5, s0=1.0):
     Hyperbolic FDR Curve Plotting Function
 
     Purpose:
-    To plot hyperbolic FDR curves, primarily used in mass spectrometry and proteomics studies for multiple hypothesis
+    To plot hyperbolic FDR curves, primarily used in mass spectrometry and use_cases studies for multiple hypothesis
      testing correction. These curves represent a balance between significance (p-value) and effect size (fold change).
 
     Background:

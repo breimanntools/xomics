@@ -172,7 +172,7 @@ class pRank:
                 ignore_log_check: bool = False,
                 ) -> np.ndarray:
         """
-        Calculate the single protein proteomics ranking score (P score) by first z-normalizing fold change scores
+        Calculate the single protein use_cases ranking score (P score) by first z-normalizing fold change scores
         and p-values, and then integrating them protein-wise to obtain min-max normalized ranking scores.
 
         Parameters
@@ -185,7 +185,7 @@ class pRank:
         Returns
         -------
         p_scores
-            Array of proteomics ranking scores (P scores) for each protein.
+            Array of use_cases ranking scores (P scores) for each protein.
 
         Notes
         -----
@@ -253,7 +253,7 @@ class pRank:
                 ids: ut.ArrayLike1D = None,
                 col_id: str = None
                 ) -> np.ndarray:
-        """Obtain protein proteomics confidence score (C score) from cImpute output
+        """Obtain protein use_cases confidence score (C score) from cImpute output
 
         Parameters
         ----------

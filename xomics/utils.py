@@ -78,7 +78,7 @@ STR_SIG_NEG = "Down"
 STR_NON_SIG = "Not Sig."
 COL_SIG_CLASS = "sig_class"
 
-# Datasets proteomics
+# Datasets use_cases
 COL_PROT_ID = "protein_id"
 COL_GENE_NAME = "gene_name"
 COL_PROT_NAME = "protein_name"

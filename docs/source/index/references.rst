@@ -36,7 +36,7 @@ Algorithms
 
 Datasets and Benchmarks
 -----------------------
-.. [Penkert] Penkert et al. (2021),
+.. [Penkert21] Penkert et al. (2021),
     *Proteomic and lipidomic profiling of demyelinating lesions identifies fatty acids as modulators in lesion recovery*
     `Cell Reports <https://www.sciencedirect.com/science/article/pii/S2211124721013681>`__
 

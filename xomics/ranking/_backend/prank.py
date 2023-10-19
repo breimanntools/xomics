@@ -91,7 +91,7 @@ def _e_ranking(x_fe, x_pvals, x_hit, z_norm=False):
 
 # II Main Functions
 def p_score(x_fc=None, x_pvals=None):
-    """Calculate the single protein proteomics ranking score (P score)."""
+    """Calculate the single protein use_cases ranking score (P score)."""
     # Normalize data
     norm_fc = _normalize_folds(x_vals=x_fc, z_norm=True)
     norm_pvals = _normalize_values(x_pvals, z_norm=True)
@@ -118,7 +118,7 @@ def e_score(ids=None, id_lists=None, x_fe=None, x_pvals=None):
 
 
 def c_score(ids=None, df_imp=None, col_id=None):
-    """Obtain protein proteomics confidence score (C score) from cImpute output"""
+    """Obtain protein use_cases confidence score (C score) from cImpute output"""
     list_ids = df_imp.index.to_list() if col_id is None else df_imp[col_id].to_list()
     dict_c_scores = dict(zip(list_ids, df_imp[ut.COL_C_SCORE]))
     c_scores = [dict_c_scores[i] for i in ids]

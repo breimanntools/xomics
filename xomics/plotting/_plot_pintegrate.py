@@ -1,5 +1,5 @@
 """
-This is a script for plotting proteomics integration data.
+This is a script for plotting use_cases integration data.
 """
 from matplotlib import pyplot as plt
 import matplotlib.patches as mpatches
