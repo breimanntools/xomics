@@ -47,13 +47,14 @@ groups
 
 
 class PreProcess:
+    """
+    Pre-processing class for quantifications of omics data.
+    """
     def __init__(self,
                  str_id: str = "protein_id",
                  str_quant: str = "log2_lfq"
                  ):
         """
-        Initialize the PreProcessor object with specific string identifiers for ID and LFQ columns.
-
         Parameters
         ----------
         str_id

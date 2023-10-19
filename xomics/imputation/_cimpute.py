@@ -28,7 +28,8 @@ loc_pct_upmnar
 
 # II Main Functions
 class cImpute:
-    """Transparent hybrid data imputation method.
+    """
+    Transparent hybrid data imputation method.
 
     `cImpute` (conditional Imputation) is a transparent hybrid imputation algorithm designed to address missing values
     (MVs) in (prote)omics data. The types of missing values can be broadly categorized into three groups based
