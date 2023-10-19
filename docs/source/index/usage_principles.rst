@@ -21,8 +21,9 @@ To get started with xOmics, import it as follows:
 
     import xomics as xo
 
+Background information on the concepts of the key functionalities of xOmics are provided in the following chapters:
+
 .. toctree::
    :maxdepth: 1
 
-   usage_principles/data_flow_entry_points
    usage_principles/imputation
