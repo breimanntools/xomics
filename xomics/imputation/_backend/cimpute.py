@@ -79,7 +79,7 @@ def _impute(df=None, mv_class=None, d_min=None, up_mnar=None, n_neighbors=6, min
 
 
 def _create_groupwise_dfs(cs_vals=None, mv_classes=None, group_dict=None, index=None, prefixes=None):
-    """Creates and concatenates dataframes for CS and NaN values per group."""
+    """Creates and concatenates DataFrames for CS and NaN values per group."""
     df_cs = pd.DataFrame(cs_vals).T
     df_cs.columns = [f"{prefixes[0]}_{group}" for group in group_dict]
 

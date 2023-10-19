@@ -46,6 +46,12 @@ FOLDER_DATA = _folder_path(FOLDER_PROJECT, '_data')
 URL_DATA = "https://github.com/breimanntools/xomics/tree/master/xomics/data/"
 
 # I Constants
+# Datasets use_cases
+COL_PROT_ID = "protein_id"
+COL_PROT_NAME = "protein_name"
+COL_GENE_NAME = "gene_name"
+STR_QUANT = "log2_lfq"
+
 # cImpute constants
 STR_MCAR = "MCAR"
 STR_MNAR = "MNAR"
@@ -75,13 +81,11 @@ COLOR_GEM = "#69C2CA"
 # Constants significance volcano
 STR_SIG_POS = "Up"
 STR_SIG_NEG = "Down"
-STR_NON_SIG = "Not Sig."
+STR_NON_SIG = "Unchanged"
+
 COL_SIG_CLASS = "sig_class"
 
-# Datasets use_cases
-COL_PROT_ID = "protein_id"
-COL_GENE_NAME = "gene_name"
-COL_PROT_NAME = "protein_name"
+
 
 
 # II Helper functions
@@ -130,14 +134,14 @@ def get_sig_classes(df=None, col_fc=None, col_pval=None, th_pval=None, th_fc=Non
 # Caching for data loading for better performance (data loaded ones)
 @lru_cache(maxsize=None)
 def read_excel_cached(name, index_col=None):
-    """Load cached dataframe to save loading time"""
+    """Load cached DataFrame to save loading time"""
     df = pd.read_excel(name, index_col=index_col)
     return df.copy()
 
 
 @lru_cache(maxsize=None)
 def read_csv_cached(name, sep=None):
-    """Load cached dataframe to save loading time"""
+    """Load cached DataFrame to save loading time"""
     df = pd.read_csv(name, sep=sep)
     return df.copy()
 

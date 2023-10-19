@@ -54,19 +54,25 @@ class cImpute:
 
     """
     def __init__(self,
-                 str_id: str = "protein_id",
-                 str_quant: str = "log2_lfq"
+                 col_id: str = ut.COL_PROT_ID,
+                 col_name: str = ut.COL_PROT_NAME,
+                 str_quant: str = ut.STR_QUANT,
                  ):
         """
         Parameters
         ----------
-        str_id
-            Column name of entry ids of input DataFrame for associated methods
+        col_id
+            Name of column with identifiers in DataFrame.
+        col_name
+            Name of column with sample names in DataFrame.
         str_quant
-            Common substring of intensity columns of input DataFrame for associated methods
+            Identifier for the LFQ columns in the DataFrame.
         """
-        self.list_mv_classes = ut.LIST_MV_CLASSES
-        self.str_id = str_id
+        ut.check_str(name="col_id", val=col_id, accept_none=False)
+        ut.check_str(name="col_name", val=col_name, accept_none=False)
+        ut.check_str(name="str_quant", val=str_quant, accept_none=False)
+        self.col_id = col_id
+        self.col_name = col_name
         self.str_quant = str_quant
 
     @ut.doc_params(doc_param_df_groups_upmnar=doc_param_df_groups_upmnar)
@@ -154,8 +160,5 @@ class cImpute:
         # Run imputation
         df_imp = run_cimpute(df=df, groups=groups,
                              min_cs=min_cs, loc_pcat_upmnar=loc_pct_upmnar, n_neighbors=n_neighbors,
-                             str_quant=self.str_quant, str_id=self.str_id)
+                             str_quant=self.str_quant, str_id=self.col_id)
         return df_imp
-
-
-

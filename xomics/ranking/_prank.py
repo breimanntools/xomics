@@ -148,22 +148,29 @@ def _check_terms_sub_list(name=None, terms_sub_list=None, terms=None):
 # TODO finsih docuemtnation, typing, refactor check functions (include log check), testing, tutorial
 # II Main Functions
 class pRank:
-    """Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
-
-    Parameters
-    ----------
-    str_id
-        Column name of entry ids of input DataFrame for associated methods
-    str_quant
-        Common substring of intensity columns of input DataFrame for associated methods
-
+    """
+    Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
     """
     def __init__(self,
-                 str_id: str = "protein_id",
-                 str_quant: str = "log2_lfq"
+                 col_id: str = ut.COL_PROT_ID,
+                 col_name: str = ut.COL_PROT_NAME,
+                 str_quant: str = ut.STR_QUANT,
                  ):
-        self.list_mv_classes = ut.LIST_MV_CLASSES
-        self.str_id = str_id
+        """
+        Parameters
+        ----------
+        col_id
+            Name of column with identifiers in DataFrame.
+        col_name
+            Name of column with sample names in DataFrame.
+        str_quant
+            Identifier for the LFQ columns in the DataFrame.
+        """
+        ut.check_str(name="col_id", val=col_id, accept_none=False)
+        ut.check_str(name="col_name", val=col_name, accept_none=False)
+        ut.check_str(name="str_quant", val=str_quant, accept_none=False)
+        self.col_id = col_id
+        self.col_name = col_name
         self.str_quant = str_quant
 
     @staticmethod

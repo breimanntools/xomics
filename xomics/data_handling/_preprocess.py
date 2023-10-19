@@ -7,7 +7,7 @@ from typing import Optional
 
 import xomics.utils as ut
 from ._backend.preprocess_run import run_preprocess
-from ._backend.preprocess_filter import filter_df, filter_names
+from ._backend.preprocess_filter import filter_duplicated_names, filter_groups
 
 # TODO finish testing, test on real data in dev_scripts
 # TODO Filter for number of quantifications
@@ -51,18 +51,25 @@ class PreProcess:
     Pre-processing class for quantifications of omics data.
     """
     def __init__(self,
-                 str_id: str = "protein_id",
+                 col_id: str = ut.COL_PROT_ID,
+                 col_name: str = ut.COL_PROT_NAME,
                  str_quant: str = "log2_lfq"
                  ):
         """
         Parameters
         ----------
-        str_id
-            Identifier for the protein ID column in the dataframe.
+        col_id
+            Name of column with identifiers in DataFrame.
+        col_name
+            Name of column with sample names in DataFrame.
         str_quant
-            Identifier for the LFQ columns in the dataframe.
+            Identifier for the LFQ columns in the DataFrame.
         """
-        self.str_id = str_id
+        ut.check_str(name="col_id", val=col_id, accept_none=False)
+        ut.check_str(name="col_name", val=col_name, accept_none=False)
+        ut.check_str(name="str_quant", val=str_quant, accept_none=False)
+        self.col_id = col_id
+        self.col_name = col_name
         self.str_quant = str_quant
 
     @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
@@ -140,23 +147,60 @@ class PreProcess:
         dict_group_qcols = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=self.str_quant)
         return dict_group_qcols
 
-    @staticmethod
-    def filter(df: pd.DataFrame = None,
-               cols: list = None,
-               drop_na: bool = True,
-               ) -> pd.DataFrame:
+    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
+    def filter_nan(self,
+                   df: pd.DataFrame = None,
+                   groups: Optional[list] = None,
+                   cols: Optional[list] = None,
+                   ) -> pd.DataFrame:
         """
-        Filter and optionally modify the provided DataFrame based on specified parameters.
+        Filter missing values based on provided ``groups`` or columns (``cols``).
 
         Parameters
         ----------
-        df
-            The DataFrame with quantifications to filter. ``Rows`` typically correspond to proteins
-            and ``columns`` to conditions.
+        {doc_param_df_groups}
         cols
             List of columns from ``df`` to consider for filtering.
-        drop_na
-            Whether to drop rows containing NaN values in the specified `cols`.
+
+        Returns
+        -------
+        df
+            The filtered DataFrame.
+
+        Notes
+        -----
+        Two options for selecting filtering columns are provided (``groups`` and ``cols``) because
+        removing samples with any missing value is a very strict filtering step.
+
+        """
+        # Check input
+        ut.check_df(df=df)
+        if cols is None and groups is None:
+            raise ValueError("'cols' and 'groups' should not be None.")
+        cols = ut.check_list_like(name="cols", val=cols, accept_none=True, accept_str=True)
+        ut.check_col_in_df(df=df, name_df="df", cols=cols, accept_none=True, accept_nan=True)
+        if groups is not None:
+            ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+            if cols is None:
+                cols = self.get_qcols(df=df, groups=groups)
+        # Filtering
+        df = df.dropna(subset=cols)
+        return df
+
+    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
+    def filter_groups(self,
+                      df: pd.DataFrame = None,
+                      groups: Optional[list] = None,
+                      min_pct: float = 0.0,
+                      ) -> pd.DataFrame:
+        """
+        Remove samples with missing values unless one group has at least ``min_pct`` non-missing values.
+
+        Parameters
+        ----------
+        {doc_param_df_groups}
+        min_pct
+            Minimum percentage threshold of non-missing values in at least one group.
 
         Returns
         -------
@@ -164,21 +208,21 @@ class PreProcess:
             The filtered DataFrame.
         """
         ut.check_df(df=df)
-        cols = ut.check_list_like(name="cols", val=cols, accept_none=True, accept_str=True)
-        ut.check_col_in_df(df=df, name_df="df", cols=cols, accept_none=True, accept_nan=True)
-        ut.check_bool(name="drop_na", val=drop_na)
+        ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
+        ut.check_number_range(name="min_pct", val=min_pct, min_val=0, max_val=1, just_int=False, accept_none=False)
         # Filtering
-        df = filter_df(df=df, cols=cols, drop_na=drop_na)
+        dict_groups_qcols = self.get_dict_group_qcols(df=df, groups=groups)
+        df = filter_groups(df=df, groups=groups, dict_groups_qcols=dict_groups_qcols, min_pct=min_pct)
         return df
 
     @staticmethod
-    def filter_names(df: pd.DataFrame = None,
-                     col: list = None,
-                     str_split: str = ";",
-                     drop_na: bool = True,
-                     ) -> pd.DataFrame:
+    def filter_duplicated_names(df: pd.DataFrame = None,
+                                col: list = None,
+                                str_split: str = ";",
+                                split_names: bool = True,
+                                ) -> pd.DataFrame:
         """
-        Split names from column in dataframe and filter duplicates.
+        Filter for duplicated items in columns (e.g., names). Items can be split by ``str_split``.
 
         Parameters
         ----------
@@ -189,8 +233,8 @@ class PreProcess:
             Column from ``df`` in which to perform string splitting and filtering.
         str_split
             The string character(s) to use for splitting string values in ``col``.
-        drop_na
-            Whether to drop rows containing NaN values in the specified `cols`.
+        split_names
+            Whether to split names using `str_split` in the specified `cols`.
 
         Returns
         -------
@@ -200,9 +244,9 @@ class PreProcess:
         ut.check_df(df=df)
         ut.check_col_in_df(df=df, name_df="df", cols=col, accept_nan=True, accept_none=False)
         ut.check_str(name="str_split", val=str_split)
-        ut.check_bool(name="drop_na", val=drop_na)
+        ut.check_bool(name="split_names", val=split_names)
         # Filtering
-        df = filter_names(df=df, col=col, str_split=str_split, drop_na=drop_na)
+        df = filter_duplicated_names(df=df, cols=col, split_names=split_names, str_split=str_split)
         return df
 
     @staticmethod
@@ -294,8 +338,10 @@ class PreProcess:
         df[cols] = df[cols].apply(lambda x: np.power(base, x))
         return df
 
-    @staticmethod
-    def add_id(df=None, list_ids=None, col_name_to_add="Protein IDs"):
+    def add_ids(self,
+                df: pd.DataFrame = None,
+                list_ids: ut.ArrayLike1D = None
+                ) -> pd.DataFrame:
         """
         Add column with protein ids to DataFrame.
 
@@ -305,8 +351,6 @@ class PreProcess:
             DataFrame containing fold-change and p-values.
         list_ids
             List or array of protein/gene identifiers.
-        col_name_to_add
-            The name of the column for the protein/gene identifiers to be added.
 
         Returns
         -------
@@ -317,9 +361,8 @@ class PreProcess:
         df = ut.check_df(df=df, accept_none=False)
         ut.check_list_like(name="list_ids", val=list_ids)
         list_ids = check_match_df_ids(df=df, list_ids=list_ids)
-        ut.check_str(name="col_name", val=col_name_to_add, accept_none=False)
         # Add column with ids
-        df.insert(0, col_name_to_add, list_ids)
+        df.insert(0, self.col_id, list_ids)
         return df
 
     @staticmethod
