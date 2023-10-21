@@ -6,6 +6,7 @@ focusing on differential proteomics expression data. It introduces the following
 - **cImpute**: Conditional Imputation - A transparent method for hybrid missing value imputation.
 - **pRank**: Protein-centric ranking of (prote)omic data, including integration with functional enrichment results.
 - **pIntegrate**: Protein-centric integration of multiple (prote)omic datasets for differential analysis.
+- **QARIP**: Quantitative proteomic analysis of regulated intramembrane proteolysis.
 
 In addition, **xOmics** provides functional capabilities for efficiently loading benchmark proteomics datasets via
 **load_datasets**, accompanied by corresponding enrichment data.A suite of supportive functions is also available to
