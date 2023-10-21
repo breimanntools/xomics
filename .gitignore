@@ -1,6 +1,6 @@
 # Directories
 /venv/
-/dev_scripts/
+#/dev_scripts/
 /recipe/
 /tutorials/.ipynb_checkpoints/
 /dist/
