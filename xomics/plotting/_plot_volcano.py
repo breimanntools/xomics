@@ -104,9 +104,9 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     df
         DataFrame containing fold-change and p-values.
     col_fc
-        Column name containing fold change values.
+        Name of column from ``df`` containing fold change values for each protein (log2 fold recommended).
     col_pval
-        Column name containing p-values.
+        Name of column from ``df`` containing p-values for each protein (-log10 fold recommended).
     col_names
         Columns with protein/gene names.
     th_fc
@@ -154,6 +154,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     # Initial parameter validation
     ut.check_ax(ax=ax, accept_none=True)
     ut.check_tuple(name="figsize", val=figsize, n=2, accept_none=True)
+    ut.check_col_in_df(df=df, name_df="df", cols=[col_fc, col_pval], name_cols=["col_fc", "col_pval"])
     df = ut.check_df(name="df", df=df, cols_req=[col_fc, col_pval])
     if col_names is not None or names_to_annotate is not None:
         ut.check_col_in_df(name_df="df", df=df, cols=col_names, name_cols="col_names")
@@ -178,7 +179,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
 
     # Plot settings
     if colors_pos_neg_non is None:
-        color_non_sig, color_sig_pos, color_sig_neg = xo.plot_get_clist(n_colors=3)
+        color_non_sig, color_sig_neg, color_sig_pos = xo.plot_get_clist(n_colors=3)
     else:
         color_sig_pos, color_sig_neg, color_non_sig = colors_pos_neg_non
     if sizes_pos_neg_non is None:
@@ -222,8 +223,10 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
         cbar.set_label(col_cbar)
         cbar.ax.spines['left'].set_visible(False)  # Hide the left spine
         cbar.outline.set_visible(False)
-    plt.xlabel(col_fc)
-    plt.ylabel(col_pval)
+    x_label = col_fc.replace("_", " ") if ut.options["replace_underscore_in_plots"] else col_fc
+    y_label = col_pval.replace("_", " ") if ut.options["replace_underscore_in_plots"] else col_pval
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
     sns.despine()
 
     # Adjust plot
@@ -255,18 +258,16 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
             fontdict.update(**label_fontdict)
         texts = [plt.text(x, y, label, fontdict=fontdict) for label, x, y in labels]
         label_adjust_text_dict = {} if label_adjust_text_dict is None else label_adjust_text_dict
-        adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='->', color='black'), **label_adjust_text_dict)
+        adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='-', color='black'), **label_adjust_text_dict)
 
     # Legend and Labels
     if not legend or col_cbar is not None:
         ax.legend().set_visible(False)
     else:
         xo.plot_legend(dict_color=dict_color,
-                       list_cat=[ut.STR_SIG_NEG, ut.STR_SIG_POS, ut.STR_NON_SIG], ncol=1,
+                       list_cat=[ut.STR_NON_SIG, ut.STR_SIG_NEG, ut.STR_SIG_POS], ncol=1,
                        marker="o",
                        loc=loc_legend,
                        labelspacing=0.1, handletextpad=0.0)
-
-
     plt.tight_layout()
     return plt.gca()

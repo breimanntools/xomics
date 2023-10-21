@@ -5,6 +5,7 @@ from typing import Dict, Any
 
 # System level options
 verbose = True
+replace_underscore_in_plots = True
 
 
 # Enables setting of system level variables like in matplotlib
@@ -12,6 +13,7 @@ class Settings:
     def __init__(self):
         self._settings: Dict[str, Any] = {
             'verbose': verbose,
+            'replace_underscore_in_plots': replace_underscore_in_plots
         }
 
     def __getitem__(self, key: str) -> Any:
@@ -25,6 +27,7 @@ class Settings:
     def __contains__(self, key: str) -> bool:
         """Check if a key is in the settings."""
         return key in self._settings
+
 
 # Global settings instance
 options = Settings()

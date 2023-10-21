@@ -187,7 +187,7 @@ def run_cimpute(df=None, groups=None, min_cs=0.5, loc_pcat_upmnar=0.25, n_neighb
     # Add aggregated CS values (mean and std)
     cs_means = np.array(cs_vals).mean(axis=0).round(2)
     cs_stds = np.array(cs_vals).std(axis=0).round(2)
-    df_imp[ut.COL_C_SCORE], df_imp[ut.COL_CS_STD] = cs_means, cs_stds
+    df_imp[ut.COL_C_SCORE], df_imp[ut.COL_C_STD] = cs_means, cs_stds
 
     # Add  CS values per group
     # Concatenate CS and NaN values per group and merge with df_imp

@@ -52,7 +52,7 @@ class PreProcess:
     """
     def __init__(self,
                  col_id: str = ut.COL_PROT_ID,
-                 col_name: str = ut.COL_PROT_NAME,
+                 col_name: str = ut.COL_GENE_NAME,
                  str_quant: str = "log2_lfq"
                  ):
         """
@@ -176,7 +176,7 @@ class PreProcess:
         # Check input
         ut.check_df(df=df)
         if cols is None and groups is None:
-            raise ValueError("'cols' and 'groups' should not be None.")
+            cols = list(df)
         cols = ut.check_list_like(name="cols", val=cols, accept_none=True, accept_str=True)
         ut.check_col_in_df(df=df, name_df="df", cols=cols, accept_none=True, accept_nan=True)
         if groups is not None:
@@ -185,13 +185,14 @@ class PreProcess:
                 cols = self.get_qcols(df=df, groups=groups)
         # Filtering
         df = df.dropna(subset=cols)
+        df = df.reset_index(drop=True)
         return df
 
     @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def filter_groups(self,
                       df: pd.DataFrame = None,
                       groups: Optional[list] = None,
-                      min_pct: float = 0.0,
+                      min_pct: float = 0.8,
                       ) -> pd.DataFrame:
         """
         Remove samples with missing values unless one group has at least ``min_pct`` non-missing values.
@@ -213,13 +214,14 @@ class PreProcess:
         # Filtering
         dict_groups_qcols = self.get_dict_group_qcols(df=df, groups=groups)
         df = filter_groups(df=df, groups=groups, dict_groups_qcols=dict_groups_qcols, min_pct=min_pct)
+        df = df.reset_index(drop=True)
         return df
 
     @staticmethod
     def filter_duplicated_names(df: pd.DataFrame = None,
-                                col: list = None,
+                                col: str = None,
                                 str_split: str = ";",
-                                split_names: bool = True,
+                                split_names: bool = False,
                                 ) -> pd.DataFrame:
         """
         Filter for duplicated items in columns (e.g., names). Items can be split by ``str_split``.
@@ -246,7 +248,9 @@ class PreProcess:
         ut.check_str(name="str_split", val=str_split)
         ut.check_bool(name="split_names", val=split_names)
         # Filtering
+        df = df.dropna(subset=col)
         df = filter_duplicated_names(df=df, cols=col, split_names=split_names, str_split=str_split)
+        df = df.reset_index(drop=True)
         return df
 
     @staticmethod
@@ -455,4 +459,6 @@ class PreProcess:
         df_fc = run_preprocess(df=df, groups=groups, groups_ctrl=groups_ctrl,
                                pvals_method=pvals_correction, pvals_neg_log10=pvals_neg_log10,
                                str_quant=self.str_quant)
+        df_fc.insert(0, self.col_id, df[self.col_id])
+        df_fc.insert(1, self.col_name, df[self.col_name])
         return df_fc

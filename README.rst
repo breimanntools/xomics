@@ -80,3 +80,7 @@ If you use xOmics in your work, please cite the respective publication as follow
 
 **pIntegrate**:
    [Citation details and link if available]
+
+**QARIP**:
+    *QARIP: a web server for quantitative proteomic analysis of regulated intramembrane proteolysis*
+    `Nucleic Acids Research <https://academic.oup.com/nar/article/41/W1/W459/1105195>`__.

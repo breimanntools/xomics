@@ -68,7 +68,9 @@ def plot_imput_histo(ax: Optional[plt.Axes] = None,
         Axes object.
     """
     # Check input
-
+    ut.check_list_like(name="cols_quant", val=cols_quant, accept_none=False)
+    ut.check_df(name="df_raw", df=df_raw, cols_req=cols_quant)
+    ut.check_df(name="df_imp", df=df_imp, cols_req=cols_quant)
     # Pre-process data
     colors = xo.plot_get_clist(n_colors=3) if colors is None else colors
     _args = dict(binwidth=binwidth, **kwargs)

@@ -23,19 +23,31 @@ Data Handling
 
    generated/tutorial2a_data_loader
 
+Volcano Plot
+------------
+.. toctree::
+   :maxdepth: 1
+
+   generated/tutorial2b_volcano_plot
+
 Imputation
 ----------
 .. toctree::
    :maxdepth: 1
 
-   generated/tutorial3a_cImpute
+   generated/tutorial3a_imputation
 
 Ranking
 -------
 .. toctree::
    :maxdepth: 1
 
-   generated/tutorial4a_xoRank
+   generated/tutorial3b_ranking
 
 Integration
 -----------
+.. toctree::
+   :maxdepth: 1
+
+   generated/tutorial3c_integration
+   generated/tutorial4a_multiomics

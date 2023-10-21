@@ -62,19 +62,16 @@ STR_CS = "CS"
 STR_MV_LABELS = "labels"
 
 # pRank constants
-COL_E_SCORE = "E-score"
-COL_P_SCORE = "P-score"
-COL_C_SCORE = "C-Score"
-COL_CS_STD = "CS_STD"
-COL_PE_MEAN = "PE-mean"
+COL_P_SCORE = "p_score"
+COL_E_SCORE = "e_score"
+COL_C_SCORE = "c_score"
+COL_C_STD = "c_std"
+COL_PE_MEAN = "pe_mean"
 
-STR_PVAL = "-log10 p-value"
-STR_FC = "log2 FC"
+STR_PVAL = "-log10_p-value"
+STR_FC = "log2_fc"
 
 # Volcano default colors
-COLOR_UP = "firebrick"
-COLOR_DOWN = "dodgerblue"
-COLOR_NOT_SIG = "gray"
 COLOR_TH = "black"
 COLOR_GEM = "#69C2CA"
 
@@ -86,6 +83,7 @@ STR_NON_SIG = "Unchanged"
 COL_SIG_CLASS = "sig_class"
 
 
+# Common docs
 
 
 # II Helper functions

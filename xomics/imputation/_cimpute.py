@@ -55,7 +55,7 @@ class cImpute:
     """
     def __init__(self,
                  col_id: str = ut.COL_PROT_ID,
-                 col_name: str = ut.COL_PROT_NAME,
+                 col_name: str = ut.COL_GENE_NAME,
                  str_quant: str = ut.STR_QUANT,
                  ):
         """

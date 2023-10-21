@@ -89,6 +89,31 @@ def _e_ranking(x_fe, x_pvals, x_hit, z_norm=False):
     return ranking_score
 
 
+def _e_ranking_only_pvals(x_pvals, x_hit, z_norm=False):
+    """
+    Rank proteins based on their  significance.
+
+    Parameters
+    x_pvals: array-like, p-values associated with each protein
+    x_hit: binary matrix denoting presence (1) or absence (0) of each protein
+    z_norm: boolean, whether to apply z-normalization
+
+    Returns
+    ranking_score: array-like, combined and normalized scores for ranking
+    """
+    # This ensures that each hit has a positive contribution to the ranking score
+    # The addition of 0.00001  avoids identical values, which can cause problems in min-max normalization
+    # Values <= 0.001 have same impact (empirically tested)
+    x_pvals += abs(min(x_pvals)) + 0.00001
+    # Weight the combined values by presence (1) or absence (0) of each protein
+    x_s = np.transpose(x_hit) * x_pvals
+    # Sum the weighted scores for each protein
+    x_s = x_s.sum(axis=1)
+    # Normalize the ranking scores
+    ranking_score = _normalize_values(x_s, z_norm=z_norm)
+    return ranking_score
+
+
 # II Main Functions
 def p_score(x_fc=None, x_pvals=None):
     """Calculate the single protein use_cases ranking score (P score)."""
@@ -100,21 +125,38 @@ def p_score(x_fc=None, x_pvals=None):
     return p_scores
 
 
-def e_score(ids=None, id_lists=None, x_fe=None, x_pvals=None):
+def e_score(names=None, name_lists=None, x_fe=None, x_pval=None):
     """Calculate the single protein enrichment score (E score)."""
     # Normalize data
-    norm_pvals = _normalize_values(x_pvals, z_norm=True)
+    norm_pvals = _normalize_values(x_pval, z_norm=True)
     norm_fe = _normalize_folds(x_vals=x_fe, z_norm=True)
     # Get unique protein IDs from input sets
-    unique_ids = ut.flatten_list(list_in=id_lists, sep=",")
+    unique_ids = ut.flatten_list(list_in=name_lists, sep=",")
     # Create binary hit matrix to represent the presence of unique IDs in each set
-    x_hit = [[int(x in id_set) for x in unique_ids] for id_set in id_lists]
+    x_hit = [[int(x in id_set) for x in unique_ids] for id_set in name_lists]
     # Scoring for unique IDs (min-max normalized)
     _ranking_scores = _e_ranking(norm_fe, norm_pvals, x_hit)
     # Map unique IDs to their final scores
     dict_val = dict(zip(unique_ids, _ranking_scores))
-    e_scores = np.array([dict_val.get(i, 0) for i in ids])
+    e_scores = np.array([dict_val.get(i, 0) for i in names])
     return e_scores
+
+
+def e_score_only_pvals(names=None, name_lists=None, x_pval=None):
+    """Calculate the single protein enrichment score (E score)."""
+    # Normalize data
+    norm_pvals = _normalize_values(x_pval, z_norm=True)
+    # Get unique protein IDs from input sets
+    unique_ids = ut.flatten_list(list_in=name_lists, sep=",")
+    # Create binary hit matrix to represent the presence of unique IDs in each set
+    x_hit = [[int(x in id_set) for x in unique_ids] for id_set in name_lists]
+    # Scoring for unique IDs (min-max normalized)
+    _ranking_scores = _e_ranking_only_pvals(norm_pvals, x_hit)
+    # Map unique IDs to their final scores
+    dict_val = dict(zip(unique_ids, _ranking_scores))
+    e_scores = np.array([dict_val.get(i, 0) for i in names])
+    return e_scores
+
 
 
 def c_score(ids=None, df_imp=None, col_id=None):

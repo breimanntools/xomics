@@ -130,6 +130,6 @@ def check_col_in_df(df=None, name_df=None, cols=None, name_cols=None, accept_nan
 
     # Check if NaNs are present when they are not accepted
     if not accept_nan:
-        if df[cols].isna().sum() > 0:
+        if df[cols].isna().any().any():
             raise ValueError(f"NaN values are not allowed in '{cols}'.")
 

@@ -52,6 +52,12 @@ Integration
     :toctree: generated/
 
 
+Mapping
+-------
+.. autosummary::
+    :toctree: generated/
+
+
 .. _plot_api:
 
 

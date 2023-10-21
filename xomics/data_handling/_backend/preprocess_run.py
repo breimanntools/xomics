@@ -63,8 +63,8 @@ def run_preprocess(df=None, groups=None, groups_ctrl=None, pvals_method=None, pv
             if pvals_method is not None:
                 p_values = _correct_p_val(p_vals=p_values, method=pvals_method)
             # Create column names
-            log2_FC_col_name = f"{ut.STR_FC} ({group}/{group_ctrl})"
-            p_value_col_name = f"{ut.STR_PVAL} ({group}/{group_ctrl})"
+            log2_FC_col_name = f"{ut.STR_FC}_({group}/{group_ctrl})"
+            p_value_col_name = f"{ut.STR_PVAL}_({group}/{group_ctrl})"
 
             # Convert pandas Series or numpy arrays to lists
             fold_change_list = fold_change.tolist()

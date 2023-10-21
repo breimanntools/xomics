@@ -6,34 +6,8 @@ import numpy as np
 from typing import Optional, List
 
 import xomics.utils as ut
-from ._backend.prank import p_score, e_score, c_score
+from ._backend.prank import p_score, e_score, c_score, e_score_only_pvals
 from ._backend.ehits import e_hits
-
-
-# TODO use log2 check for testing (if data are not properly log-transformed, trhough error;
-# TODO can be disabled by user via 'ignore_log_check')
-# ----------------
-def _adjust_log2_xvals(x_vals):
-    """Heuristic test and conduction of log2 transformation for fold changes/enrichment values
-    (performed for absolute values)"""
-    # Check if transformation is needed
-    if 10 < max(x_vals):
-        x_vals = np.log2(x_vals)
-        return x_vals, True
-    else:
-        return x_vals, False
-
-
-def _adjust_log10_pvals(x_pvals):
-    """Heuristic test and conduction of -log10 transformation for p-values"""
-    # Check if transformation is needed
-    p_log10 = (max(x_pvals) - min(x_pvals)) > 1
-    if not p_log10:
-        x_pvals = -np.log10(x_pvals)
-        return x_pvals, True
-    else:
-        return x_pvals, False
-#-----------------
 
 
 # I Helper Functions
@@ -153,7 +127,7 @@ class pRank:
     """
     def __init__(self,
                  col_id: str = ut.COL_PROT_ID,
-                 col_name: str = ut.COL_PROT_NAME,
+                 col_name: str = ut.COL_GENE_NAME,
                  str_quant: str = ut.STR_QUANT,
                  ):
         """
@@ -174,92 +148,111 @@ class pRank:
         self.str_quant = str_quant
 
     @staticmethod
-    def p_score(x_fc: ut.ArrayLike1D = None,
-                x_pval: ut.ArrayLike1D = None,
-                ignore_log_check: bool = False,
-                ) -> np.ndarray:
+    def p_score(df_fc: pd.DataFrame = None,
+                col_fc: str = None,
+                col_pval: str = None,
+                ) -> pd.DataFrame:
         """
         Calculate the single protein use_cases ranking score (P score) by first z-normalizing fold change scores
         and p-values, and then integrating them protein-wise to obtain min-max normalized ranking scores.
 
         Parameters
         ----------
-        x_fc
-            Array of fold changes for each protein (log2 fold recommanded). Should correspond to ``x_pval``.
-        x_pval
-            Array of p-values for each protein (log10 fold recommanded). Should correspond to ``x_fc``.
+        df_fc
+            DataFrame with fold-change and p-values.
+        col_fc
+            Name of column from ``df`` with fold change values for each protein (log2 fold recommended).
+        col_pval
+            Name of column from ``df`` with p-values for each protein (-log10 fold recommended).
 
         Returns
         -------
-        p_scores
-            Array of use_cases ranking scores (P scores) for each protein.
-
-        Notes
-        -----
-        Function can either be used by providing ``df_fc`` with its ``col_fc`` and ``col_pval`` column,
-        or by providing the FC and P-values directly as array using ``x_fc`` and ``x_pval``.
-
-        Examples
-        --------
-        >>> p_score(x_fc=[2.4, 1.5], x_pvals=[0.05, 0.2])
-        array([1.0, 0.])
+        df_fc
+            Input DataFrame with p-score for each protein given in 'P-Score' column.
         """
         # Checking functions
+        df_fc = ut.check_df(name="df_fc", df=df_fc)
+        ut.check_col_in_df(df=df_fc, name_df="df_fc", cols=[col_fc, col_pval], name_cols=["col_fc", "col_pval"])
+        # Get arrays with values
+        x_fc = df_fc[col_fc].values
+        x_pval = df_fc[col_pval].values
+        # Check columns values
         x_fc, x_pval = check_input_scoring_match(x_fc, x_pval)
         check_numeric_elements(x_fc, name="x_fc")
         check_numeric_elements(x_pval, name="x_pvals")
         # Get P-score
         p_scores = p_score(x_fc=x_fc, x_pvals=x_pval)
-        return p_scores
+        df_fc[ut.COL_P_SCORE] = p_scores
+        return df_fc
 
     @staticmethod
-    def e_score(ids: ut.ArrayLike1D = None,
-                id_lists: List[list] = None,
-                x_fe: ut.ArrayLike1D = None,
-                x_pval: ut.ArrayLike1D = None,
-                ignore_log_check: bool = False,
-                ) -> np.ndarray:
+    def e_score(df_fc: pd.DataFrame = None,
+                col_name: str = None,
+                df_enrich: pd.DataFrame = None,
+                col_fe: str = None,
+                col_pval: str = None,
+                col_name_lists: str = None,
+                ) -> pd.DataFrame:
         """
         Calculate the single protein enrichment score (E score) by first z-normalizing fold enrichment scores and
         p-values, and then integrating them protein-wise to obtain a min-max normalized ranking score.
 
         Parameters
         ----------
-        ids
-            List or array of protein identifiers.
-        id_lists
-            List of protein identifier sets from enrichment analysis (e.g., set of proteins linked to specific GO term)
-        x_fe
-            Array of fold enrichments for each protein set.
-        x_pval
-            Array of p-values for each protein set.
+        df_fc
+            DataFrame with fold-change and p-values.
+        col_name
+            Name of column from ``df_fc`` with protein names.
+        df_enrich
+            DataFrame with fold enrichment and p-values for each enrichment term.
+        col_fe
+            Name of column from ``df_enrich`` with fold enrichment values for each enrichment term (log2 fold recommended).
+        col_pval
+            Name of column from ``df_enrich`` with p-values for each term (-log10 fold recommended).
+        col_name_lists
+            Name of column from ``df_enrich`` with protein name lists. Lists should contain names from ``col_names``.
 
         Returns
         -------
-        e_scores : numpy.ndarray
-            Array of enrichment ranking scores (E scores) for each protein.
-
-        Examples
-        --------
-        >>> e_score(ids=['protein1', 'protein2'], id_lists=[['protein1', 'protein2'], ['protein2']],
-        ... x_fe=[2, 1.5], x_pvals=[0.05, 0.1])
-        [0., 1.0]
+        df_fc
+            Input DataFrame with E-score for each protein given in 'P-Score' column.
         """
-        # Checking functions
         # TODO check for duplicated Term
-        _, x_fe, x_pval = check_input_scoring_match(id_lists, x_fe, x_pval)
-        check_numeric_elements(x_fe, name="x_fe")
-        check_numeric_elements(x_pval, name="x_pvals")
-        check_all_non_negative(x_fe, name="x_fe")
+        # Checking functions
+        df_fc = ut.check_df(name="df_fc", df=df_fc)
+        ut.check_str(name="col_name", val=col_name)
+        ut.check_col_in_df(df=df_fc, name_df="df_fc", cols=col_name, name_cols="col_id")
+        df_enrich = ut.check_df(name="df_enrich", df=df_enrich)
+        ut.check_str(name="col_pval", val=col_pval)
+        ut.check_str(name="col_fe", val=col_fe, accept_none=True)
+        ut.check_str(name="col_name_lists", val=col_name_lists)
+        ut.check_col_in_df(df=df_enrich, name_df="df_enrich", cols=[col_pval, col_name_lists], name_cols=["col_pval", "col_id_lists"])
+        # Get arrays with values
+        names = df_fc[col_name].values
+        x_pval = df_enrich[col_pval].values
+        name_lists = df_enrich[col_name_lists].values
+        # Check columns values
+        if col_fe is not None:
+            ut.check_col_in_df(df=df_enrich, name_df="df_enrich", cols=[col_fe], name_cols=["col_fe"])
+            x_fe = df_enrich[col_fe].values
+            _, x_fe, x_pval = check_input_scoring_match(name_lists, x_fe, x_pval)
+            check_numeric_elements(x_fe, name="col_fe")
+        else:
+            _, x_pval = check_input_scoring_match(name_lists, x_pval)
+            check_numeric_elements(x_pval, name="col_pvals")
         # Get E-score
-        e_scores = e_score(ids=ids, id_lists=id_lists, x_fe=x_fe, x_pvals=x_pval)
-        return e_scores
+        if col_fe is not None:
+            e_scores = e_score(names=names, name_lists=name_lists, x_fe=x_fe, x_pval=x_pval)
+        else:
+            e_scores = e_score_only_pvals(names=names, name_lists=name_lists, x_pval=x_pval)
+        df_fc[ut.COL_E_SCORE] = e_scores
+        return df_fc
 
     @staticmethod
     def c_score(df_imp: pd.DataFrame = None,
                 ids: ut.ArrayLike1D = None,
                 col_id: str = None
-                ) -> np.ndarray:
+                ) -> pd.DataFrame:
         """Obtain protein use_cases confidence score (C score) from cImpute output
 
         Parameters
@@ -277,7 +270,8 @@ class pRank:
             Array of confidence scores (C scores) from imputation for each protein.
         """
         c_scores = c_score(ids=ids, df_imp=df_imp, col_id=col_id)
-        return c_scores
+        df_imp[ut.COL_C_SCORE] = c_scores
+        return df_imp
 
     @staticmethod
     def e_hits(ids=None,
