@@ -1,9 +1,13 @@
 # Directories
 /venv/
-#/dev_scripts/
+/dev_scripts/
 /recipe/
 /tutorials/.ipynb_checkpoints/
 /dist/
+
+# Created documentation
+/docs/build/
+/docs/source/generated/
 
 # IDEs & Editors
 ## PyCharm
@@ -25,6 +29,11 @@ Thumbs.db
 __pycache__/
 *.py[cod]
 *$py.class
+**/__pycache__/
+
+# Hypothesis
+.hypothesis/
+.coverage
 
 ## C extensions
 *.so
@@ -119,3 +128,5 @@ dmypy.json
 
 # Cython
 cython_debug/
+/venv_shap/
+/dev_scripts/
