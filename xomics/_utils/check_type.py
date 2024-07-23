@@ -74,7 +74,7 @@ def check_str(name=None, val=None, accept_none=False, return_empty_string=False,
         raise ValueError(str_error)
     return val
 
-
+# TODO
 # TODO check
 def check_str_in_list(name=None, val=None, list_options=None, accept_none=False):
     """Check if val is one of the given options"""
