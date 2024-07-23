@@ -12,25 +12,66 @@ import itertools
 
 from .config import options
 
-# Import utility functions explicitly
-from ._utils.check_data import (check_X, check_X_unique_samples, check_labels, check_match_X_labels,
-                                check_array_like, check_superset_subset,
-                                check_col_in_df, check_df)
-from ._utils.check_models import check_mode_class, check_model_kwargs
-from ._utils.check_type import (check_number_range, check_number_val, check_str, check_bool,
-                                check_dict, check_tuple, check_list_like, check_str_in_list,
-                                check_ax)
+# Data types
+from ._utils.utils_types import (ArrayLike1D,
+                                 ArrayLike2D,
+                                 VALID_INT_TYPES,
+                                 VALID_FLOAT_TYPES,
+                                 VALID_INT_FLOAT_TYPES)
 
-from ._utils.new_types import ArrayLike1D, ArrayLike2D
-
-from ._utils.decorators import (catch_runtime_warnings, CatchRuntimeWarnings,
-                                catch_convergence_warning, ClusteringConvergenceException,
+# Decorators
+from ._utils.decorators import (catch_runtime_warnings,
+                                CatchRuntimeWarnings,
+                                catch_convergence_warning,
+                                ClusteringConvergenceException,
                                 catch_invalid_divide_warning,
-                                doc_params)
+                                catch_undefined_metric_warning,
+                                CatchUndefinedMetricWarning)
 
-from ._utils.utils_output import (print_out, print_start_progress, print_progress, print_finished_progress)
+# Check functions
+from ._utils.check_type import (check_number_range,
+                                check_number_val,
+                                check_str,
+                                check_str_in_list,
+                                check_bool,
+                                check_dict,
+                                check_tuple,
+                                check_list_like)
+from ._utils.check_data import (check_X,
+                                check_X_unique_samples,
+                                check_labels,
+                                check_match_X_labels,
+                                check_match_X_list_labels,
+                                check_match_list_labels_names_datasets,
+                                check_array_like,
+                                check_superset_subset,
+                                check_df)
+from ._utils.check_models import (check_mode_class,
+                                  check_model_kwargs)
+from ._utils.check_plots import (check_fig,
+                                 check_ax,
+                                 check_figsize,
+                                 check_grid_axis,
+                                 check_font_weight,
+                                 check_fontsize_args,
+                                 check_vmin_vmax,
+                                 check_lim,
+                                 check_dict_xlims,
+                                 check_color,
+                                 check_list_colors,
+                                 check_dict_color,
+                                 check_cmap,
+                                 check_palette)
+
+# Internal utility functions
+from ._utils.utils_output import (print_out,
+                                  print_start_progress,
+                                  print_progress,
+                                  print_end_progress)
+
+# External (system-level) utility functions (only backend)
 from ._utils.utils_groups import get_dict_qcol_group, get_dict_group_qcols, get_qcols
-from ._utils.utils_plotting import plot_gco
+from ._utils.utils_plotting import plot_gco, plot_legend_, plot_get_clist_
 
 
 # Folder structure
@@ -145,17 +186,9 @@ def read_csv_cached(name, sep=None):
 
 
 # Main check functions
-def check_verbose(verbose):
-    if verbose is None:
-        # System level verbosity
-        verbose = options['verbose']
-    else:
-        check_bool(name="verbose", val=verbose)
-    return verbose
-
-
 def check_match_df_groups(df=None, groups=None, name_groups="groups", str_quant=None):
     """"""
+    print(df)
     if str_quant is None:
         raise ValueError("'str_quant' must be given.")
     list_substr_cols = [col.replace(str_quant, "").split("_") for col in list(df)]

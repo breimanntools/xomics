@@ -53,7 +53,7 @@ def get_qcols(df=None, groups=None, str_quant=None):
     str_quant: Substring in column indicating quantification
     """
     if str_quant is None:
-        raise ValueError("'str_quant' must be given")
+        raise ValueError("'str_quant' should not be None")
     dict_col_group = get_dict_qcol_group(df=df, groups=groups, str_quant=str_quant)
     dict_group_cols = {g: [k for k, v in dict_col_group.items() if v == g] for g in groups}
     list_group_cols = [col for group_cols in dict_group_cols.values() for col in group_cols]

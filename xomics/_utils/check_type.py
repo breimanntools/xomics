@@ -4,52 +4,78 @@ Basic utility check functions for type checking
 import pandas as pd
 import numpy as np
 
+from ._utils import add_str
+from .utils_types import VALID_INT_TYPES, VALID_INT_FLOAT_TYPES
+
 
 # Type checking functions
-def check_number_val(name=None, val=None, accept_none=False, just_int=False):
-    """Check if value is float"""
+def check_number_val(name=None, val=None, accept_none=False, just_int=False, str_add=None):
+    """Check if value is a valid integer or float"""
     if val is None:
         if not accept_none:
-            raise ValueError(f"'{name}' should not be None.")
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
         return None
     if just_int is None:
         raise ValueError("'just_int' must be specified")
-    valid_types = (int,) if just_int else (float, int)
-    type_description = "int" if just_int else "float or int"
+    # Define valid types for integers and floating points
+    valid_types = VALID_INT_TYPES if just_int else VALID_INT_TYPES + VALID_INT_FLOAT_TYPES
+    type_description = "an integer" if just_int else "a float or an integer"
     if not isinstance(val, valid_types):
-        raise ValueError(f"'{name}' ({val}) should be {type_description}.")
+        str_error = add_str(str_error=f"'{name}' should be {type_description}, but got {type(val).__name__}.",
+                            str_add=str_add)
+        raise ValueError(str_error)
 
 
-def check_number_range(name=None, val=None, min_val=0, max_val=None, accept_none=False, just_int=None):
+def check_number_range(name=None, val=None, min_val=0, max_val=None, exclusive_limits=False,
+                       accept_none=False, just_int=None, str_add=None):
     """Check if value of given name is within defined range"""
     if val is None:
         if not accept_none:
-            raise ValueError(f"'{name}' should not be None.")
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
         return None
     if just_int is None:
         raise ValueError("'just_int' must be specified")
-    valid_types = (int,) if just_int else (float, int)
-    type_description = "int" if just_int else "float or int n, with"
-
+    # Define valid types for integers and floating points
+    valid_types = VALID_INT_TYPES if just_int else VALID_INT_TYPES + VALID_INT_FLOAT_TYPES
     # Verify the value's type and range
-    if not isinstance(val, valid_types) or val < min_val or (max_val is not None and val > max_val):
-        range_desc = f"n>={min_val}" if max_val is None else f"{min_val}<=n<={max_val}"
-        error = f"'{name}' ({val}) should be {type_description} {range_desc}. "
-        if accept_none:
-            error += "None is also accepted."
-        raise ValueError(error)
+    type_description = "an integer" if just_int else "a float or an integer"
+    if not isinstance(val, valid_types):
+        str_error = add_str(str_error=f"'{name}' should be {type_description}, but got {type(val).__name__}.",
+                            str_add=str_add)
+        raise ValueError(str_error)
+    # Min and max values are excluded from allowed values
+    if exclusive_limits:
+        if val <= min_val or (max_val is not None and val >= max_val):
+            range_desc = f"n > {min_val}" if max_val is None else f"{min_val} < n < {max_val}"
+            str_error = add_str(str_error=f"'{name}' should be {type_description} with {range_desc}, but got {val}.",
+                                str_add=str_add)
+            raise ValueError(str_error)
+    else:
+        if val < min_val or (max_val is not None and val > max_val):
+            range_desc = f"n >= {min_val}" if max_val is None else f"{min_val} <= n <= {max_val}"
+            str_error = add_str(str_error=f"'{name}' should be {type_description} with {range_desc}, but got {val}.",
+                                str_add=str_add)
+            raise ValueError(str_error)
+    return val
 
 
-def check_str(name=None, val=None, accept_none=False):
+def check_str(name=None, val=None, accept_none=False, return_empty_string=False, str_add=None):
     """Check type string"""
     if val is None:
         if not accept_none:
-            raise ValueError(f"'{name}' should not be None.")
-        return None
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
+        return "" if return_empty_string else None
     if not isinstance(val, str):
-        raise ValueError(f"'{name}' ('{val}') should be string.")
+        str_error = add_str(str_error=f"'{name}' ('{val}') should be string.",
+                            str_add=str_add)
+        raise ValueError(str_error)
+    return val
 
 
+# TODO check
 def check_str_in_list(name=None, val=None, list_options=None, accept_none=False):
     """Check if val is one of the given options"""
     if val is None:
@@ -60,64 +86,103 @@ def check_str_in_list(name=None, val=None, list_options=None, accept_none=False)
         raise ValueError(f"'{name}' ('{val}') should be of the following: {list_options}")
 
 
-def check_bool(name=None, val=None):
+def check_bool(name=None, val=None, accept_none=False, str_add=None):
     """Check if the provided value is a boolean."""
+    if val is None:
+        if not accept_none:
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
+        return None
     if not isinstance(val, bool):
-        raise ValueError(f"'{name}' ({val}) should be bool.")
+        str_error = add_str(str_error=f"'{name}' ({val}) should be bool.",
+                            str_add=str_add)
+        raise ValueError(str_error)
 
 
-def check_dict(name=None, val=None, accept_none=False):
+def check_dict(name=None, val=None, accept_none=False, str_add=None):
     """Check if the provided value is a dictionary."""
     if val is None:
         if not accept_none:
-            raise ValueError(f"'{name}' should not be None.")
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
         return None
     if not isinstance(val, dict):
-        error = f"'{name}' ({val}) should be a dictionary"
-        error += " or None." if accept_none else "."
-        raise ValueError(error)
+        str_error = add_str(str_error=f"'{name}' ({val}) should be a dictionary.",
+                            str_add=str_add)
+        raise ValueError(str_error)
 
 
-def check_tuple(name=None, val=None, n=None, check_n=True, accept_none=False):
-    """"""
+def check_tuple(name=None, val=None, n=None, check_number=True, accept_none=False,
+                accept_none_number=False, str_add=None):
+    """Check if the provided value is a tuple, optionally of a certain length and containing only numbers."""
     if val is None:
         if not accept_none:
-            raise ValueError(f"'{name}' should not be None.")
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
         return None
     if not isinstance(val, tuple):
-        raise ValueError(f"'{name}' ({val}) should be a tuple.")
-    if check_n and n is not None and len(val) != n:
-        raise ValueError(f"'{name}' ({val}) should be a tuple with {n} elements.")
+        str_error = add_str(str_error=f"'{name}' ({val}) should be a tuple.",
+                            str_add=str_add)
+        raise ValueError(str_error)
+    if n is not None and len(val) != n:
+        str_error = add_str(str_error=f"'{name}' ({val}) should be a tuple with {n} elements.",
+                            str_add=str_add)
+        raise ValueError(str_error)
+    if n is not None and check_number:
+        for v in val:
+            check_number_val(name=name, val=v, just_int=False, accept_none=accept_none_number,
+                             str_add=str_add)
 
 
-def check_list_like(name=None, val=None, accept_none=False, convert=True, accept_str=False):
-    """"""
+def check_list_like(name=None, val=None, accept_none=False, convert=True, accept_str=False, min_len=None,
+                    check_all_non_neg_int=False, check_all_non_none=True, check_all_str_or_convertible=False,
+                    str_add=None):
+    """Check if the value is list-like, optionally converting it to a list, and performing additional checks."""
     if val is None:
         if not accept_none:
-            raise ValueError(f"'{name}' should not be None.")
+            str_error = add_str(str_error=f"'{name}' should not be None.", str_add=str_add)
+            raise ValueError(str_error)
         return None
     if not convert:
         if not isinstance(val, list):
-            raise ValueError(f"'{name}' (type: {type(val)}) should be a list.")
+            str_error = add_str(str_error=f"'{name}' (type: {type(val)}) should be a list.",
+                                str_add=str_add)
+            raise ValueError(str_error)
     elif accept_str and isinstance(val, str):
         return [val]
     else:
         allowed_types = (list, tuple, np.ndarray, pd.Series)
         if not isinstance(val, allowed_types):
-            raise ValueError(f"'{name}' (type: {type(val)}) should be one of {allowed_types}.")
+            str_error = add_str(str_error=f"'{name}' (type: {type(val)}) should be one of {allowed_types}.",
+                                str_add=str_add)
+            raise ValueError(str_error)
         if isinstance(val, np.ndarray) and val.ndim != 1:
-            raise ValueError(f"'{name}' is a multi-dimensional numpy array and cannot be considered as a list.")
-        val = list(val)
+            str_error = add_str(str_error=f"'{name}' is a multi-dimensional numpy array and cannot be considered as a list.",
+                                str_add=str_add)
+            raise ValueError(str_error)
+        val = list(val) if isinstance(val, (np.ndarray, pd.Series)) else val
+    if check_all_non_none:
+        n_none = len([x for x in val if x is None])
+        if n_none > 0:
+            str_error = add_str(str_error=f"'{name}' should not contain 'None' (n={n_none})",
+                                str_add=str_add)
+            raise ValueError(str_error)
+    if check_all_non_neg_int:
+        if any(type(i) != int or i < 0 for i in val):
+            str_error = add_str(str_error=f"'{name}' should only contain non-negative integers.",
+                                str_add=str_add)
+            raise ValueError(str_error)
+    if check_all_str_or_convertible:
+        wrong_elements = [x for x in val if not isinstance(x, (str, int, float, np.number))]
+        if len(wrong_elements) > 0:
+            str_error = add_str(str_error=f"The following elements in '{name}' are not strings or"
+                                          f" reasonably convertible: {wrong_elements}",
+                                str_add=str_add)
+            raise ValueError(str_error)
+        else:
+            val = [str(x) for x in val]
+    if min_len is not None and len(val) < min_len:
+        str_error = add_str(str_error=f"'{name}' should not contain at least {min_len} elements",
+                            str_add=str_add)
+        raise ValueError(str_error)
     return val
-
-
-# Check special types
-def check_ax(ax=None, accept_none=False):
-    """"""
-    import matplotlib.axes
-    if ax is None:
-        if not accept_none:
-            raise ValueError(f"'ax' should not be None.")
-        return None
-    if not isinstance(ax, matplotlib.axes.Axes):
-        raise ValueError(f"'ax' (type={type(ax)}) should be mpl.axes.Axes or None.")

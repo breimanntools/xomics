@@ -126,8 +126,8 @@ class pRank:
     Hybrid imputation algorithm for missing values (MVs) in (prote)omics data.
     """
     def __init__(self,
-                 col_id: str = ut.COL_PROT_ID,
-                 col_name: str = ut.COL_GENE_NAME,
+                 col_id: str = "protein_id",
+                 col_name: str = "gene_name",
                  str_quant: str = ut.STR_QUANT,
                  ):
         """
@@ -308,8 +308,8 @@ class pRank:
 
         Returns
         -------
-        df_e_hit : pandas.DataFrame
-            Data frame with links between gene/protein ids and 'enrichment' terms
+        df_e_hit : pd.DataFrame
+            DataFrame with links between gene/protein ids and 'enrichment' terms
 
         Examples
         --------
