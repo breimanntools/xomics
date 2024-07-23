@@ -9,7 +9,6 @@ import pandas as pd
 from typing import Optional, Tuple, Union, List
 from adjustText import adjust_text
 
-import xomics as xo
 import xomics.utils as ut
 
 # Constats
@@ -154,20 +153,21 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     # Initial parameter validation
     ut.check_ax(ax=ax, accept_none=True)
     ut.check_tuple(name="figsize", val=figsize, n=2, accept_none=True)
-    ut.check_col_in_df(df=df, name_df="df", cols=[col_fc, col_pval], name_cols=["col_fc", "col_pval"])
-    df = ut.check_df(name="df", df=df, cols_req=[col_fc, col_pval])
+    cols_requiered = [col_fc, col_pval]
+    ut.check_df(df=df, name="df", cols_requiered=cols_requiered, accept_nan=False, accept_none=False)
     if col_names is not None or names_to_annotate is not None:
-        ut.check_col_in_df(name_df="df", df=df, cols=col_names, name_cols="col_names")
+        cols_requiered.append(col_names)
         names_to_annotate = ut.check_list_like(name="names_to_annotate", val=names_to_annotate, accept_none=False)
         names_to_annotate = check_match_df_names(df=df, list_names=names_to_annotate, col_names=col_names)
     if col_cbar is not None:
-        ut.check_col_in_df(name_df="df", df=df, cols=col_cbar, accept_nan=True)
+        cols_requiered.append(col_cbar)
+    ut.check_df(df=df, name="df", cols_requiered=cols_requiered)
     ut.check_number_range(name="th_fc", val=th_fc, min_val=0, just_int=False)
     ut.check_number_range(name="th_pval", val=th_pval, min_val=0, max_val=1, just_int=False)
     colors = ut.check_list_like(name="colors", val=colors, accept_none=True, accept_str=True)
-    ut.check_tuple(name="colors_pos_neg_non", val=colors_pos_neg_non, accept_none=True, n=3, check_n=True)
+    ut.check_tuple(name="colors_pos_neg_non", val=colors_pos_neg_non, accept_none=True, n=3, check_number=True)
     ut.check_number_range(name="size", val=size, min_val=1, just_int=True)
-    ut.check_tuple(name="size_pos_neg_non", val=colors_pos_neg_non, accept_none=True, n=3, check_n=True)
+    ut.check_tuple(name="size_pos_neg_non", val=colors_pos_neg_non, accept_none=True, n=3, check_number=True)
     ut.check_number_range(name="alpha", val=alpha, min_val=0, max_val=1, just_int=False)
     ut.check_number_range(name="edge_width", val=edge_width, min_val=0, just_int=False)
     ut.check_dict(name="label_fontdict", val=label_fontdict, accept_none=True)
@@ -179,7 +179,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
 
     # Plot settings
     if colors_pos_neg_non is None:
-        color_non_sig, color_sig_neg, color_sig_pos = xo.plot_get_clist(n_colors=3)
+        color_non_sig, color_sig_neg, color_sig_pos = ut.plot_get_clist_(n_colors=3)
     else:
         color_sig_pos, color_sig_neg, color_non_sig = colors_pos_neg_non
     if sizes_pos_neg_non is None:
@@ -253,7 +253,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     if names_to_annotate is not None:
         labels = [(row[col_names], row[col_fc], row[col_pval]) for i, row in df.iterrows()
                   if row[col_names] in names_to_annotate and not np.isnan(row[col_fc])]
-        fontdict = dict(size=xo.plot_gcfs()-8)
+        fontdict = dict(size=ut.plot_gco()-8)
         if label_fontdict is not None:
             fontdict.update(**label_fontdict)
         texts = [plt.text(x, y, label, fontdict=fontdict) for label, x, y in labels]
@@ -264,7 +264,7 @@ def plot_volcano(ax: Optional[plt.Axes] = None,
     if not legend or col_cbar is not None:
         ax.legend().set_visible(False)
     else:
-        xo.plot_legend(dict_color=dict_color,
+        ut.plot_legend_(dict_color=dict_color,
                        list_cat=[ut.STR_NON_SIG, ut.STR_SIG_NEG, ut.STR_SIG_POS], ncol=1,
                        marker="o",
                        loc=loc_legend,

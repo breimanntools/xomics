@@ -15,15 +15,6 @@ from ._backend.cimpute import run_cimpute, get_up_mnar
 # TODO d) Extend to other omics data
 
 # I Helper Functions
-doc_param_df_groups_upmnar = \
-"""\
-df
-    DataFrame containing quantified values with MVs. ``Rows`` typically correspond to proteins  and ``columns``  to conditions.
-groups
-    List of quantification group (substrings of columns in ``df``).
-loc_pct_upmnar
-    Location factor [0-1] for the upper MNAR limit (upMNAR) given as relative proportion (percentage) of the detection range.\
-"""
 
 
 # II Main Functions
@@ -75,7 +66,6 @@ class cImpute:
         self.col_name = col_name
         self.str_quant = str_quant
 
-    @ut.doc_params(doc_param_df_groups_upmnar=doc_param_df_groups_upmnar)
     def get_limits(self,
                    df: pd.DataFrame = None,
                    groups: ut.ArrayLike1D = None,
@@ -88,8 +78,15 @@ class cImpute:
 
         Parameters
         ----------
-        {doc_param_df_groups_upmnar}
-        cols_quant
+        df : pd.DataFrame, shape(n_samples, n_conditions)
+            DataFrame containing quantified values with missing values. ``Rows`` typically correspond to proteins
+            and ``columns``  to conditions.
+        groups : array-like, shape (n_groups,)
+            List of quantification group (substrings of columns in ``df``).
+        loc_pct_upmnar : float, default=0.25
+            Location factor [0-1] for the upper MNAR limit (upMNAR) given as relative proportion (percentage)
+            of the detection range.
+        cols_quant : array-like, shape (n_columns,)
             Column names with quantification data in ``df``.
 
         Return
@@ -103,7 +100,7 @@ class cImpute:
         """
         # Check input
         cols_quant = ut.check_list_like(name="cols_quant", val=cols_quant, accept_none=True)
-        df = ut.check_df(df=df, accept_none=False, cols_req=cols_quant)
+        df = ut.check_df(df=df, accept_none=False, cols_requiered=cols_quant)
         groups = ut.check_list_like(name="groups", val=groups, accept_none=False)
         ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
         ut.check_number_range(name="loc_pct_upmnar", val=loc_pct_upmnar, min_val=0, max_val=1,
@@ -115,7 +112,6 @@ class cImpute:
         d_max = df[cols_quant].max().max()
         return d_min, up_mnar, d_max
 
-    @ut.doc_params(doc_param_df_groups_upmnar=doc_param_df_groups_upmnar)
     def run(self,
             df: pd.DataFrame = None,
             groups: ut.ArrayLike1D = None,
@@ -132,15 +128,22 @@ class cImpute:
 
         Parameters
         ----------
-        {doc_param_df_groups_upmnar}
-        min_cs
+        df : pd.DataFrame, shape(n_samples, n_conditions)
+            DataFrame containing quantified values with missing values. ``Rows`` typically correspond to proteins
+            and ``columns``  to conditions.
+        groups : array-like, shape (n_groups,)
+            List of quantification group (substrings of columns in ``df``).
+        loc_pct_upmnar : float, default=0.25
+            Location factor [0-1] for the upper MNAR limit (upMNAR) given as relative proportion (percentage)
+            of the detection range.
+        min_cs : float, default=0.5
             Minimum of confidence score [0-1] used for selecting values for protein in groups to apply imputation on.
-        n_neighbors
+        n_neighbors: int, default=5
             Number of neighboring samples to use for MCAR imputation by KNN.
 
         Return
         ------
-        df_imp
+        df_imp : pd.DataFrame
             DataFrame with (a) imputed intensities values and (b) group-wise confidence score and NaN classification.
 
         Notes

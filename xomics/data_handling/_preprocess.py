@@ -14,6 +14,13 @@ from ._backend.preprocess_filter import filter_duplicated_names, filter_groups
 
 
 # I Helper Functions
+def check_all_positive(df=None):
+    """"""
+    min_val = df.min().min()
+    if min_val < 0:
+        raise ValueError(f"Minimum value ({min_val}) in 'df' should be >= 0")
+
+
 def check_base(base=None):
     """Ensure 'base' is a valid numerical type and has an acceptable value"""
     if not isinstance(base, (int, float)) or base not in [2, 10]:
@@ -36,22 +43,12 @@ def check_match_df_ids(df=None, list_ids=None):
 
 
 # II Main Functions
-# Common interface
-doc_param_df_groups = \
-"""\
-df
-    DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
-groups
-    List with names grouping conditions from ``df`` columns.\
-"""
-
-
 class PreProcess:
     """
     Pre-processing class for quantifications of omics data.
     """
     def __init__(self,
-                 col_id: str = ut.COL_PROT_ID,
+                 col_id: str = "protein_id",
                  col_name: str = ut.COL_GENE_NAME,
                  str_quant: str = "log2_lfq"
                  ):
@@ -63,7 +60,7 @@ class PreProcess:
         col_name
             Name of column with sample names in DataFrame.
         str_quant
-            Identifier for the LFQ columns in the DataFrame.
+            Identifier for the quantification columns in the DataFrame.
         """
         ut.check_str(name="col_id", val=col_id, accept_none=False)
         ut.check_str(name="col_name", val=col_name, accept_none=False)
@@ -72,17 +69,19 @@ class PreProcess:
         self.col_name = col_name
         self.str_quant = str_quant
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def get_qcols(self,
                   df: pd.DataFrame = None,
-                  groups: list = None
+                  groups: ut.ArrayLike1D = None
                   ) -> list:
         """
         Create a list with groups from df based on str_quant and given groups
 
         Parameters
         ----------
-        {doc_param_df_groups}
+        df : pd.DataFrame, shape (n_samples, n_conditions)
+            DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
+        groups : array-like, shape (n_groups,)
+            List with names grouping conditions from ``df`` columns.
 
         Return
         ------
@@ -97,17 +96,19 @@ class PreProcess:
         cols_quant = ut.get_qcols(df=df, groups=groups, str_quant=self.str_quant)
         return cols_quant
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def get_dict_qcol_group(self,
                             df: pd.DataFrame = None,
-                            groups: list = None
+                            groups: ut.ArrayLike1D = None
                             ) -> dict:
         """
         Create a dictionary with quantification columns and the group they are subordinated to
 
         Parameters
         ----------
-        {doc_param_df_groups}
+        df : pd.DataFrame, shape (n_samples, n_conditions)
+            DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
+        groups : array-like, shape (n_groups,)
+            List with names grouping conditions from ``df`` columns.
 
         Return
         ------
@@ -122,17 +123,19 @@ class PreProcess:
         dict_qcol_group = ut.get_dict_qcol_group(df=df, groups=groups, str_quant=self.str_quant)
         return dict_qcol_group
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def get_dict_group_qcols(self,
                              df: pd.DataFrame = None,
-                             groups: list = None
+                             groups: ut.ArrayLike1D = None
                              ) -> dict:
         """
         Create a dictionary with for groups from df and their corresponding columns with quantifications
 
         Parameters
         ----------
-        {doc_param_df_groups}
+        df : pd.DataFrame, shape (n_samples, n_conditions)
+            DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
+        groups : array-like, shape (n_groups,)
+            List with names grouping conditions from ``df`` columns.
 
         Return
         ------
@@ -147,10 +150,9 @@ class PreProcess:
         dict_group_qcols = ut.get_dict_group_qcols(df=df, groups=groups, str_quant=self.str_quant)
         return dict_group_qcols
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def filter_nan(self,
                    df: pd.DataFrame = None,
-                   groups: Optional[list] = None,
+                   groups: Optional[ut.ArrayLike1D] = None,
                    cols: Optional[list] = None,
                    ) -> pd.DataFrame:
         """
@@ -158,7 +160,10 @@ class PreProcess:
 
         Parameters
         ----------
-        {doc_param_df_groups}
+        df : pd.DataFrame, shape (n_samples, n_conditions)
+            DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
+        groups : array-like, shape (n_groups,)
+            List with names grouping conditions from ``df`` columns.
         cols
             List of columns from ``df`` to consider for filtering.
 
@@ -178,7 +183,7 @@ class PreProcess:
         if cols is None and groups is None:
             cols = list(df)
         cols = ut.check_list_like(name="cols", val=cols, accept_none=True, accept_str=True)
-        ut.check_col_in_df(df=df, name_df="df", cols=cols, accept_none=True, accept_nan=True)
+        df = ut.check_df(df=df, name="df", cols_requiered=cols, accept_none=False, accept_nan=True)
         if groups is not None:
             ut.check_match_df_groups(groups=groups, df=df, str_quant=self.str_quant)
             if cols is None:
@@ -188,10 +193,9 @@ class PreProcess:
         df = df.reset_index(drop=True)
         return df
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def filter_groups(self,
                       df: pd.DataFrame = None,
-                      groups: Optional[list] = None,
+                      groups: Optional[ut.ArrayLike1D] = None,
                       min_pct: float = 0.8,
                       ) -> pd.DataFrame:
         """
@@ -199,7 +203,10 @@ class PreProcess:
 
         Parameters
         ----------
-        {doc_param_df_groups}
+        df : pd.DataFrame, shape (n_samples, n_conditions)
+            DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
+        groups : array-like, shape (n_groups,)
+            List with names grouping conditions from ``df`` columns.
         min_pct
             Minimum percentage threshold of non-missing values in at least one group.
 
@@ -244,7 +251,7 @@ class PreProcess:
             The modified and filtered DataFrame.
         """
         ut.check_df(df=df)
-        ut.check_col_in_df(df=df, name_df="df", cols=col, accept_nan=True, accept_none=False)
+        df = ut.check_df(df=df, name="df", cols_requiered=col, accept_none=False, accept_nan=True)
         ut.check_str(name="str_split", val=str_split)
         ut.check_bool(name="split_names", val=split_names)
         # Filtering
@@ -284,11 +291,11 @@ class PreProcess:
         - NaN values will remain NaN after the transformation.
         """
         # Check input
-        df = ut.check_df(df=df, all_positive=True)
         if cols is None:
             cols = list(df)
         cols = ut.check_list_like(name="cols", val=cols, accept_none=False, accept_str=True)
-        ut.check_col_in_df(df=df, cols=cols, accept_nan=True)
+        df = ut.check_df(df=df, name="df", cols_requiered=cols, accept_none=False, accept_nan=True)
+        check_all_positive(df=df[cols])
         ut.check_bool(name="log2", val=log2)
         ut.check_bool(name="neg", val=neg)
         # Log transform
@@ -333,7 +340,7 @@ class PreProcess:
         if cols is None:
             cols = list(df)
         cols = ut.check_list_like(name="cols", val=cols, accept_none=False, accept_str=True)
-        ut.check_col_in_df(df=df, cols=cols, accept_nan=True)
+        df = ut.check_df(df=df, name="df", cols_requiered=cols, accept_none=False, accept_nan=True)
         ut.check_bool(name="neg", val=neg)
         check_base(base=base)
         # Exponential transform
@@ -403,7 +410,7 @@ class PreProcess:
             DataFrame with added significance column.
         """
         # Check input
-        df = ut.check_df(name="df", df=df, cols_req=[col_fc, col_pval])
+        df = ut.check_df(name="df", df=df, cols_requiered=[col_fc, col_pval])
         ut.check_number_range(name="th_fc", val=th_fc, min_val=0, just_int=False)
         ut.check_number_range(name="th_pval", val=th_pval, min_val=0, max_val=1, just_int=False)
         # Rescale p-value
@@ -412,10 +419,9 @@ class PreProcess:
         df[ut.COL_SIG_CLASS] = ut.get_sig_classes(df=df, col_fc=col_fc, col_pval=col_pval, th_pval=th_pval, th_fc=th_fc)
         return df
 
-    @ut.doc_params(doc_param_df_groups=doc_param_df_groups)
     def run(self,
             df: pd.DataFrame = None,
-            groups: list = None,
+            groups: ut.ArrayLike1D = None,
             groups_ctrl: list = None,
             pvals_correction: Optional[str] = None,
             pvals_neg_log10: bool = True
@@ -426,7 +432,10 @@ class PreProcess:
 
         Parameters
         ----------
-        {doc_param_df_groups}
+        df : pd.DataFrame, shape (n_samples, n_conditions)
+            DataFrame with quantifications. ``Rows`` typically correspond to proteins and ``columns`` to conditions.
+        groups : array-like, shape (n_groups,)
+            List with names grouping conditions from ``df`` columns.
         groups_ctrl
             List with names control grouping conditions from ``df`` columns.
         pvals_correction

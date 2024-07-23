@@ -158,7 +158,6 @@ def e_score_only_pvals(names=None, name_lists=None, x_pval=None):
     return e_scores
 
 
-
 def c_score(ids=None, df_imp=None, col_id=None):
     """Obtain protein use_cases confidence score (C score) from cImpute output"""
     list_ids = df_imp.index.to_list() if col_id is None else df_imp[col_id].to_list()

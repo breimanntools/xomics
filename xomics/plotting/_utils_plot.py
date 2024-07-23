@@ -10,6 +10,7 @@ from matplotlib import pyplot as plt
 import xomics.utils as ut
 
 
+# TODO into utils and remove
 def set_legend_handles_labels(ax=None, dict_color=None, list_cat=None, labels=None,
                               y=-0.2, x=0.5, ncol=3, fontsize=11, weight="normal",
                               lw=0, edgecolor=None, return_handles=False, loc=9,
