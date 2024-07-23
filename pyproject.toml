@@ -1,16 +1,15 @@
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "xomics"
 version = "0.2.0"
 description = "Python framework for eXplainable Omics analysis"
-authors = [
-    "Stephan Breimann <stephanbreimann@gmail.de>",
-    "Clarissa Rienaecker <clarissa.rienaecker@web.de>"]
-license = "MIT"
+authors = ["Stephan Breimann <stephanbreimann@gmail.de>"]
+license = "BSD-3-Clause"
 readme = "README.rst"
+homepage = "https://xomics.readthedocs.io"
 
 # Add classifiers to provide more details about the package (used by PyPI)
 classifiers = [
@@ -18,6 +17,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Natural Language :: English",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
@@ -26,6 +26,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "License :: OSI Approved :: MIT License",
     "Development Status :: 3 - Alpha",
+    # 1 - Planning (The project is still in the planning phase)
+    # 2 - Pre-Alpha (Initial development, not yet functional)
+    # 3 - Alpha (Early development stage, not feature-complete, may be unstable, intended for early adopters and testers)
     # 4 - Beta (feature complete, may need minor improvements
     # 5 - Prodcution/Stable (softaware is stable & deployed)
     # 6 - Mature (Stable & in production for long time)
@@ -93,8 +96,8 @@ adjustText = "0.8"
 "Repository" = "https://github.com/breimanntools/xomics"
 "Documentation" = "https://xomics.readthedocs.io"
 
-# If you use a tool for linting or formatting, you can add its configurations here.
-# For example, if you use `black` for formatting:
+
+# Configuration for black (code formatter)
 [tool.black]
 line-length = 88
 exclude = '''
@@ -104,8 +107,24 @@ exclude = '''
   | \.eggs
   | \.mypy_cache
   | \.pytest_cache
-  | \__pycache__
+  | __pycache__
   | build
   | dist
 )/
+'''
+
+# Configuration for isort (import sorting)
+[tool.isort]
+profile = "black"
+line_length = 88
+
+# Configuration for flake8 (linting)
+[tool.flake8]
+max-line-length = 88
+exclude = '''
+    .git,
+    __pycache__,
+    build,
+    dist,
+    venv
 '''

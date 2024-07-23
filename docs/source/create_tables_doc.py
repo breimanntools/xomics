@@ -1,3 +1,5 @@
+"""This is a script to convert csv/excel files into RST files """
+
 import os
 import pandas as pd
 import re
@@ -23,16 +25,11 @@ COLUMN_WIDTH = 8
 STR_REMOVE = "_XXX" # Check with tables_template.rst for consistency
 STR_ADD_TABLE = "ADD-TABLE"
 
-EXCLUDE_FROM_REF_CHECK = ["t1_omics_fields",
-                          "t2_quantification_methods",
-                          "t4_omics_analysis_tools",
-                          "t5_omics_post_analysis_tools",
-                          "t6_enrichment_tools"]
-
+EXCLUDE_FROM_REF_CHECK = ["t3a_aaontology_categories",
+                          "t3b_aaontology_subcategories"]
 
 # Helper Functions
 def _f_xlsx(on=True, file=None, ending=".xlsx"):
-    """"""
     if on:
         if ending not in file:
             return file.split(".")[0] + ending
@@ -52,7 +49,6 @@ def _check_references(table_name=None, table_refs=None, list_refs=None):
 
 
 def _check_tables(list_tables):
-    """"""
     f = lambda x: _f_xlsx(on=False, file=x)
     if list_tables != LIST_TABLES:
         list_missing_map = [f(x) for x in list_tables if x not in list_tables]
@@ -78,11 +74,13 @@ def _convert_excel_to_rst(df):
             else:
                 new_row.append(str(val))
         rst_output += "   * - " + "\n     - ".join(new_row) + "\n"
+    rst_output += "\n"  # Add a blank line after each table for better spacing.
     return rst_output
 
 
 # Main Functionality
 def generate_table_rst():
+    """Generate rst tables from csv and excel"""
     # Read the existing references
     with open(FILE_REF, 'r') as f:
         list_refs = f.read()
